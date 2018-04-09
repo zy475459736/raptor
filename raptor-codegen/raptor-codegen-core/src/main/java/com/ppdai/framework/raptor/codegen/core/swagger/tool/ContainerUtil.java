@@ -106,8 +106,11 @@ public class ContainerUtil {
 
         for (MessageType messageType : messageContainer.getMessageTypeList()) {
             for (FieldType fieldType : messageType.getFieldTypeList()) {
-                String leadingComments = locationMap.get(fieldType.getPath()).getLeadingComments();
-                fieldType.setLeadingComment(leadingComments);
+                DescriptorProtos.SourceCodeInfo.Location location = locationMap.get(fieldType.getPath());
+                if(Objects.nonNull(location)){
+                    String leadingComments = location.getLeadingComments();
+                    fieldType.setLeadingComment(leadingComments);
+                }
             }
         }
     }

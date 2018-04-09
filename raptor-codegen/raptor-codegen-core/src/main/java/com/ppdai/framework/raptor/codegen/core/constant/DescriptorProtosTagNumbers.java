@@ -30,4 +30,17 @@ public class DescriptorProtosTagNumbers {
         public static final int OPTIONS = 3;
     }
 
+    public static class DescriptorProto{
+        public static final int NAME = 1;
+        public static final int FIELD = 2;
+        public static final int EXTENSION = 6;
+        public static final int NESTED_TYPE = 3;
+        public static final int ENUM_TYPE = 4;
+        public static final int EXTENSION_RANGE = 5;
+        public static final int ONEOF_DECL = 8;
+        public static final int OPTIONS = 7;
+        public static final int RESERVED_RANGE = 9;
+        public static final int RESERVED_NAME = 10;
+    }
+
 }

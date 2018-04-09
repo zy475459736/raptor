@@ -9,6 +9,8 @@ public abstract class AbstractType implements Type {
     private String fullyQualifiedPathName;
     private String className;
     private String packageName;
+    private String leadingComment;
+    private String trailingComments;
 
 
     @Override
@@ -53,5 +55,21 @@ public abstract class AbstractType implements Type {
 
     public String getFullyQualifiedClassName() {
         return StringUtils.join(new String[]{getPackageName(), getClassName(), getName()}, ProtobufConstant.PACKAGE_SEPARATOR);
+    }
+
+    public String getLeadingComment() {
+        return leadingComment;
+    }
+
+    public void setLeadingComment(String leadingComment) {
+        this.leadingComment = leadingComment;
+    }
+
+    public String getTrailingComments() {
+        return trailingComments;
+    }
+
+    public void setTrailingComments(String trailingComments) {
+        this.trailingComments = trailingComments;
     }
 }

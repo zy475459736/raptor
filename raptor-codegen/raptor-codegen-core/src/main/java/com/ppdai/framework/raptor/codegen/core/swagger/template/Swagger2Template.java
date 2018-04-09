@@ -137,6 +137,10 @@ public class Swagger2Template implements SwaggerTemplate {
         LinkedHashMap<String, Property> properties = new LinkedHashMap<>();
         for (FieldType fieldType : messageType.getFieldTypeList()) {
             Property property = TypeFormatUtil.formatTypeSwagger2(fieldType, basePackage);
+            String leadingComment = fieldType.getLeadingComment();
+            if(StringUtils.isNotBlank(leadingComment)){
+                property.setDescription(leadingComment);
+            }
             properties.put(fieldType.getName(), property);
         }
         model.setProperties(properties);

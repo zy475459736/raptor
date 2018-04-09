@@ -39,7 +39,8 @@
     "com.ppdai.framework.raptor.proto.ResultOuterClass.Result" : {
       "properties" : {
         "url" : {
-          "type" : "string"
+          "type" : "string",
+          "description" : "field command\n"
         },
         "title" : {
           "type" : "string"
@@ -78,7 +79,8 @@
     "Helloworld.HelloRequest" : {
       "properties" : {
         "name" : {
-          "type" : "string"
+          "type" : "string",
+          "description" : " hello name\n"
         },
         "corpus" : {
           "$ref" : "#/definitions/Helloworld.HelloRequest.Corpus"

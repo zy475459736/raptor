@@ -16,7 +16,7 @@ public class ServiceContainer {
 
     private Map<String, ServiceType> serviceTypeMap = new LinkedHashMap<>();
 
-    public void addServiceProto(String packageName, DescriptorProtos.ServiceDescriptorProto sdp, List<DescriptorProtos.SourceCodeInfo.Location> locationList, final List<Integer> parentpath) {
+    public void addServiceProto(String packageName, DescriptorProtos.ServiceDescriptorProto sdp, List<DescriptorProtos.SourceCodeInfo.Location> locationList, final List<Integer> parentPath) {
         ServiceType serviceType = new ServiceType();
         serviceType.setName(sdp.getName());
         serviceType.setFullyQualifiedPathName(packageName + "." + serviceType.getName());
@@ -33,7 +33,7 @@ public class ServiceContainer {
             methodType.setOutputType(mdp.getOutputType().replaceAll("^\\.", ""));
 
             //处理 method 上的注释
-            ArrayList<Integer> path = new ArrayList<>(parentpath);
+            ArrayList<Integer> path = new ArrayList<>(parentPath);
             path.add(DescriptorProtosTagNumbers.ServiceDescriptorProto.METHOD);
             path.add(methodIndex++);
 

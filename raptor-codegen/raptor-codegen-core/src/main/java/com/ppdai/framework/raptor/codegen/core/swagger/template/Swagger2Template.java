@@ -180,12 +180,14 @@ public class Swagger2Template implements SwaggerTemplate {
         ServiceContainer serviceContainer = new ServiceContainer();
         ContainerUtil.getServiceContainer(fdp, serviceContainer);
 
+        String leadingComments = fdp.getSourceCodeInfo().getLocationList().get(1).getLeadingComments();
+
 
         Swagger swagger = new Swagger().scheme(HTTP)
                 .consumes(Collections.singletonList("application/json"))
                 .produces(Collections.singletonList("application/json"))
                 .paths(new LinkedHashMap<>())
-                .info(new Info().version(apiVersion).title(fdp.getName()));
+                .info(new Info().version(apiVersion).title(fdp.getName()).description(leadingComments));
         swagger.setDefinitions(new LinkedHashMap<>());
 
         String basePackage = fdp.getPackage();

@@ -1,6 +1,7 @@
 {
   "swagger" : "2.0",
   "info" : {
+    "description" : "",
     "version" : "version not set",
     "title" : "helloworld.proto"
   },
@@ -40,7 +41,7 @@
       "properties" : {
         "url" : {
           "type" : "string",
-          "description" : "field command\n"
+          "description" : "field comment\n"
         },
         "title" : {
           "type" : "string"

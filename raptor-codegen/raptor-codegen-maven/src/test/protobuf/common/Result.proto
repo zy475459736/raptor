@@ -1,18 +1,18 @@
-//syntax command
+//syntax comment
 syntax = "proto3";
 
 package com.ppdai.framework.raptor.proto;
 
 
-//service command
+//service comment
 service ResultApi{
-    //method command
-    rpc rpcCommand (Result) returns (Result) {
+    //method comment
+    rpc rpcComment (Result) returns (Result) {
     }
 }
 
 message Result {
-    //field command
+    //field comment
     string url = 1;
     string title = 2;
     repeated string snippets = 3;

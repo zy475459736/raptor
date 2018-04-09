@@ -1,6 +1,7 @@
 {
   "swagger" : "2.0",
   "info" : {
+    "description" : "",
     "version" : "version not set",
     "title" : "AccountApi.proto"
   },

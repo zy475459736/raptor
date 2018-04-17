@@ -3,5 +3,5 @@ jdk:
   - openjdk8
 
 
-#after_success:
-#  - mvn clean test jacoco:report coveralls:report -DrepoToken="${COVERALLS_TOKEN}"
+after_success:
+  - mvn clean test jacoco:report coveralls:report -DrepoToken="${COVERALLS_TOKEN}"

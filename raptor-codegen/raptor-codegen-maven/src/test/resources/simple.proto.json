@@ -1,6 +1,7 @@
 {
   "swagger" : "2.0",
   "info" : {
+    "description" : " comment on syntax\n",
     "version" : "version not set",
     "title" : "simple.proto"
   },
@@ -46,7 +47,8 @@
     "SimpleOuterClass.SimpleRequest" : {
       "properties" : {
         "name" : {
-          "type" : "string"
+          "type" : "string",
+          "description" : " hello name\n"
         }
       }
     }

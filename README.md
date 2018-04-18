@@ -3,7 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/ppdai-incubator/raptor/badge.svg)](https://coveralls.io/github/ppdai-incubator/raptor)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-#![](docs/wiki/assets/logo.png)Raptor
+# ![](docs/wiki/assets/logo.png)Raptor
 
 详细参考文档请参考 [wiki](https://github.com/ppdai-incubator/raptor/wiki)
 

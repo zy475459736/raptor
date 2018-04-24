@@ -1,6 +1,5 @@
 package com.ppdai.framework.raptor.proto;
 
-import com.ppdai.framework.raptor.annotation.Protobuf;
 import lombok.Getter;
 
 import java.lang.reflect.Modifier;

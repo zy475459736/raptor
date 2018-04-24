@@ -1,16 +1,37 @@
-package {{packageName}};
+{{#topLevelType}}
+package {{type.enclosingTypeOrPackage}};
 
-{{#types}}
+{{^constants}}
+import com.ppdai.codegen.demo.wire.demo.swagger.Tag;
+{{/constants}}
+{{#relationTypes}}
 import {{type}};
-{{/types}}
+{{/relationTypes}}
 
-{{#types}}{{#-first}}
+{{^constants}}
 public class {{name}}{
+
     {{#fields}}
     @Tag({{tag}})
-    private {{type.simpleName}} {{name}};
+    private {{#javaClassName}}{{type.simpleName}}{{/javaClassName}} {{name}};
+
     {{/fields}}
 
 }
-{{/-first}}
-{{/types}}
+{{/constants}}
+
+{{^fields}}
+public enum {{name}}{
+    {{#constants}}
+    {{name}}({{tag}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
+    {{/constants}}
+
+    private int value;
+
+    Period(int value){
+        this.value = value;
+    }
+}
+{{/fields}}
+{{/topLevelType}}
+

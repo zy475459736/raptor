@@ -20,7 +20,7 @@ public class {{name}}{
 }
 {{/constants}}
 
-{{^fields}}
+{{#constants.length}}
 public enum {{name}}{
     {{#constants}}
     {{name}}({{tag}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
@@ -32,6 +32,6 @@ public enum {{name}}{
         this.value = value;
     }
 }
-{{/fields}}
+{{/constants.length}}
 {{/topLevelType}}
 

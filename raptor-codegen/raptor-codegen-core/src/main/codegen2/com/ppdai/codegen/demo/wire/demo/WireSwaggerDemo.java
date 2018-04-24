@@ -15,7 +15,7 @@ import java.util.List;
 public class WireSwaggerDemo {
 
     public static void main(String[] args) throws IOException {
-        String dictionary1 = "/Users/zhangchengxi/git/soucres/proto/code-generator-demo/wire-swagger-demo/src/main/proto2";
+        String dictionary1 = "/Users/zhangchengxi/Desktop/testwire";
         SchemaLoader schemaLoader = new SchemaLoader();
         schemaLoader.addSource(new File(dictionary1));
         Schema schema = schemaLoader.load();

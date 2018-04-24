@@ -1,0 +1,16 @@
+package {{packageName}};
+
+{{#types}}
+import {{type}};
+{{/types}}
+
+{{#types}}{{#-first}}
+public class {{name}}{
+    {{#fields}}
+    @Tag({{tag}})
+    private {{type.simpleName}} {{name}};
+    {{/fields}}
+
+}
+{{/-first}}
+{{/types}}

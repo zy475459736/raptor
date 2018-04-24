@@ -12,11 +12,14 @@ public @interface Protobuf {
 
     int order();
 
+    WireFormat.FieldType keyType() default WireFormat.FieldType.STRING;
+
     WireFormat.FieldType fieldType();
 
     /**
      * Specifying Field description which comment end of field define like:
      * int32 count = 10; //count
+     *
      * @return
      */
     String description() default "";

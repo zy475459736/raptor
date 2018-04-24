@@ -3,11 +3,15 @@ package com.ppdai.framework.raptor.proto;
 import com.google.protobuf.WireFormat;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author yinzuolong
  */
 public class AllTypesPojos {
+
+    public AllTypesPojos() {
+    }
 
     public enum NestedEnum implements ProtoEnum {
         A(0);
@@ -81,7 +85,7 @@ public class AllTypesPojos {
     @Protobuf(order = 17, fieldType = WireFormat.FieldType.MESSAGE)
     private NestedMessage nested_message;
 
-    /*-------------------*/
+    /*-----List--------*/
     @Protobuf(order = 201, fieldType = WireFormat.FieldType.INT32)
     private List<Integer> repInt32;
 
@@ -132,4 +136,18 @@ public class AllTypesPojos {
 
     @Protobuf(order = 217, fieldType = WireFormat.FieldType.MESSAGE)
     private List<NestedMessage> repNestedMessage;
+
+    /*-----Map--------*/
+    @Protobuf(order = 501, fieldType = WireFormat.FieldType.INT32, keyType = WireFormat.FieldType.INT32)
+    private Map<Integer, Integer> mapInt32Int32;
+
+    @Protobuf(order = 502, fieldType = WireFormat.FieldType.STRING)
+    private Map<String, String> mapStringString;
+
+    @Protobuf(order = 503, fieldType = WireFormat.FieldType.MESSAGE)
+    private Map<String, NestedMessage> mapStringMessage;
+
+    @Protobuf(order = 504, fieldType = WireFormat.FieldType.ENUM)
+    private Map<String, NestedEnum> mapStringEnum;
+
 }

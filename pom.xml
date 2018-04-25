@@ -22,6 +22,7 @@
         <module>raptor-codegen</module>
         <module>raptor-demo</module>
         <module>raptor-benchmark</module>
+        <module>raptor-codegen2</module>
     </modules>
     <dependencyManagement>
         <dependencies>

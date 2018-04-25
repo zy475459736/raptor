@@ -2,6 +2,7 @@
 package {{type.enclosingTypeOrPackage}};
 
 {{^constants}}
+import java.util.*;
 import com.ppdai.codegen.demo.wire.demo.swagger.Tag;
 {{/constants}}
 {{#relationTypes}}
@@ -13,14 +14,18 @@ public class {{name}}{
 
     {{#fields}}
     @Tag({{tag}})
-    private {{#javaClassName}}{{type.simpleName}}{{/javaClassName}} {{name}};
+    private {{#label}}Lis<{{/label}}{{#javaClassName}}{{type.simpleName}}{{/javaClassName}}{{#label}}>{{/label}} {{name}};
 
     {{/fields}}
+
+    {{#nestedTypes}}
+        {{> nestMessage}}
+    {{/nestedTypes}}
 
 }
 {{/constants}}
 
-{{#constants.length}}
+{{#constants.size}}
 public enum {{name}}{
     {{#constants}}
     {{name}}({{tag}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
@@ -32,6 +37,6 @@ public enum {{name}}{
         this.value = value;
     }
 }
-{{/constants.length}}
+{{/constants.size}}
 {{/topLevelType}}
 

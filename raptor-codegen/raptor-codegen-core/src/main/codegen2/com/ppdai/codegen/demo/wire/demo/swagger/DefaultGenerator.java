@@ -90,7 +90,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                 collectRelatedTypes(data, topLevelType, typesIndex);
                 collectTopLevelType(data,topLevelType);
                 try {
-                    processTemplateToFile(data, "model.mustache", "raptor-codegen/raptor-codegen-core/target/generated-sources/" + topLevelType.type().enclosingTypeOrPackage().replace(".","/")+"/"+topLevelType.type().simpleName() + ".java");
+                    processTemplateToFile(data, "model.mustache", "raptor-codegen/raptor-codegen-core/target/wire/" + topLevelType.type().enclosingTypeOrPackage().replace(".","/")+"/"+topLevelType.type().simpleName() + ".java");
                 } catch (IOException e) {
                     throw new RuntimeException("Could not process model '" + "'" + ".Please make sure that your schema is correct!", e);
                 }

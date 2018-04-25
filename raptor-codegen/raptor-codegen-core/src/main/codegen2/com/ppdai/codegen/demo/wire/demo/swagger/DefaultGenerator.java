@@ -9,15 +9,10 @@ import com.ppdai.codegen.demo.wire.demo.swagger.ignore.IgnoreProcessor;
 import com.ppdai.codegen.demo.wire.demo.swagger.mustache.JavaClassNameLambda;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
-//import com.squareup.javapoet.TypeSpec;
-//import com.squareup.wire.java.JavaGenerator;
-import com.squareup.javapoet.TypeSpec;
 import com.squareup.wire.schema.*;
-import com.sun.tools.corba.se.idl.toJavaPortable.JavaGenerator;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.*;
 
 /**
@@ -27,9 +22,7 @@ import java.util.*;
 public class DefaultGenerator extends AbstractGenerator implements Generator {
     private static final String SCHEMA = "schema";
     private static final String TYPE_INDEX = "typeIndex";
-//    private JavaGenerator javaGenerator;
     private Schema schema;
-    //    private Codegen codegenConfig;
     private IgnoreProcessor ignoreProcessor;
 
     private Codegen codegen;
@@ -83,14 +76,14 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
 
 
         for (ProtoFile protoFile : schema.protoFiles()) {
-            if(ignoreProcessor.ignore(protoFile)){
+            if (ignoreProcessor.ignore(protoFile)) {
                 continue;
             }
             for (Type topLevelType : protoFile.types()) {
                 collectRelatedTypes(data, topLevelType, typesIndex);
-                collectTopLevelType(data,topLevelType);
+                collectTopLevelType(data, topLevelType);
                 try {
-                    processTemplateToFile(data, "model.mustache", "raptor-codegen/raptor-codegen-core/target/wire/" + topLevelType.type().enclosingTypeOrPackage().replace(".","/")+"/"+topLevelType.type().simpleName() + ".java");
+                    processTemplateToFile(data, "model.mustache", "raptor-codegen/raptor-codegen-core/target/wire/" + topLevelType.type().enclosingTypeOrPackage().replace(".", "/") + "/" + topLevelType.type().simpleName() + ".java");
                 } catch (IOException e) {
                     throw new RuntimeException("Could not process model '" + "'" + ".Please make sure that your schema is correct!", e);
                 }
@@ -101,11 +94,11 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
     }
 
     private void collectAdditionProperties(HashMap<String, Object> data) {
-        data.put("javaClassName",new JavaClassNameLambda());
+        data.put("javaClassName", new JavaClassNameLambda());
     }
 
     private void collectTopLevelType(HashMap<String, Object> data, Type topLevelType) {
-        data.put("topLevelType",topLevelType);
+        data.put("topLevelType", topLevelType);
     }
 
     private void collectRelatedTypes(HashMap<String, Object> data, Type type, ImmutableMap<String, Type> typesIndex) {
@@ -156,8 +149,6 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
 
         return null;
     }
-
-
 
 
     private Set<ProtoType> collectRootTypes() {

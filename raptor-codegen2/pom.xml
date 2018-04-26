@@ -14,38 +14,43 @@
         <wire.version>2.3.0-RC1</wire.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.squareup.wire</groupId>
-            <artifactId>wire-runtime</artifactId>
-            <version>${wire.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.wire</groupId>
-            <artifactId>wire-schema</artifactId>
-            <!--release 版本有bug-->
-            <version>2.3.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okio</groupId>
-            <artifactId>okio</artifactId>
-            <version>1.11.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup</groupId>
-            <artifactId>javapoet</artifactId>
-            <version>1.8.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.auto.value</groupId>
-            <artifactId>auto-value</artifactId>
-            <version>1.1</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>raptor-codegen2-core</module>
+        <module>raptor-codegen2-maven</module>
+        <module>raptor-codegen2-cli</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.squareup.wire</groupId>
+                <artifactId>wire-runtime</artifactId>
+                <version>${wire.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.wire</groupId>
+                <artifactId>wire-schema</artifactId>
+                <!--release 版本有bug-->
+                <version>2.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio</artifactId>
+                <version>1.11.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup</groupId>
+                <artifactId>javapoet</artifactId>
+                <version>1.8.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.auto.value</groupId>
+                <artifactId>auto-value</artifactId>
+                <version>1.1</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
 
 </project>

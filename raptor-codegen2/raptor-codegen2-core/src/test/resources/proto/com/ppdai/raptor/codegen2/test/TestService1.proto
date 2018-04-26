@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+
+package com.ppdai.raptor.codegen2.test;
+
+import "raptor_option.proto";
+
+service TestService{
+    /* asdfghhjk */
+    rpc getRandomString (GetRandomStringQuery) returns (RandomStringResponse) {
+        option (requestMapping) = {method:GET path:"/test"};}
+    rpc SlowResponder (GetRandomStringQuery) returns (RandomStringResponse) {
+        option (requestMapping) ={ method:GET  path:"/test/{id}/{name}" pathParams:[
+        {
+            name:"id"
+            type:TYPE_INT32
+        },
+        {
+            name:"name"
+            type:TYPE_STRING
+        }]};
+    }
+    rpc SetHealthCheckStatus (SetHealthCheckStatusCommand) returns (SetHealthCheckStatusResponse) {}
+    rpc CallsAnotherService (CallAnotherServiceCommand) returns (CallAnotherServiceResponse) {}
+}
+
+/* test message document */
+message GetRandomStringQuery {
+    string input = 1;
+}
+
+message RandomStringResponse {
+    string random = 1;
+}
+
+message SetHealthCheckStatusCommand {
+    string status = 1;
+    string message = 2;
+}
+
+message SetHealthCheckStatusResponse {
+}
+
+message RandomSampleEvent {
+    Meta meta = 1;
+    string id = 2;
+    string message = 3;
+}
+
+message HandlerSuccessEvent {
+    Meta meta = 1;
+    string id = 2;
+    string message = 3;
+}
+
+message Meta {
+    string name = 1;
+}
+
+message CallAnotherServiceCommand {
+}
+
+message CallAnotherServiceResponse {
+}

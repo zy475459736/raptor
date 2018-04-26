@@ -1,6 +1,7 @@
 package com.ppdai.framework.raptor.proto;
 
 import com.google.protobuf.WireFormat;
+import com.ppdai.framework.raptor.annotation.PojoMessage;
 import com.ppdai.framework.raptor.annotation.ProtoField;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,9 +14,10 @@ import java.util.Map;
  */
 @Getter
 @Setter
-public class AllTypesPojos {
+@PojoMessage
+public class AllTypesPojo {
 
-    public AllTypesPojos() {
+    public AllTypesPojo() {
     }
 
     public enum NestedEnum {

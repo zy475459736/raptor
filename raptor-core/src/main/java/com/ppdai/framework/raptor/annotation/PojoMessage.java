@@ -2,14 +2,14 @@ package com.ppdai.framework.raptor.annotation;
 
 import java.lang.annotation.*;
 
+/**
+ * @author yinzuolong
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 @Documented
-public @interface RaptorInterface {
-
-    String appId() default "";
-
-    String appName() default "";
+public @interface PojoMessage {
 
     String version() default "";
 

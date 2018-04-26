@@ -1,16 +1,42 @@
-package {{packageName}};
+{{#topLevelType}}
+package {{type.enclosingTypeOrPackage}};
 
-{{#types}}
+{{^constants}}
+import java.util.*;
+import com.ppdai.codegen.demo.wire.demo.swagger.Tag;
+{{/constants}}
+{{#relationTypes}}
 import {{type}};
-{{/types}}
+{{/relationTypes}}
 
-{{#types}}{{#-first}}
+{{^constants}}
 public class {{name}}{
+
     {{#fields}}
-    @Tag({{protoField}})
-    private {{type.simpleName}} {{name}};
+    @Tag({{tag}})
+    private {{#label}}Lis<{{/label}}{{#javaClassName}}{{type.simpleName}}{{/javaClassName}}{{#label}}>{{/label}} {{name}};
+
     {{/fields}}
 
+    {{#nestedTypes}}
+        {{> nestMessage}}
+    {{/nestedTypes}}
+
 }
-{{/-first}}
-{{/types}}
+{{/constants}}
+
+{{#constants.size}}
+public enum {{name}}{
+    {{#constants}}
+    {{name}}({{tag}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
+    {{/constants}}
+
+    private int value;
+
+    Period(int value){
+        this.value = value;
+    }
+}
+{{/constants.size}}
+{{/topLevelType}}
+

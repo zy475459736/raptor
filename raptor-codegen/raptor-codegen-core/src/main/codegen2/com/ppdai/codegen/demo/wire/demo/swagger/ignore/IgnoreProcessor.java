@@ -9,7 +9,7 @@ import java.io.File;
  */
 public class IgnoreProcessor {
     public boolean ignore(ProtoFile protoFile) {
-        return false;
+        return protoFile.packageName().contains("google.protobuf");
     }
 
 

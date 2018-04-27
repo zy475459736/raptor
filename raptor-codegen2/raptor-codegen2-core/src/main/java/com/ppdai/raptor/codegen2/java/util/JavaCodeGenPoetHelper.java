@@ -25,8 +25,8 @@ public class JavaCodeGenPoetHelper {
 
         for (FieldSpec fieldSpec : fields.keySet()) {
             FieldExtendSpec fieldExtendSpec = fields.get(fieldSpec);
+            typespecBuilder.addField(fieldSpec);
             if (fieldExtendSpec.isGenerateGetterAndSetter()) {
-                typespecBuilder.addField(fieldSpec);
                 MethodSpec getterMethodSpec = MethodSpec.methodBuilder("get" + StringUtils.captureName(fieldSpec.name)).addModifiers(Modifier.PUBLIC)
                         .addParameter(fieldSpec.type, fieldSpec.name, Modifier.FINAL).returns(fieldSpec.type).addStatement("return this." + fieldSpec.name + ";").build();
                 typespecBuilder.addMethod(getterMethodSpec);

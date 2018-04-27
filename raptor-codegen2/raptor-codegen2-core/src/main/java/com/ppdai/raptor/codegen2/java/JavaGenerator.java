@@ -23,13 +23,17 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.ppdai.raptor.codegen2.java.option.Method;
+import com.ppdai.raptor.codegen2.java.option.PathParam;
 import com.squareup.javapoet.*;
 import com.squareup.wire.*;
 import com.squareup.wire.ProtoAdapter.EnumConstantNotFoundException;
 import com.squareup.wire.internal.Internal;
 import com.squareup.wire.schema.*;
 import okio.ByteString;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -1542,8 +1546,6 @@ public final class JavaGenerator {
         }
 
         for (Rpc rpc : service.rpcs()) {
-            // TODO: 2018/4/26 增加注解
-
             ProtoType requestType = rpc.requestType();
             TypeName requestJavaType = typeName(requestType);
 
@@ -1556,6 +1558,7 @@ public final class JavaGenerator {
             rpcBuilder.returns(responseJavaType);
             // TODO: 2018/4/26 参数需要修改
             rpcBuilder.addParameter(requestJavaType, "request");
+            rpcBuilder.addParameters(pathParameters(rpc));
 
             if (!rpc.documentation().isEmpty()) {
                 rpcBuilder.addJavadoc("$L\n", rpc.documentation());
@@ -1567,21 +1570,38 @@ public final class JavaGenerator {
         return typeBuilder.build();
     }
 
+    @SuppressWarnings("unchecked")
+    private Iterable<ParameterSpec> pathParameters(Rpc rpc) {
+
+        List<ParameterSpec> result = Lists.newArrayList();
+        com.ppdai.raptor.codegen2.java.option.RequestMapping requestMapping = com.ppdai.raptor.codegen2.java.option.RequestMapping.readFrom(rpc);
+        for (PathParam pathParam : requestMapping.getPathParams()) {
+            ParameterSpec.Builder builder = ParameterSpec.builder(pathParam.getJavaType(pathParam.getType()), pathParam.getName());
+            AnnotationSpec pathVariable = AnnotationSpec.builder(PathVariable.class).addMember("value", "$S",pathParam.getName()).build();
+            builder.addAnnotation(pathVariable);
+            result.add(builder.build());
+
+        }
+        return result;
+
+    }
+
+    @SuppressWarnings("unchecked")
     private AnnotationSpec serviceAnnotation(Rpc rpc, ClassName className) {
         AnnotationSpec.Builder builder = AnnotationSpec.builder(RequestMapping.class);
 
-        Map requestMapping = (Map) rpc.options().map().get(REQUEST_MAPPING);
-        Object path = Optional.ofNullable((requestMapping)).map(map -> map.get(REQUEST_MAPPING_PATH)).orElse(null);
-        Object method = Optional.ofNullable((requestMapping)).map(map -> map.get(REQUEST_MAPPING_METHOD)).orElse(null);
+        com.ppdai.raptor.codegen2.java.option.RequestMapping requestMapping = com.ppdai.raptor.codegen2.java.option.RequestMapping.readFrom(rpc);
 
+        String path = requestMapping.getPath();
         if (Objects.isNull(path)) {
             builder.addMember("path", "$S", defaultRequestPath(rpc, className));
         } else {
             builder.addMember("path", "$S", path);
         }
 
-        if (Objects.nonNull(method)) {
-            builder.addMember("method", "$T.$L", RequestMethod.class, method);
+        Method method1 = requestMapping.getMethod();
+        if (Objects.nonNull(method1)) {
+            builder.addMember("method", "$T.$L", RequestMethod.class, method1.getName());
         }
 
         return builder.build();

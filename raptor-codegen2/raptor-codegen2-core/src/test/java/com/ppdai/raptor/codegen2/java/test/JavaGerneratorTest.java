@@ -29,7 +29,7 @@ public class JavaGerneratorTest {
 
     // TODO: 2018/4/26 换成resource路径下
     private static final String PROTO_FILE_DIR = "src/test/resources/proto";
-    private static final String GENERATED_SOURCE_DIR = "target/test/generate";
+    private static final String GENERATED_SOURCE_DIR = "target/generated-sources/annotations";
     private Schema schema;
     private Profile profile;
 
@@ -78,6 +78,26 @@ public class JavaGerneratorTest {
         System.out.println(typeSpec.toString());
 
         writeJavaFile(typeName,typeSpec,service.location().withPathOnly());
+
+    }
+    @Test
+    public void testGenerateAll() throws IOException {
+        JavaGenerator javaGenerator = JavaGenerator.get(schema)
+                .withProfile(profile);
+
+        for (ProtoFile protoFile : schema.protoFiles()) {
+            for (Type type : protoFile.types()) {
+                ClassName javaTypeName = javaGenerator.generatedTypeName(type);
+                TypeSpec typeSpec = javaGenerator.generateType(type);
+                writeJavaFile(javaTypeName,typeSpec,type.location().withPathOnly());
+            }
+
+            for (Service service : protoFile.services()) {
+                TypeSpec typeSpec = javaGenerator.generateService(service);
+                ClassName typeName = (ClassName)javaGenerator.typeName(service.type());
+                writeJavaFile(typeName,typeSpec,service.location().withPathOnly());
+            }
+        }
 
     }
 

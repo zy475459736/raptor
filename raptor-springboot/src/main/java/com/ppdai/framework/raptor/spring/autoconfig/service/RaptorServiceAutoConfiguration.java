@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.autoconfig;
+package com.ppdai.framework.raptor.spring.autoconfig.service;
 
 import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.filter.provider.ProviderAccessLogFilter;
@@ -24,14 +24,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Import({RaptorServiceProcessor.class, RaptorMvcConfigurer.class})
+@Import({RaptorServiceRegistryProcessor.class, RaptorMethodParameterAnnotationProcessor.class, RaptorMvcConfigurer.class})
 @Configuration
 @EnableConfigurationProperties({ServletEndpointProperties.class})
 public class RaptorServiceAutoConfiguration {
@@ -103,11 +102,6 @@ public class RaptorServiceAutoConfiguration {
         public RaptorProvidersActuatorEndpoint createRaptorServiceActuatorEndpoint(ServletEndpoint servletEndpoint) {
             return new RaptorProvidersActuatorEndpoint(servletEndpoint.getProviders());
         }
-    }
-
-    @Bean
-    public WebMvcConfigurerAdapter createRaptorMvcConfig() {
-        return new RaptorMvcConfigurer();
     }
 
 }

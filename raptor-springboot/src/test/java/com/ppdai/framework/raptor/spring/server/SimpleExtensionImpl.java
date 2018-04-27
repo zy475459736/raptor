@@ -29,12 +29,12 @@ public class SimpleExtensionImpl implements SimpleExtension {
     }
 
     @Override
-    public AllTypesPojo testPost1(@RequestBody AllTypesPojo request) {
+    public AllTypesPojo testPost1(AllTypesPojo request) {
         return request;
     }
 
     @Override
-    public AllTypesPojo testPost2(AllTypesPojo request, @PathVariable("p1") String p1, @PathVariable("p2") int p2) {
+    public AllTypesPojo testPost2(AllTypesPojo request,  String p1, @PathVariable("p2") int p2) {
         return request;
     }
 

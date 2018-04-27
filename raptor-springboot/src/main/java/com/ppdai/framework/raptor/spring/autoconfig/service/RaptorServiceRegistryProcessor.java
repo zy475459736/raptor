@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.autoconfig;
+package com.ppdai.framework.raptor.spring.autoconfig.service;
 
 import com.ppdai.framework.raptor.annotation.RaptorInterface;
 import com.ppdai.framework.raptor.exception.RaptorServiceException;
@@ -7,9 +7,7 @@ import com.ppdai.framework.raptor.service.Endpoint;
 import com.ppdai.framework.raptor.service.Provider;
 import com.ppdai.framework.raptor.service.ProviderBuilder;
 import com.ppdai.framework.raptor.spring.annotation.RaptorService;
-import com.ppdai.framework.raptor.spring.utils.AopHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -26,7 +24,7 @@ import java.util.Set;
 
 @Configuration
 @Slf4j
-public class RaptorServiceProcessor implements BeanPostProcessor {
+public class RaptorServiceRegistryProcessor implements BeanPostProcessor {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -40,33 +38,26 @@ public class RaptorServiceProcessor implements BeanPostProcessor {
     }
 
     @Override
-    public Object postProcessAfterInitialization(Object springBean, String beanName) throws BeansException {
-        Object bean = springBean;
-        if (AopUtils.isAopProxy(bean)) {
-            try {
-                bean = AopHelper.getTarget(bean);
-            } catch (Exception e) {
-                throw new RaptorServiceException(String.format("Can not find proxy target for %s .", bean.getClass().getName()));
-            }
-        }
-        Annotation annotation = AnnotationUtils.findAnnotation(bean.getClass(), RaptorService.class);
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        Class<?> clazz = ClassUtils.getUserClass(bean);
+        Annotation annotation = AnnotationUtils.findAnnotation(clazz, RaptorService.class);
         if (annotation == null) {
-            return springBean;
+            return bean;
         }
-        List<Class<?>> interfaceClasses = findAllInterfaces(bean);
+        List<Class<?>> interfaceClasses = findAllInterfaces(clazz);
         if (interfaceClasses.size() == 0) {
-            throw new RaptorServiceException(String.format("Can not find %s serviceImpl's interface.", bean.getClass().getName()));
+            throw new RaptorServiceException(String.format("Can not find %s serviceImpl's interface.", clazz.getName()));
         }
         for (Class<?> interfaceClass : interfaceClasses) {
-            registryRaptorService(interfaceClass, springBean);
+            registryRaptorService(interfaceClass, bean);
         }
-        return springBean;
+        return bean;
     }
 
 
-    private List<Class<?>> findAllInterfaces(Object bean) {
+    private List<Class<?>> findAllInterfaces(Class<?> clazz) {
         List<Class<?>> raptorInterfaces = new ArrayList<>();
-        Set<Class<?>> interfaceClasses = ClassUtils.getAllInterfacesAsSet(bean);
+        Set<Class<?>> interfaceClasses = ClassUtils.getAllInterfacesAsSet(clazz);
         for (Class<?> interfaceClass : interfaceClasses) {
             Annotation annotation = AnnotationUtils.findAnnotation(interfaceClass, RaptorInterface.class);
             if (annotation != null) {

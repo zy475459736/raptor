@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.autoconfig;
+package com.ppdai.framework.raptor.spring.autoconfig.service;
 
 import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.filter.provider.ProviderAccessLogFilter;
@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Import({RaptorServiceProcessor.class})
+@Import({RaptorServiceRegistryProcessor.class, RaptorMethodParameterAnnotationProcessor.class, RaptorMvcConfigurer.class})
 @Configuration
 @EnableConfigurationProperties({ServletEndpointProperties.class})
 public class RaptorServiceAutoConfiguration {

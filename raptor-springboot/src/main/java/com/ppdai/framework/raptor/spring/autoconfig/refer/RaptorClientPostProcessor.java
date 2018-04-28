@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.autoconfig;
+package com.ppdai.framework.raptor.spring.autoconfig.refer;
 
 import com.ppdai.framework.raptor.spring.annotation.RaptorClient;
 import com.ppdai.framework.raptor.spring.utils.SpringResourceUtils;

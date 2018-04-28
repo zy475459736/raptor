@@ -1,17 +1,23 @@
 package com.ppdai.raptor.codegen2.java.option;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.ppdai.framework.raptor.annotation.RaptorMethod;
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.wire.schema.Options;
 import com.squareup.wire.schema.ProtoMember;
 import com.squareup.wire.schema.Rpc;
 import lombok.Builder;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.squareup.wire.schema.Options.METHOD_OPTIONS;
 
@@ -33,79 +39,61 @@ public class MethodMetaInfo {
 
 
     private String path;
-    private List<PathParam> pathParams = Lists.newArrayList();
+    private List<PathParam> pathParams;
     private Method method;
+    private String summary;
 
-    // TODO: 2018/4/27 zcx:太丑,重构
     public static MethodMetaInfo readFrom(Rpc rpc) {
-        Map<ProtoMember, Object> optionMap = rpc.options().map();
+        Options options = rpc.options();
 
+        String path = OptionUtil.readStringOption(options, PATH);
+        String method = OptionUtil.readStringOption(options, METHOD);
+        String paramTypesStr = OptionUtil.readStringOption(options, PARAM_TYPES);
+        String summary = OptionUtil.readSummary(rpc.documentation());
+        List<PathParam> pathParams = buildPathParams(path, paramTypesStr);
 
-        MethodMetaInfoBuilder builder = MethodMetaInfo.builder();
-        List<PathParam> pathParams = Lists.newArrayList();
+        return MethodMetaInfo.builder()
+                .path(path)
+                .method(Method.get(method))
+                .pathParams(pathParams)
+                .summary(summary)
+                .build();
+    }
 
-        Optional<String> pathOptional = Optional.ofNullable(optionMap.get(PATH))
-                .filter(String.class::isInstance)
-                .map(String.class::cast);
+    private static List<PathParam> buildPathParams(String path, String paramTypesStr) {
+        List<String> pathParamNames = getPathParams(path);
 
-        if (pathOptional.isPresent()) {
-            String path = pathOptional.get();
-            builder.path(path);
-
-            List<String> pathParamNames = getPathParams(path);
-
-            Optional<String> typeOptional = Optional.ofNullable(optionMap.get(PARAM_TYPES))
-                    .filter(String.class::isInstance)
-                    .map(String.class::cast);
-            if (typeOptional.isPresent()) {
-                String types = typeOptional.get();
-                String[] split = types.split(",");
-                if (split.length == pathParamNames.size()) {
-                    for (int i = 0; i < split.length; i++) {
-                        pathParams.add(new PathParam(pathParamNames.get(i),split[i]));
-                    }
-                } else {
-                    throw new RuntimeException("path param number is not equal to type number,path:"+path+",type:"+types);
-                }
-            } else {
-                for (String pathParamName : pathParamNames) {
-                    pathParams.add(new PathParam(pathParamName,"string"));
-                }
-            }
+        List<String> types;
+        if (Objects.isNull(paramTypesStr)) {
+            types = Lists.newArrayList();
+        } else {
+            types = Arrays.stream(paramTypesStr.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
         }
-        builder.pathParams(pathParams);
 
-        Method method = Optional.ofNullable(optionMap.get(METHOD))
-                .filter(String.class::isInstance)
-                .map(String.class::cast)
-                .map(Method::get)
-                .orElse(null);
-        builder.method(method);
-
-
-
-
-//        if (requestMappingObject instanceof Map) {
-//
-//            Object pathParamsObject = ((Map) requestMappingObject).get(REQUEST_MAPPING_PATH_PARAMS);
-//            if (pathParamsObject instanceof List) {
-//                for (Object o : ((List) pathParamsObject)) {
-//                    if (o instanceof Map) {
-//                        PathParam pathParam = PathParam.readFrom((Map<ProtoMember, String>) o);
-//                        pathParams.add(pathParam);
-//                    }
-//                }
-//            }
-//        }
-//        builder.pathParams(pathParams);
+        ImmutableList.Builder<PathParam> builder = ImmutableList.builder();
+        if (CollectionUtils.isEmpty(types)) {
+            for (String pathParamName : pathParamNames) {
+                builder.add(new PathParam(pathParamName, "string"));
+            }
+        } else if (pathParamNames.size() == types.size()) {
+            for (int i = 0; i < pathParamNames.size(); i++) {
+                builder.add(new PathParam(pathParamNames.get(i), types.get(i)));
+            }
+        } else {
+            throw new RuntimeException("path param number is not equal to type number,path:" + path + ",type:" + paramTypesStr);
+        }
 
         return builder.build();
-
     }
 
 
     // TODO: 2018/4/27 可以般到一个Util里面
     private static List<String> getPathParams(String path) {
+        if(Objects.isNull(path)){
+            return Lists.newArrayList();
+        }
         Matcher matcher = PATH_PARAM_PATTERN.matcher(path);
         ArrayList<String> result = Lists.newArrayList();
         while (matcher.find()) {
@@ -114,4 +102,12 @@ public class MethodMetaInfo {
         }
         return result;
     }
+
+    public AnnotationSpec generateRaptorMethod() {
+        AnnotationSpec.Builder builder = AnnotationSpec.builder(RaptorMethod.class);
+        OptionUtil.setAnnotationMember(builder,"summary", "$S", summary);
+        return builder.build();
+
+    }
+
 }

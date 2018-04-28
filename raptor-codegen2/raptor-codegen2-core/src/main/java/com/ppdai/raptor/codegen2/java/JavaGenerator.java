@@ -25,8 +25,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.ppdai.raptor.codegen2.java.option.MethodMetaInfo;
+import com.ppdai.raptor.codegen2.java.option.InterfaceMetaInfo;
 import com.ppdai.raptor.codegen2.java.option.Method;
+import com.ppdai.raptor.codegen2.java.option.MethodMetaInfo;
 import com.ppdai.raptor.codegen2.java.option.PathParam;
 import com.squareup.javapoet.*;
 import com.squareup.wire.*;
@@ -1536,11 +1537,14 @@ public final class JavaGenerator {
         }
     }
 
-    public TypeSpec generateService(Service service) {
+    public TypeSpec generateService(ProtoFile protoFile, Service service) {
         ClassName apiName = (ClassName) typeName(service.type());
 
         TypeSpec.Builder typeBuilder = TypeSpec.interfaceBuilder(apiName.simpleName());
         typeBuilder.addModifiers(PUBLIC);
+        InterfaceMetaInfo interfaceMetaInfo = InterfaceMetaInfo.readFrom(protoFile, service);
+        typeBuilder.addAnnotations(interfaceMetaInfo.generateAnnotations());
+
 
         if (!service.documentation().isEmpty()) {
             typeBuilder.addJavadoc("$L\n", service.documentation());
@@ -1554,10 +1558,14 @@ public final class JavaGenerator {
             TypeName responseJavaType = typeName(responseType);
 
             MethodSpec.Builder rpcBuilder = MethodSpec.methodBuilder(rpc.name());
-            rpcBuilder.addAnnotation(serviceAnnotation(rpc, apiName));
+            MethodMetaInfo methodMetaInfo = MethodMetaInfo.readFrom(rpc);
+
+            rpcBuilder.addAnnotation(serviceAnnotation(rpc, apiName, interfaceMetaInfo));
+            rpcBuilder.addAnnotation(methodMetaInfo.generateRaptorMethod());
+
             rpcBuilder.addModifiers(PUBLIC, ABSTRACT);
             rpcBuilder.returns(responseJavaType);
-            // TODO: 2018/4/26 参数需要修改
+
             rpcBuilder.addParameter(requestJavaType, "request");
             rpcBuilder.addParameters(pathParameters(rpc));
 
@@ -1578,7 +1586,7 @@ public final class JavaGenerator {
         MethodMetaInfo methodMetaInfo = MethodMetaInfo.readFrom(rpc);
         for (PathParam pathParam : methodMetaInfo.getPathParams()) {
             ParameterSpec.Builder builder = ParameterSpec.builder(pathParam.getJavaType(pathParam.getType()), pathParam.getName());
-            AnnotationSpec pathVariable = AnnotationSpec.builder(PathVariable.class).addMember("value", "$S",pathParam.getName()).build();
+            AnnotationSpec pathVariable = AnnotationSpec.builder(PathVariable.class).addMember("value", "$S", pathParam.getName()).build();
             builder.addAnnotation(pathVariable);
             result.add(builder.build());
 
@@ -1588,21 +1596,23 @@ public final class JavaGenerator {
     }
 
     @SuppressWarnings("unchecked")
-    private AnnotationSpec serviceAnnotation(Rpc rpc, ClassName className) {
+    private AnnotationSpec serviceAnnotation(Rpc rpc, ClassName className, InterfaceMetaInfo interfaceMetaInfo) {
         AnnotationSpec.Builder builder = AnnotationSpec.builder(RequestMapping.class);
 
         MethodMetaInfo methodMetaInfo = MethodMetaInfo.readFrom(rpc);
 
         String path = methodMetaInfo.getPath();
         if (Objects.isNull(path)) {
-            builder.addMember("path", "$S", defaultRequestPath(rpc, className));
+            if (Objects.isNull(interfaceMetaInfo.getServicePath())) {
+                builder.addMember("path", "$S", defaultRequestPath(rpc, className));
+            }
         } else {
             builder.addMember("path", "$S", path);
         }
 
-        Method method1 = methodMetaInfo.getMethod();
-        if (Objects.nonNull(method1)) {
-            builder.addMember("method", "$T.$L", RequestMethod.class, method1.getName());
+        Method method = methodMetaInfo.getMethod();
+        if (Objects.nonNull(method)) {
+            builder.addMember("method", "$T.$L", RequestMethod.class, method.getName());
         }
 
         return builder.build();

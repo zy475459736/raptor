@@ -73,7 +73,7 @@ public class JavaGerneratorTest {
                 .withProfile(profile);
         Service service = schema.getService("com.ppdai.raptor.codegen2.test.TestService");
 
-        TypeSpec typeSpec = javaGenerator.generateService(service);
+        TypeSpec typeSpec = javaGenerator.generateService(null,service);
         ClassName typeName = (ClassName)javaGenerator.typeName(service.type());
         System.out.println(typeSpec.toString());
 
@@ -93,7 +93,7 @@ public class JavaGerneratorTest {
             }
 
             for (Service service : protoFile.services()) {
-                TypeSpec typeSpec = javaGenerator.generateService(service);
+                TypeSpec typeSpec = javaGenerator.generateService(protoFile,service);
                 ClassName typeName = (ClassName)javaGenerator.typeName(service.type());
                 writeJavaFile(typeName,typeSpec,service.location().withPathOnly());
             }

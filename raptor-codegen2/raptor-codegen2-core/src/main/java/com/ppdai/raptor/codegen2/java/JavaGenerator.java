@@ -25,10 +25,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.ppdai.raptor.codegen2.java.option.InterfaceMetaInfo;
-import com.ppdai.raptor.codegen2.java.option.Method;
-import com.ppdai.raptor.codegen2.java.option.MethodMetaInfo;
-import com.ppdai.raptor.codegen2.java.option.PathParam;
+import com.google.protobuf.WireFormat;
+import com.ppdai.framework.raptor.annotation.RaptorField;
+import com.ppdai.framework.raptor.annotation.RaptorMessage;
+import com.ppdai.raptor.codegen2.java.option.*;
 import com.squareup.javapoet.*;
 import com.squareup.wire.*;
 import com.squareup.wire.ProtoAdapter.EnumConstantNotFoundException;
@@ -45,6 +45,7 @@ import java.util.*;
 
 import static com.google.common.base.CaseFormat.*;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.squareup.wire.schema.Options.*;
 import static javax.lang.model.element.Modifier.*;
 
@@ -103,6 +104,29 @@ public final class JavaGenerator {
                     .put(ENUM_OPTIONS, ClassName.get("com.google.protobuf", "FieldOptions"))
                     .put(MESSAGE_OPTIONS, ClassName.get("com.google.protobuf", "EnumOptions"))
                     .build();
+
+    private static final Map<ProtoType, WireFormat.FieldType> FIELD_TYPE_MAP =
+            ImmutableMap.<ProtoType, WireFormat.FieldType>builder()
+                    .put(ProtoType.DOUBLE, WireFormat.FieldType.DOUBLE)
+                    .put(ProtoType.FLOAT, WireFormat.FieldType.FLOAT)
+                    .put(ProtoType.INT64, WireFormat.FieldType.INT64)
+                    .put(ProtoType.UINT64, WireFormat.FieldType.UINT64)
+                    .put(ProtoType.INT32, WireFormat.FieldType.INT32)
+                    .put(ProtoType.FIXED64, WireFormat.FieldType.FIXED64)
+                    .put(ProtoType.FIXED32, WireFormat.FieldType.FIXED32)
+                    .put(ProtoType.BOOL, WireFormat.FieldType.BOOL)
+                    .put(ProtoType.STRING, WireFormat.FieldType.STRING)
+//                    .put(ProtoType.GROUP, WireFormat.FieldType.GROUP)  //not support group
+//                    .put(ProtoType.MESSAGE, WireFormat.FieldType.MESSAGE)  todo
+                    .put(ProtoType.BYTES, WireFormat.FieldType.BYTES)
+                    .put(ProtoType.UINT32, WireFormat.FieldType.UINT32)
+//                    .put(ProtoType.ENUM, WireFormat.FieldType.ENUM) todo
+                    .put(ProtoType.SFIXED32, WireFormat.FieldType.SFIXED32)
+                    .put(ProtoType.SFIXED64, WireFormat.FieldType.SFIXED64)
+                    .put(ProtoType.SINT32, WireFormat.FieldType.SINT32)
+                    .put(ProtoType.SINT64, WireFormat.FieldType.SINT64)
+                    .build();
+
 
     private static final String URL_CHARS = "[-!#$%&'()*+,./0-9:;=?@A-Z\\[\\]_a-z~]";
     private final Schema schema;
@@ -323,27 +347,27 @@ public final class JavaGenerator {
     /**
      * Returns the generated code for {@code type}, which may be a top-level or a nested type.
      */
-    public TypeSpec generateType(Type type) {
+    public TypeSpec generateType(ProtoFile protoFile, Type type) {
         if (type instanceof MessageType) {
             AdapterConstant adapterConstant = profile.getAdapter(type.type());
             if (adapterConstant != null) {
                 return generateAbstractAdapter((MessageType) type);
             }
             //noinspection deprecation: Only deprecated as a public API.
-            return generateMessage((MessageType) type);
+            return generateMessage(protoFile, (MessageType) type);
         }
         if (type instanceof EnumType) {
             //noinspection deprecation: Only deprecated as a public API.
             return generateEnum((EnumType) type);
         }
         if (type instanceof EnclosingType) {
-            return generateEnclosingType((EnclosingType) type);
+            return generateEnclosingType(protoFile, (EnclosingType) type);
         }
         throw new IllegalStateException("Unknown type: " + type);
     }
 
     /**
-     * @deprecated Use {@link #generateType(Type)}
+     * @deprecated Use {@link #generateType(ProtoFile, Type)}
      */
     @Deprecated
     public TypeSpec generateEnum(EnumType type) {
@@ -456,10 +480,10 @@ public final class JavaGenerator {
     }
 
     /**
-     * @deprecated Use {@link #generateType(Type)}
+     * @deprecated Use {@link #generateType(ProtoFile, Type)}
      */
     @Deprecated
-    public TypeSpec generateMessage(MessageType type) {
+    public TypeSpec generateMessage(ProtoFile protoFile, MessageType type) {
         NameAllocator nameAllocator = nameAllocators.getUnchecked(type);
 
         ClassName javaType = (ClassName) typeName(type.type());
@@ -467,6 +491,9 @@ public final class JavaGenerator {
 
         TypeSpec.Builder builder = TypeSpec.classBuilder(javaType.simpleName());
         builder.addModifiers(PUBLIC, FINAL);
+
+        AnnotationSpec raptorMessage = MessageMetaInfo.readFrom(protoFile, type).generateMessageSpec();
+        builder.addAnnotation(raptorMessage);
 
         if (javaType.enclosingClassName() != null) {
             builder.addModifiers(STATIC);
@@ -525,7 +552,7 @@ public final class JavaGenerator {
 
             String fieldName = nameAllocator.get(field);
             FieldSpec.Builder fieldBuilder = FieldSpec.builder(fieldJavaType, fieldName, PRIVATE);
-            fieldBuilder.addAnnotation(wireFieldAnnotation(field));
+            fieldBuilder.addAnnotation(wireFieldAnnotation(field, type.oneOfs()));
             if (!field.documentation().isEmpty()) {
                 fieldBuilder.addJavadoc("$L\n", sanitizeJavadoc(field.documentation()));
             }
@@ -557,7 +584,7 @@ public final class JavaGenerator {
         builder.addType(builder(nameAllocator, type, javaType, builderJavaType));
 
         for (Type nestedType : type.nestedTypes()) {
-            builder.addType(generateType(nestedType));
+            builder.addType(generateType(protoFile, nestedType));
         }
 
         if (!emitCompact) {
@@ -584,7 +611,7 @@ public final class JavaGenerator {
                 .addStatement("return this.$L", fieldName).build();
     }
 
-    private TypeSpec generateEnclosingType(EnclosingType type) {
+    private TypeSpec generateEnclosingType(ProtoFile protoFile, EnclosingType type) {
         ClassName javaType = (ClassName) typeName(type.type());
 
         TypeSpec.Builder builder = TypeSpec.classBuilder(javaType.simpleName())
@@ -607,7 +634,7 @@ public final class JavaGenerator {
                 .build());
 
         for (Type nestedType : type.nestedTypes()) {
-            builder.addType(generateType(nestedType));
+            builder.addType(generateType(protoFile, nestedType));
         }
 
         return builder.build();
@@ -1026,31 +1053,48 @@ public final class JavaGenerator {
     //   type = INT32
     // )
     //
-    private AnnotationSpec wireFieldAnnotation(Field field) {
-        AnnotationSpec.Builder result = AnnotationSpec.builder(WireField.class);
+    private AnnotationSpec wireFieldAnnotation(Field field, ImmutableList<OneOf> oneOVES) {
+        AnnotationSpec.Builder result = AnnotationSpec.builder(RaptorField.class);
+
+        // TODO: 2018/4/28 处理 oneOfs  ,处理 WireFormat.FieldType 和ProtoType的转换
+
+        // TODO: 2018/4/28 明确  order name  keyType 的含义
+
+        ProtoType type = field.type();
+        WireFormat.FieldType wireType = getWireType(type);
+        result.addMember("fieldType", "$T.$L",WireFormat.FieldType.class,wireType);
+        if(type.isMap()){
+            result.addMember("keyType", "$T.$L",WireFormat.FieldType.class,getWireType(type.keyType()));
+        }
 
         int tag = field.tag();
-        result.addMember("tag", String.valueOf(tag));
-        if (field.type().isMap()) {
-            result.addMember("keyAdapter", "$S", adapterString(field.type().keyType()));
-            result.addMember("adapter", "$S", adapterString(field.type().valueType()));
-        } else {
-            result.addMember("adapter", "$S", adapterString(field.type()));
+        result.addMember("order", String.valueOf(tag));
+        result.addMember("name", "$S", field.name());
+
+        if (type.isMap()) {
+            result.addMember("isMap", "true");
         }
 
-        if (!field.isOptional()) {
-            if (field.isPacked()) {
-                result.addMember("label", "$T.PACKED", WireField.Label.class);
-            } else if (field.label() != null) {
-                result.addMember("label", "$T.$L", WireField.Label.class, field.label());
-            }
-        }
-
-        if (field.isRedacted()) {
-            result.addMember("redacted", "true");
+        if (field.isRepeated()) {
+            result.addMember("repeated", "true");
         }
 
         return result.build();
+    }
+
+    private WireFormat.FieldType getWireType(ProtoType type) {
+        checkNotNull(type);
+        if (type.isScalar()) {
+            WireFormat.FieldType fieldType = FIELD_TYPE_MAP.get(type);
+            Objects.nonNull(fieldType);
+            return fieldType;
+        } else if (type.isMap()) {
+            return getWireType(type.keyType());
+        } else if (isEnum(type)) {
+            return WireFormat.FieldType.ENUM;
+        } else {
+            return WireFormat.FieldType.MESSAGE;
+        }
     }
 
     private String adapterString(ProtoType type) {
@@ -1566,7 +1610,8 @@ public final class JavaGenerator {
             rpcBuilder.addModifiers(PUBLIC, ABSTRACT);
             rpcBuilder.returns(responseJavaType);
 
-            rpcBuilder.addParameter(requestJavaType, "request");
+            ParameterSpec request = ParameterSpec.builder(requestJavaType, "request").addAnnotation(RaptorMessage.class).build();
+            rpcBuilder.addParameter(request);
             rpcBuilder.addParameters(pathParameters(rpc));
 
             if (!rpc.documentation().isEmpty()) {

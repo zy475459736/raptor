@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 /**
  * @author yinzuolong
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE,ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented

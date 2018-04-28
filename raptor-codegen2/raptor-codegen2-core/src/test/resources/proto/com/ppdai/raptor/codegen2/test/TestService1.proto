@@ -33,7 +33,22 @@ service TestService{
 
 /* test message document */
 message GetRandomStringQuery {
-    string input = 1;
+    repeated string input = 1;
+    map<int32,int32> amap = 2;
+
+    oneof oneof_test {
+        int32 id = 3;
+        string name = 4;
+    }
+
+    RandomStringResponse r = 5;
+    TestEnum te = 6;
+
+}
+
+enum TestEnum{
+    A = 0;
+    B = 1;
 }
 
 message RandomStringResponse {

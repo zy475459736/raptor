@@ -5,7 +5,6 @@ import com.ppdai.raptor.codegen2.java.Profile;
 import com.ppdai.raptor.codegen2.java.ProfileLoader;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.wire.schema.*;
 import org.apache.commons.lang3.StringUtils;
@@ -14,8 +13,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.IOException;
 
@@ -50,9 +47,10 @@ public class JavaGerneratorTest {
     public void testGeneratePOJO() throws IOException {
         JavaGenerator javaGenerator = JavaGenerator.get(schema)
                 .withProfile(profile);
-        Type type = schema.getType("squareup.dinosaurs.Dinosaur");
+        Type type = schema.getType("com.ppdai.raptor.codegen2.test.GetRandomStringQuery");
         ClassName javaTypeName = javaGenerator.generatedTypeName(type);
-        TypeSpec typeSpec = javaGenerator.generateType(type);
+        ProtoFile protoFile = schema.protoFile("com/ppdai/raptor/codegen2/test/TestService1.proto");
+        TypeSpec typeSpec = javaGenerator.generateType(protoFile, type);
         String cs = typeSpec.toString();
 
         Assert.assertTrue(StringUtils.isNotBlank(cs));
@@ -88,7 +86,7 @@ public class JavaGerneratorTest {
         for (ProtoFile protoFile : schema.protoFiles()) {
             for (Type type : protoFile.types()) {
                 ClassName javaTypeName = javaGenerator.generatedTypeName(type);
-                TypeSpec typeSpec = javaGenerator.generateType(type);
+                TypeSpec typeSpec = javaGenerator.generateType(protoFile,type);
                 writeJavaFile(javaTypeName,typeSpec,type.location().withPathOnly());
             }
 

@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
  * Date 2018/4/28
  */
 public class OptionUtil {
-    public static final String SUMMARY_TOKEN = "@summary";
     private static final Pattern PATTERN = Pattern.compile("@[Ss]ummary(.*)$",Pattern.MULTILINE);
 
     public static String readStringOption(Options options, ProtoMember key){
@@ -32,7 +31,7 @@ public class OptionUtil {
     public static String readSummary(String documentation) {
         Matcher matcher = PATTERN.matcher(documentation);
         if(matcher.find()){
-            return matcher.group(0);
+            return matcher.group(1);
         }
         return null;
     }

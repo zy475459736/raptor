@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.ppdai.raptor.codegen2.java.option.MethodMetaInfo;
 import com.ppdai.raptor.codegen2.java.option.Method;
 import com.ppdai.raptor.codegen2.java.option.PathParam;
 import com.squareup.javapoet.*;
@@ -58,7 +59,7 @@ public final class JavaGenerator {
     static final ProtoMember ENUM_DEPRECATED = ProtoMember.get(ENUM_VALUE_OPTIONS, "deprecated");
     static final ProtoMember PACKED = ProtoMember.get(FIELD_OPTIONS, "packed");
     static final ProtoMember REQUEST_MAPPING = ProtoMember.get(METHOD_OPTIONS, "requestMapping");
-    static final ProtoType REQUEST_MAPPING_TYPE = ProtoType.get("RequestMapping");
+    static final ProtoType REQUEST_MAPPING_TYPE = ProtoType.get("MethodMetaInfo");
     static final ProtoMember REQUEST_MAPPING_PATH = ProtoMember.get(REQUEST_MAPPING_TYPE, "path");
     static final ProtoMember REQUEST_MAPPING_METHOD = ProtoMember.get(REQUEST_MAPPING_TYPE, "method");
 
@@ -1574,8 +1575,8 @@ public final class JavaGenerator {
     private Iterable<ParameterSpec> pathParameters(Rpc rpc) {
 
         List<ParameterSpec> result = Lists.newArrayList();
-        com.ppdai.raptor.codegen2.java.option.RequestMapping requestMapping = com.ppdai.raptor.codegen2.java.option.RequestMapping.readFrom(rpc);
-        for (PathParam pathParam : requestMapping.getPathParams()) {
+        MethodMetaInfo methodMetaInfo = MethodMetaInfo.readFrom(rpc);
+        for (PathParam pathParam : methodMetaInfo.getPathParams()) {
             ParameterSpec.Builder builder = ParameterSpec.builder(pathParam.getJavaType(pathParam.getType()), pathParam.getName());
             AnnotationSpec pathVariable = AnnotationSpec.builder(PathVariable.class).addMember("value", "$S",pathParam.getName()).build();
             builder.addAnnotation(pathVariable);
@@ -1590,16 +1591,16 @@ public final class JavaGenerator {
     private AnnotationSpec serviceAnnotation(Rpc rpc, ClassName className) {
         AnnotationSpec.Builder builder = AnnotationSpec.builder(RequestMapping.class);
 
-        com.ppdai.raptor.codegen2.java.option.RequestMapping requestMapping = com.ppdai.raptor.codegen2.java.option.RequestMapping.readFrom(rpc);
+        MethodMetaInfo methodMetaInfo = MethodMetaInfo.readFrom(rpc);
 
-        String path = requestMapping.getPath();
+        String path = methodMetaInfo.getPath();
         if (Objects.isNull(path)) {
             builder.addMember("path", "$S", defaultRequestPath(rpc, className));
         } else {
             builder.addMember("path", "$S", path);
         }
 
-        Method method1 = requestMapping.getMethod();
+        Method method1 = methodMetaInfo.getMethod();
         if (Objects.nonNull(method1)) {
             builder.addMember("method", "$T.$L", RequestMethod.class, method1.getName());
         }

@@ -42,6 +42,8 @@ public class PathParam {
                     .put("TYPE_SFIXED64", TypeName.LONG)
                     .put("TYPE_SINT32", TypeName.INT)
                     .put("TYPE_SINT64", TypeName.LONG)
+                    .put("int",TypeName.INT)
+                    .put("string",ClassName.get(String.class))
                     .build();
 
     private String name;

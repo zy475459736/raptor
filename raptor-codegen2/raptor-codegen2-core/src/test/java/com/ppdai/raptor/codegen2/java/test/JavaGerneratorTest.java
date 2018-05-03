@@ -8,6 +8,7 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.wire.schema.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,13 +51,15 @@ public class JavaGerneratorTest {
         Type type = schema.getType("com.ppdai.raptor.codegen2.test.GetRandomStringQuery");
         ClassName javaTypeName = javaGenerator.generatedTypeName(type);
         ProtoFile protoFile = schema.protoFile("com/ppdai/raptor/codegen2/test/TestService1.proto");
-        TypeSpec typeSpec = javaGenerator.generateType(protoFile, type);
+        Pair<TypeSpec, TypeSpec> typeSpecTypeSpecPair = javaGenerator.generateType(protoFile, type);
+        TypeSpec typeSpec =  typeSpecTypeSpecPair.getKey();
         String cs = typeSpec.toString();
 
         Assert.assertTrue(StringUtils.isNotBlank(cs));
         System.out.println(cs);
 
         writeJavaFile(javaTypeName,typeSpec,type.location().withPathOnly());
+        writeJavaFile(javaTypeName,typeSpecTypeSpecPair.getKey(),type.location().withPathOnly());
 
     }
 
@@ -86,8 +89,10 @@ public class JavaGerneratorTest {
         for (ProtoFile protoFile : schema.protoFiles()) {
             for (Type type : protoFile.types()) {
                 ClassName javaTypeName = javaGenerator.generatedTypeName(type);
-                TypeSpec typeSpec = javaGenerator.generateType(protoFile,type);
+                Pair<TypeSpec, TypeSpec> typeSpecTypeSpecPair = javaGenerator.generateType(protoFile, type);
+                TypeSpec typeSpec =  typeSpecTypeSpecPair.getKey();
                 writeJavaFile(javaTypeName,typeSpec,type.location().withPathOnly());
+                writeJavaFile(javaTypeName,typeSpecTypeSpecPair.getValue(),type.location().withPathOnly());
             }
 
             for (Service service : protoFile.services()) {

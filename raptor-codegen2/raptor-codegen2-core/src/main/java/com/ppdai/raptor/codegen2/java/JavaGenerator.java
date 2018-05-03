@@ -35,6 +35,7 @@ import com.squareup.wire.ProtoAdapter.EnumConstantNotFoundException;
 import com.squareup.wire.internal.Internal;
 import com.squareup.wire.schema.*;
 import okio.ByteString;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -163,6 +164,7 @@ public final class JavaGenerator {
         }
     });
     private final boolean emitCompact;
+    private ClassName builderJavaType;
 
     private JavaGenerator(Schema schema, Map<ProtoType, ClassName> nameToJavaName, Profile profile,
                           boolean emitAndroid, boolean emitCompact) {
@@ -347,7 +349,7 @@ public final class JavaGenerator {
     /**
      * Returns the generated code for {@code type}, which may be a top-level or a nested type.
      */
-    public TypeSpec generateType(ProtoFile protoFile, Type type) {
+    public Pair<TypeSpec, TypeSpec> generateType(ProtoFile protoFile, Type type) {
         if (type instanceof MessageType) {
             AdapterConstant adapterConstant = profile.getAdapter(type.type());
             if (adapterConstant != null) {
@@ -370,7 +372,7 @@ public final class JavaGenerator {
      * @deprecated Use {@link #generateType(ProtoFile, Type)}
      */
     @Deprecated
-    public TypeSpec generateEnum(EnumType type) {
+    public Pair<TypeSpec, TypeSpec> generateEnum(EnumType type) {
         ClassName javaType = (ClassName) typeName(type.type());
 
         TypeSpec.Builder builder = TypeSpec.enumBuilder(javaType.simpleName())
@@ -471,19 +473,22 @@ public final class JavaGenerator {
                 .addStatement("return value")
                 .build());
 
+        TypeSpec adapterAdapter = null;
         if (!emitCompact) {
             // Adds the ProtoAdapter implementation at the bottom.
-            builder.addType(enumAdapter(javaType, adapterJavaType));
+//            builder.addType(enumAdapter(javaType, adapterJavaType));
+            adapterAdapter = enumAdapter(javaType, adapterJavaType);
         }
 
-        return builder.build();
+        TypeSpec enumTypeSpec = builder.build();
+        return Pair.of(enumTypeSpec,adapterAdapter);
     }
 
     /**
      * @deprecated Use {@link #generateType(ProtoFile, Type)}
      */
     @Deprecated
-    public TypeSpec generateMessage(ProtoFile protoFile, MessageType type) {
+    public Pair<TypeSpec, TypeSpec> generateMessage(ProtoFile protoFile, MessageType type) {
         NameAllocator nameAllocator = nameAllocators.getUnchecked(type);
 
         ClassName javaType = (ClassName) typeName(type.type());
@@ -509,7 +514,8 @@ public final class JavaGenerator {
         String adapterName = nameAllocator.get("ADAPTER");
         String protoAdapterName = "ProtoAdapter_" + javaType.simpleName();
         String protoAdapterClassName = nameAllocator.newName(protoAdapterName);
-        ClassName adapterJavaType = javaType.nestedClass(protoAdapterClassName);
+//        ClassName adapterJavaType = javaType.nestedClass(protoAdapterClassName);
+        ClassName adapterJavaType = ClassName.get(javaType.packageName(), protoAdapterClassName);
         builder.addField(messageAdapterField(adapterName, javaType, adapterJavaType));
         // Note: The non-compact implementation is added at the very bottom of the surrounding type.
 
@@ -584,16 +590,25 @@ public final class JavaGenerator {
         builder.addType(builder(nameAllocator, type, javaType, builderJavaType));
 
         for (Type nestedType : type.nestedTypes()) {
-            builder.addType(generateType(protoFile, nestedType));
+            Pair<TypeSpec, TypeSpec> typeSpecTypeSpecPair = generateType(protoFile, nestedType);
+            builder.addType(typeSpecTypeSpecPair.getKey());
+            TypeSpec adapter = typeSpecTypeSpecPair.getValue();
+            if(Objects.nonNull(adapter)){
+                builder.addType(adapter);
+            }
+
         }
 
+        TypeSpec typeSpec = null;
         if (!emitCompact) {
             // Add the ProtoAdapter implementation at the very bottom since it's ugly serialization code.
-            builder.addType(
-                    messageAdapter(nameAllocator, type, javaType, adapterJavaType, builderJavaType));
+//            builder.addType(
+//                    messageAdapter(nameAllocator, type, javaType, adapterJavaType, builderJavaType));
+            typeSpec = messageAdapter(nameAllocator, type, javaType, adapterJavaType, builderJavaType);
         }
 
-        return builder.build();
+        TypeSpec messageTypeSpec = builder.build();
+        return Pair.of(messageTypeSpec, typeSpec);
     }
 
     private MethodSpec buildSetMethod(TypeName fieldJavaType, String fieldName) {
@@ -605,13 +620,13 @@ public final class JavaGenerator {
     }
 
     private MethodSpec buildGetMethod(TypeName fieldJavaType, String fieldName) {
-        return MethodSpec.methodBuilder("get" + LOWER_CAMEL.to(UPPER_CAMEL, fieldName))
+        return MethodSpec.methodBuilder(fieldName2getMethod(fieldName))
                 .addModifiers(PUBLIC)
                 .returns(fieldJavaType)
                 .addStatement("return this.$L", fieldName).build();
     }
 
-    private TypeSpec generateEnclosingType(ProtoFile protoFile, EnclosingType type) {
+    private Pair<TypeSpec, TypeSpec> generateEnclosingType(ProtoFile protoFile, EnclosingType type) {
         ClassName javaType = (ClassName) typeName(type.type());
 
         TypeSpec.Builder builder = TypeSpec.classBuilder(javaType.simpleName())
@@ -634,16 +649,23 @@ public final class JavaGenerator {
                 .build());
 
         for (Type nestedType : type.nestedTypes()) {
-            builder.addType(generateType(protoFile, nestedType));
+            Pair<TypeSpec, TypeSpec> typeSpecTypeSpecPair = generateType(protoFile, nestedType);
+
+            builder.addType(typeSpecTypeSpecPair.getKey());
+            TypeSpec adapter = typeSpecTypeSpecPair.getValue();
+            if (Objects.nonNull(adapter)) {
+                builder.addType(adapter);
+            }
         }
 
-        return builder.build();
+        return Pair.of(builder.build(),null);
     }
 
     /**
      * Returns an abstract adapter for {@code type}.
      */
-    public TypeSpec generateAbstractAdapter(MessageType type) {
+    // TODO: 2018/5/3 理解AbstractAdapter的作用
+    public Pair<TypeSpec, TypeSpec> generateAbstractAdapter(MessageType type) {
         NameAllocator nameAllocator = nameAllocators.getUnchecked(type);
         ClassName adapterTypeName = abstractAdapterName(type.type());
         ClassName typeName = (ClassName) typeName(type.type());
@@ -661,11 +683,12 @@ public final class JavaGenerator {
                         + " when enclosing proto has custom proto adapter.");
             }
             if (nestedType instanceof MessageType) {
-                adapter.addType(generateAbstractAdapter((MessageType) nestedType));
+                Pair<TypeSpec, TypeSpec> typeSpecTypeSpecPair = generateAbstractAdapter((MessageType) nestedType);
+                adapter.addType(typeSpecTypeSpecPair.getValue());
             }
         }
 
-        return adapter.build();
+        return Pair.of(adapter.build(), null);
     }
 
     /**
@@ -718,7 +741,7 @@ public final class JavaGenerator {
                 .superclass(adapterOf(javaType));
 
         if (useBuilder) {
-            adapter.addModifiers(PRIVATE, STATIC, FINAL);
+            adapter.addModifiers(PUBLIC, FINAL);
         } else {
             adapter.addModifiers(PUBLIC, ABSTRACT);
         }
@@ -781,7 +804,7 @@ public final class JavaGenerator {
             String fieldName = nameAllocator.get(field);
             CodeBlock adapter = adapterFor(field);
             result.addCode("$L $L.encodedSizeWithTag($L, ", leading, adapter, fieldTag)
-                    .addCode((useBuilder ? "value.$L" : "$L(value)"), fieldName)
+                    .addCode((useBuilder ? "value.$L()" : "$L(value)"), useBuilder ? fieldName2getMethod(fieldName) : fieldName)
                     .addCode(")");
             leading = "\n+";
         }
@@ -791,6 +814,10 @@ public final class JavaGenerator {
         result.addCode(";$]\n", leading);
 
         return result.build();
+    }
+
+    private String fieldName2getMethod(String fieldName) {
+        return "get" + LOWER_CAMEL.to(UPPER_CAMEL, fieldName);
     }
 
     private MethodSpec messageAdapterEncode(NameAllocator nameAllocator, MessageType type,
@@ -806,7 +833,7 @@ public final class JavaGenerator {
             int fieldTag = field.tag();
             CodeBlock adapter = adapterFor(field);
             result.addCode("$L.encodeWithTag(writer, $L, ", adapter, fieldTag)
-                    .addCode((useBuilder ? "value.$L" : "$L(value)"), nameAllocator.get(field))
+                    .addCode((useBuilder ? "value.$L()" : "$L(value)"), useBuilder ? fieldName2getMethod(nameAllocator.get(field)) : nameAllocator.get(field))
                     .addCode(");\n");
         }
 
@@ -1062,9 +1089,9 @@ public final class JavaGenerator {
 
         ProtoType type = field.type();
         WireFormat.FieldType wireType = getWireType(type);
-        result.addMember("fieldType", "$T.$L",WireFormat.FieldType.class,wireType);
-        if(type.isMap()){
-            result.addMember("keyType", "$T.$L",WireFormat.FieldType.class,getWireType(type.keyType()));
+        result.addMember("fieldType", "$T.$L", WireFormat.FieldType.class, wireType);
+        if (type.isMap()) {
+            result.addMember("keyType", "$T.$L", WireFormat.FieldType.class, getWireType(type.keyType()));
         }
 
         int tag = field.tag();

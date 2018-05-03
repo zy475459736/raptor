@@ -26,6 +26,7 @@ public class PathParam {
     private static final ProtoMember REQUEST_MAPPING_NAME = ProtoMember.get(PATH_PARAM_TYPE, "name");
     private static final ProtoMember REQUEST_MAPPING_TYPE = ProtoMember.get(PATH_PARAM_TYPE, "type");
     private static final Map<String, TypeName> BUILD_IN_TYPE_MAP =
+            // TODO: 2018/5/3 补充类型
             ImmutableMap.<String, TypeName>builder()
                     .put("TYPE_DOUBLE", TypeName.DOUBLE)
                     .put("TYPE_FLOAT", TypeName.FLOAT)
@@ -55,7 +56,7 @@ public class PathParam {
         return new PathParam(name, type);
     }
 
-    public TypeName getJavaType(String type) {
+    public static TypeName getJavaType(String type) {
         TypeName typeName = BUILD_IN_TYPE_MAP.get(type);
         if(Objects.isNull(typeName)){
             throw new RuntimeException("type name not supported: type="+type);

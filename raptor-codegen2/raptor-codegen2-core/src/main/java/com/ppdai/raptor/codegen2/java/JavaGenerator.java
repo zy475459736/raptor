@@ -41,6 +41,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -1658,7 +1659,7 @@ public final class JavaGenerator {
 
             ParameterSpec request = ParameterSpec.builder(requestJavaType, "request").build();
             rpcBuilder.addParameter(request);
-            rpcBuilder.addParameters(pathParameters(rpc));
+            rpcBuilder.addParameters(methodParameters(rpc));
 
             if (!rpc.documentation().isEmpty()) {
                 rpcBuilder.addJavadoc("$L\n", rpc.documentation());
@@ -1671,17 +1672,27 @@ public final class JavaGenerator {
     }
 
     @SuppressWarnings("unchecked")
-    private Iterable<ParameterSpec> pathParameters(Rpc rpc) {
+    private Iterable<ParameterSpec> methodParameters(Rpc rpc) {
 
         List<ParameterSpec> result = Lists.newArrayList();
         MethodMetaInfo methodMetaInfo = MethodMetaInfo.readFrom(rpc);
         for (PathParam pathParam : methodMetaInfo.getPathParams()) {
-            ParameterSpec.Builder builder = ParameterSpec.builder(pathParam.getJavaType(pathParam.getType()), pathParam.getName());
+            ParameterSpec.Builder builder = ParameterSpec.builder(PathParam.getJavaType(pathParam.getType()), pathParam.getName());
             AnnotationSpec pathVariable = AnnotationSpec.builder(PathVariable.class).addMember("value", "$S", pathParam.getName()).build();
             builder.addAnnotation(pathVariable);
             result.add(builder.build());
 
         }
+        Map<String, String> requestParams = methodMetaInfo.getRequestParams();
+        for (Map.Entry<String, String> requestParam : requestParams.entrySet()) {
+            // TODO: 2018/5/3 将 getJavaType从 PathParam 抽出来
+            // TODO: 2018/5/3 验证 pathparam 和  requestParam 不会冲突
+            ParameterSpec.Builder builder = ParameterSpec.builder(PathParam.getJavaType(requestParam.getValue()), requestParam.getKey());
+            AnnotationSpec pathVariable = AnnotationSpec.builder(RequestParam.class).addMember("value", "$S", requestParam.getKey()).build();
+            builder.addAnnotation(pathVariable);
+            result.add(builder.build());
+        }
+
         return result;
 
     }

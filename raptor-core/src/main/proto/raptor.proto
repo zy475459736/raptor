@@ -1,7 +1,7 @@
 syntax = "proto3";
 import "google/protobuf/descriptor.proto";
 
-package com.ppdai.framework.raptor;
+option java_package = "com.ppdai.framework.raptor";
 
 extend google.protobuf.FileOptions {
     string appId = 60001;

@@ -72,7 +72,7 @@ public class JavaGeneratorTest {
                 .withProfile(profile);
         Service service = schema.getService("com.ppdai.raptor.codegen2.test.TestService");
 
-        TypeSpec typeSpec = javaGenerator.generateService(null,service);
+        TypeSpec typeSpec = javaGenerator.generateService(schema.protoFile("com/ppdai/raptor/codegen2/test/TestService1.proto"),service);
         ClassName typeName = (ClassName)javaGenerator.typeName(service.type());
         System.out.println(typeSpec.toString());
 

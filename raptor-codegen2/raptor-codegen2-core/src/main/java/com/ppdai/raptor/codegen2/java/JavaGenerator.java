@@ -28,6 +28,8 @@ import com.google.common.collect.Ordering;
 import com.google.protobuf.WireFormat;
 import com.ppdai.framework.raptor.annotation.RaptorField;
 import com.ppdai.framework.raptor.annotation.RaptorMessage;
+import com.ppdai.framework.raptor.common.RaptorConstants;
+import com.ppdai.framework.raptor.common.URLParamType;
 import com.ppdai.raptor.codegen2.java.option.*;
 import com.squareup.javapoet.*;
 import com.squareup.wire.*;
@@ -35,6 +37,7 @@ import com.squareup.wire.ProtoAdapter.EnumConstantNotFoundException;
 import com.squareup.wire.internal.Internal;
 import com.squareup.wire.schema.*;
 import okio.ByteString;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -118,10 +121,8 @@ public final class JavaGenerator {
                     .put(ProtoType.BOOL, WireFormat.FieldType.BOOL)
                     .put(ProtoType.STRING, WireFormat.FieldType.STRING)
 //                    .put(ProtoType.GROUP, WireFormat.FieldType.GROUP)  //not support group
-//                    .put(ProtoType.MESSAGE, WireFormat.FieldType.MESSAGE)  todo
                     .put(ProtoType.BYTES, WireFormat.FieldType.BYTES)
                     .put(ProtoType.UINT32, WireFormat.FieldType.UINT32)
-//                    .put(ProtoType.ENUM, WireFormat.FieldType.ENUM) todo
                     .put(ProtoType.SFIXED32, WireFormat.FieldType.SFIXED32)
                     .put(ProtoType.SFIXED64, WireFormat.FieldType.SFIXED64)
                     .put(ProtoType.SINT32, WireFormat.FieldType.SINT32)
@@ -451,7 +452,14 @@ public final class JavaGenerator {
         // ADAPTER
         FieldSpec.Builder adapterBuilder = FieldSpec.builder(adapterOf(javaType), "ADAPTER")
                 .addModifiers(PUBLIC, STATIC, FINAL);
-        ClassName adapterJavaType = javaType.nestedClass("ProtoAdapter_" + javaType.simpleName());
+        ClassName enclosingClassName = javaType.enclosingClassName();
+        ClassName adapterJavaType;
+        if (Objects.nonNull(enclosingClassName)) {
+            adapterJavaType = enclosingClassName.nestedClass("ProtoAdapter_" + javaType.simpleName());
+        } else {
+            adapterJavaType = ClassName.get(javaType.packageName(),"ProtoAdapter_" + javaType.simpleName());
+
+        }
         if (!emitCompact) {
             adapterBuilder.initializer("new $T()", adapterJavaType);
         } else {
@@ -481,7 +489,7 @@ public final class JavaGenerator {
         }
 
         TypeSpec enumTypeSpec = builder.build();
-        return Pair.of(enumTypeSpec,adapterAdapter);
+        return Pair.of(enumTypeSpec, adapterAdapter);
     }
 
     /**
@@ -500,7 +508,8 @@ public final class JavaGenerator {
         AnnotationSpec raptorMessage = MessageMetaInfo.readFrom(protoFile, type).generateMessageSpec();
         builder.addAnnotation(raptorMessage);
 
-        if (javaType.enclosingClassName() != null) {
+        ClassName className = javaType.enclosingClassName();
+        if (className != null) {
             builder.addModifiers(STATIC);
         }
 
@@ -515,7 +524,13 @@ public final class JavaGenerator {
         String protoAdapterName = "ProtoAdapter_" + javaType.simpleName();
         String protoAdapterClassName = nameAllocator.newName(protoAdapterName);
 //        ClassName adapterJavaType = javaType.nestedClass(protoAdapterClassName);
-        ClassName adapterJavaType = ClassName.get(javaType.packageName(), protoAdapterClassName);
+        ClassName adapterJavaType;
+        if (Objects.nonNull(className)) {
+            adapterJavaType = className.nestedClass(protoAdapterClassName);
+        } else {
+            adapterJavaType = ClassName.get(javaType.packageName(), protoAdapterClassName);
+
+        }
         builder.addField(messageAdapterField(adapterName, javaType, adapterJavaType));
         // Note: The non-compact implementation is added at the very bottom of the surrounding type.
 
@@ -593,7 +608,7 @@ public final class JavaGenerator {
             Pair<TypeSpec, TypeSpec> typeSpecTypeSpecPair = generateType(protoFile, nestedType);
             builder.addType(typeSpecTypeSpecPair.getKey());
             TypeSpec adapter = typeSpecTypeSpecPair.getValue();
-            if(Objects.nonNull(adapter)){
+            if (Objects.nonNull(adapter)) {
                 builder.addType(adapter);
             }
 
@@ -658,13 +673,12 @@ public final class JavaGenerator {
             }
         }
 
-        return Pair.of(builder.build(),null);
+        return Pair.of(builder.build(), null);
     }
 
     /**
      * Returns an abstract adapter for {@code type}.
      */
-    // TODO: 2018/5/3 理解AbstractAdapter的作用
     public Pair<TypeSpec, TypeSpec> generateAbstractAdapter(MessageType type) {
         NameAllocator nameAllocator = nameAllocators.getUnchecked(type);
         ClassName adapterTypeName = abstractAdapterName(type.type());
@@ -718,7 +732,7 @@ public final class JavaGenerator {
     }
 
     private TypeSpec enumAdapter(ClassName javaType, ClassName adapterJavaType) {
-        return TypeSpec.classBuilder(adapterJavaType.simpleName())
+        TypeSpec.Builder builder = TypeSpec.classBuilder(adapterJavaType.simpleName())
                 .superclass(enumAdapterOf(javaType))
                 .addModifiers(PRIVATE, STATIC, FINAL)
                 .addMethod(MethodSpec.constructorBuilder()
@@ -730,8 +744,8 @@ public final class JavaGenerator {
                         .returns(javaType)
                         .addParameter(int.class, "value")
                         .addStatement("return $T.fromValue(value)", javaType)
-                        .build())
-                .build();
+                        .build());
+        return builder.build();
     }
 
     private TypeSpec messageAdapter(NameAllocator nameAllocator, MessageType type, ClassName javaType,
@@ -742,6 +756,10 @@ public final class JavaGenerator {
 
         if (useBuilder) {
             adapter.addModifiers(PUBLIC, FINAL);
+
+            if (adapterJavaType.enclosingClassName() != null) {
+                adapter.addModifiers(STATIC);
+            }
         } else {
             adapter.addModifiers(PUBLIC, ABSTRACT);
         }
@@ -1083,10 +1101,6 @@ public final class JavaGenerator {
     private AnnotationSpec wireFieldAnnotation(Field field, ImmutableList<OneOf> oneOVES) {
         AnnotationSpec.Builder result = AnnotationSpec.builder(RaptorField.class);
 
-        // TODO: 2018/4/28 处理 oneOfs  ,处理 WireFormat.FieldType 和ProtoType的转换
-
-        // TODO: 2018/4/28 明确  order name  keyType 的含义
-
         ProtoType type = field.type();
         WireFormat.FieldType wireType = getWireType(type);
         result.addMember("fieldType", "$T.$L", WireFormat.FieldType.class, wireType);
@@ -1104,6 +1118,12 @@ public final class JavaGenerator {
 
         if (field.isRepeated()) {
             result.addMember("repeated", "true");
+        }
+
+        for (OneOf oneOF : oneOVES) {
+            if (oneOF.fields().contains(field)) {
+                result.addMember("oneof","$S",oneOF.name());
+            }
         }
 
         return result.build();
@@ -1637,7 +1657,7 @@ public final class JavaGenerator {
             rpcBuilder.addModifiers(PUBLIC, ABSTRACT);
             rpcBuilder.returns(responseJavaType);
 
-            ParameterSpec request = ParameterSpec.builder(requestJavaType, "request").addAnnotation(RaptorMessage.class).build();
+            ParameterSpec request = ParameterSpec.builder(requestJavaType, "request").build();
             rpcBuilder.addParameter(request);
             rpcBuilder.addParameters(pathParameters(rpc));
 
@@ -1691,8 +1711,8 @@ public final class JavaGenerator {
     }
 
     private Object defaultRequestPath(Rpc rpc, ClassName className) {
-        // TODO: 2018/4/26 优化代码,减少魔法变量
-        return "/raptor/" + className.reflectionName() + "/" + rpc.name();
+        ArrayList<String> params = Lists.newArrayList(URLParamType.basePath.getValue(), className.reflectionName(), rpc.name());
+        return  RaptorConstants.PATH_SEPARATOR+StringUtils.join(params, RaptorConstants.PATH_SEPARATOR);
     }
 
 

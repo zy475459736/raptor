@@ -88,8 +88,6 @@ public class MethodMetaInfo {
         return builder.build();
     }
 
-
-    // TODO: 2018/4/27 可以般到一个Util里面
     private static List<String> getPathParams(String path) {
         if(Objects.isNull(path)){
             return Lists.newArrayList();

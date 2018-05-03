@@ -24,8 +24,6 @@ import java.io.IOException;
  */
 public class JavaGerneratorTest {
 
-
-    // TODO: 2018/4/26 换成resource路径下
     private static final String PROTO_FILE_DIR = "src/test/resources/proto";
     private static final String GENERATED_SOURCE_DIR = "target/generated-sources/annotations";
     private Schema schema;

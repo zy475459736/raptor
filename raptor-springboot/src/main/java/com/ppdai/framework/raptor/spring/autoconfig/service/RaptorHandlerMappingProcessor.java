@@ -18,7 +18,7 @@ import java.util.Set;
  *
  * @author yinzuolong
  */
-public class RaptorMethodParameterAnnotationProcessor implements BeanPostProcessor {
+public class RaptorHandlerMappingProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         return bean;
@@ -44,6 +44,10 @@ public class RaptorMethodParameterAnnotationProcessor implements BeanPostProcess
                     System.arraycopy(parameterAnnotation, 0, newParameterAnnotation, 0, parameterAnnotation.length);
                     System.arraycopy(superParameterAnnotation, 0, newParameterAnnotation, parameterAnnotation.length, superParameterAnnotation.length);
                     MethodParameter newParameter = new MethodParameter(parameter) {
+                        /**
+                         * 覆盖父类方法，返回合并接口注解的数组
+                         * @return
+                         */
                         @Override
                         public Annotation[] getParameterAnnotations() {
                             return newParameterAnnotation;
@@ -57,6 +61,11 @@ public class RaptorMethodParameterAnnotationProcessor implements BeanPostProcess
         return bean;
     }
 
+    /**
+     * 找到方法实现的接口方法
+     * @param method
+     * @return
+     */
     private Method findInterfaceMethod(Method method) {
         Set<Class<?>> interfaces = ClassUtils.getAllInterfacesForClassAsSet(method.getDeclaringClass());
         for (Class<?> superInterface : interfaces) {

@@ -14,6 +14,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.ppdai.framework</groupId>
+            <artifactId>raptor-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>

@@ -2,6 +2,8 @@ package com.ppdai.raptor.codegen2.java.option;
 
 import com.sun.tools.javac.util.StringUtils;
 
+import java.util.Objects;
+
 /**
  * @author zhangchengxi
  * Date 2018/4/27
@@ -25,6 +27,9 @@ public enum Method {
     }
 
     public static Method get(String name) {
+        if (Objects.isNull(name)) {
+            return null;
+        }
         String upperCase = StringUtils.toUpperCase(name);
         return Method.valueOf(upperCase);
     }

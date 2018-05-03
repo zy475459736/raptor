@@ -22,7 +22,7 @@ public @interface RaptorField {
 
     boolean isMap() default false;
 
-    boolean oneof() default false;
+    String oneof() default "";
 
     /**
      * Specifying Field summary which comment end of field define like:

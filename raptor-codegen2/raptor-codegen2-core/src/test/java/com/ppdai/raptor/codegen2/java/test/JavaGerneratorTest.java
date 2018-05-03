@@ -5,17 +5,15 @@ import com.ppdai.raptor.codegen2.java.Profile;
 import com.ppdai.raptor.codegen2.java.ProfileLoader;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.wire.schema.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.IOException;
 
@@ -26,8 +24,6 @@ import java.io.IOException;
  */
 public class JavaGerneratorTest {
 
-
-    // TODO: 2018/4/26 换成resource路径下
     private static final String PROTO_FILE_DIR = "src/test/resources/proto";
     private static final String GENERATED_SOURCE_DIR = "target/generated-sources/annotations";
     private Schema schema;
@@ -50,15 +46,18 @@ public class JavaGerneratorTest {
     public void testGeneratePOJO() throws IOException {
         JavaGenerator javaGenerator = JavaGenerator.get(schema)
                 .withProfile(profile);
-        Type type = schema.getType("squareup.dinosaurs.Dinosaur");
+        Type type = schema.getType("com.ppdai.raptor.codegen2.test.GetRandomStringQuery");
         ClassName javaTypeName = javaGenerator.generatedTypeName(type);
-        TypeSpec typeSpec = javaGenerator.generateType(type);
+        ProtoFile protoFile = schema.protoFile("com/ppdai/raptor/codegen2/test/TestService1.proto");
+        Pair<TypeSpec, TypeSpec> typeSpecTypeSpecPair = javaGenerator.generateType(protoFile, type);
+        TypeSpec typeSpec =  typeSpecTypeSpecPair.getKey();
         String cs = typeSpec.toString();
 
         Assert.assertTrue(StringUtils.isNotBlank(cs));
         System.out.println(cs);
 
         writeJavaFile(javaTypeName,typeSpec,type.location().withPathOnly());
+        writeJavaFile(javaTypeName,typeSpecTypeSpecPair.getKey(),type.location().withPathOnly());
 
     }
 
@@ -73,7 +72,7 @@ public class JavaGerneratorTest {
                 .withProfile(profile);
         Service service = schema.getService("com.ppdai.raptor.codegen2.test.TestService");
 
-        TypeSpec typeSpec = javaGenerator.generateService(service);
+        TypeSpec typeSpec = javaGenerator.generateService(null,service);
         ClassName typeName = (ClassName)javaGenerator.typeName(service.type());
         System.out.println(typeSpec.toString());
 
@@ -88,12 +87,14 @@ public class JavaGerneratorTest {
         for (ProtoFile protoFile : schema.protoFiles()) {
             for (Type type : protoFile.types()) {
                 ClassName javaTypeName = javaGenerator.generatedTypeName(type);
-                TypeSpec typeSpec = javaGenerator.generateType(type);
+                Pair<TypeSpec, TypeSpec> typeSpecTypeSpecPair = javaGenerator.generateType(protoFile, type);
+                TypeSpec typeSpec =  typeSpecTypeSpecPair.getKey();
                 writeJavaFile(javaTypeName,typeSpec,type.location().withPathOnly());
+                writeJavaFile(javaTypeName,typeSpecTypeSpecPair.getValue(),type.location().withPathOnly());
             }
 
             for (Service service : protoFile.services()) {
-                TypeSpec typeSpec = javaGenerator.generateService(service);
+                TypeSpec typeSpec = javaGenerator.generateService(protoFile,service);
                 ClassName typeName = (ClassName)javaGenerator.typeName(service.type());
                 writeJavaFile(typeName,typeSpec,service.location().withPathOnly());
             }

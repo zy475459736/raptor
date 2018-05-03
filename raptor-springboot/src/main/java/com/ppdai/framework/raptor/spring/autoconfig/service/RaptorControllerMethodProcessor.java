@@ -31,6 +31,7 @@ public class RaptorControllerMethodProcessor extends AbstractMessageConverterMet
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         parameter = parameter.nestedIfOptional();
+        //TODO 如果是get方法，将param反射到RaptorMessage中
         return readWithMessageConverters(webRequest, parameter, parameter.getNestedGenericParameterType());
     }
 

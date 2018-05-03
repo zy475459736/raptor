@@ -27,7 +27,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.protobuf.WireFormat;
 import com.ppdai.framework.raptor.annotation.RaptorField;
-import com.ppdai.framework.raptor.annotation.RaptorMessage;
 import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.common.URLParamType;
 import com.ppdai.raptor.codegen2.java.option.*;

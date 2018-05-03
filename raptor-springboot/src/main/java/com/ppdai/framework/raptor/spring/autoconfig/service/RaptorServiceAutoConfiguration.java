@@ -7,7 +7,6 @@ import com.ppdai.framework.raptor.filter.provider.ProviderMetricsFilter;
 import com.ppdai.framework.raptor.rpc.URL;
 import com.ppdai.framework.raptor.service.ProviderBuilder;
 import com.ppdai.framework.raptor.service.ServletEndpoint;
-import com.ppdai.framework.raptor.spring.converter.ProtobufHttpMessageConverter;
 import com.ppdai.framework.raptor.spring.endpoint.RaptorProvidersActuatorEndpoint;
 import com.ppdai.framework.raptor.spring.properties.ServletEndpointProperties;
 import com.ppdai.framework.raptor.util.NetUtils;
@@ -30,16 +29,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Import({RaptorServiceRegistryProcessor.class, RaptorMethodParameterAnnotationProcessor.class, RaptorMvcConfigurer.class})
+@Import({RaptorServiceRegistryProcessor.class,
+        RaptorHandlerMappingProcessor.class,
+        RaptorHandlerAdapterProcessor.class,
+        RaptorControllerMethodProcessor.class})
 @Configuration
 @EnableConfigurationProperties({ServletEndpointProperties.class})
 public class RaptorServiceAutoConfiguration {
-
-    @Bean
-    ProtobufHttpMessageConverter protobufHttpMessageConverter() {
-        return new ProtobufHttpMessageConverter();
-    }
-
     @Autowired
     private Environment env;
 

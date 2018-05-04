@@ -315,7 +315,7 @@ public final class AllTypesPojo extends Message<AllTypesPojo, AllTypesPojo.Build
   )
   private Map<String, NestedEnum> mapStringEnum;
 
-  AllTypesPojo() {
+  public AllTypesPojo() {
     super(ADAPTER, ByteString.EMPTY);
   }
 
@@ -1245,7 +1245,7 @@ public final class AllTypesPojo extends Message<AllTypesPojo, AllTypesPojo.Build
     )
     private Integer a;
 
-    NestedMessage() {
+    public NestedMessage() {
       super(ADAPTER, ByteString.EMPTY);
     }
 

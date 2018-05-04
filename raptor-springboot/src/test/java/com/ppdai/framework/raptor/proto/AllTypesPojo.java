@@ -2,22 +2,34 @@
 // Source file: all_types.proto
 package com.ppdai.framework.raptor.proto;
 
-import com.google.protobuf.WireFormat;
-import com.ppdai.framework.raptor.annotation.RaptorField;
 import com.ppdai.framework.raptor.annotation.RaptorMessage;
-import com.squareup.wire.*;
-import okio.ByteString;
-
+import com.squareup.wire.EnumAdapter;
+import com.squareup.wire.FieldEncoding;
+import com.squareup.wire.Message;
+import com.squareup.wire.ProtoAdapter;
+import com.squareup.wire.ProtoReader;
+import com.squareup.wire.ProtoWriter;
+import com.squareup.wire.WireEnum;
+import com.squareup.wire.WireField;
+import com.squareup.wire.internal.Internal;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.lang.Boolean;
+import java.lang.Double;
+import java.lang.Float;
+import java.lang.Integer;
+import java.lang.Long;
+import java.lang.Object;
+import java.lang.Override;
+import java.lang.String;
+import java.lang.StringBuilder;
 import java.util.List;
 import java.util.Map;
+import okio.ByteString;
 
 @RaptorMessage(
     protoFile = "all_types"
 )
-public final class AllTypesPojo {
+public final class AllTypesPojo extends Message<AllTypesPojo, AllTypesPojo.Builder> {
   public static final ProtoAdapter<AllTypesPojo> ADAPTER = new ProtoAdapter_AllTypesPojo();
 
   private static final long serialVersionUID = 0L;
@@ -54,296 +66,325 @@ public final class AllTypesPojo {
 
   public static final NestedEnum DEFAULT_NESTEDENUM = NestedEnum.A;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.INT32,
-      order = 1,
-      name = "int32"
+  @WireField(
+      tag = 1,
+      adapter = "com.squareup.wire.ProtoAdapter#INT32"
   )
   private Integer int32;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.UINT32,
-      order = 2,
-      name = "uint32"
+  @WireField(
+      tag = 2,
+      adapter = "com.squareup.wire.ProtoAdapter#UINT32"
   )
   private Integer uint32;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.SINT32,
-      order = 3,
-      name = "sint32"
+  @WireField(
+      tag = 3,
+      adapter = "com.squareup.wire.ProtoAdapter#SINT32"
   )
   private Integer sint32;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.FIXED32,
-      order = 4,
-      name = "fixed32"
+  @WireField(
+      tag = 4,
+      adapter = "com.squareup.wire.ProtoAdapter#FIXED32"
   )
   private Integer fixed32;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.SFIXED32,
-      order = 5,
-      name = "sfixed32"
+  @WireField(
+      tag = 5,
+      adapter = "com.squareup.wire.ProtoAdapter#SFIXED32"
   )
   private Integer sfixed32;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.INT64,
-      order = 6,
-      name = "int64"
+  @WireField(
+      tag = 6,
+      adapter = "com.squareup.wire.ProtoAdapter#INT64"
   )
   private Long int64;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.UINT64,
-      order = 7,
-      name = "uint64"
+  @WireField(
+      tag = 7,
+      adapter = "com.squareup.wire.ProtoAdapter#UINT64"
   )
   private Long uint64;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.SINT64,
-      order = 8,
-      name = "sint64"
+  @WireField(
+      tag = 8,
+      adapter = "com.squareup.wire.ProtoAdapter#SINT64"
   )
   private Long sint64;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.FIXED64,
-      order = 9,
-      name = "fixed64"
+  @WireField(
+      tag = 9,
+      adapter = "com.squareup.wire.ProtoAdapter#FIXED64"
   )
   private Long fixed64;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.SFIXED64,
-      order = 10,
-      name = "sfixed64"
+  @WireField(
+      tag = 10,
+      adapter = "com.squareup.wire.ProtoAdapter#SFIXED64"
   )
   private Long sfixed64;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.BOOL,
-      order = 11,
-      name = "bool"
+  @WireField(
+      tag = 11,
+      adapter = "com.squareup.wire.ProtoAdapter#BOOL"
   )
   private Boolean bool;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.FLOAT,
-      order = 12,
-      name = "float"
+  @WireField(
+      tag = 12,
+      adapter = "com.squareup.wire.ProtoAdapter#FLOAT"
   )
   private Float float_;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.DOUBLE,
-      order = 13,
-      name = "double"
+  @WireField(
+      tag = 13,
+      adapter = "com.squareup.wire.ProtoAdapter#DOUBLE"
   )
   private Double double_;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.STRING,
-      order = 14,
-      name = "string"
+  @WireField(
+      tag = 14,
+      adapter = "com.squareup.wire.ProtoAdapter#STRING"
   )
   private String string;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.BYTES,
-      order = 15,
-      name = "bytes"
+  @WireField(
+      tag = 15,
+      adapter = "com.squareup.wire.ProtoAdapter#BYTES"
   )
   private ByteString bytes;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.ENUM,
-      order = 16,
-      name = "nested_enum"
+  @WireField(
+      tag = 16,
+      adapter = "com.ppdai.framework.raptor.proto.AllTypesPojo$NestedEnum#ADAPTER"
   )
   private NestedEnum nestedEnum;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.MESSAGE,
-      order = 17,
-      name = "nested_message"
+  @WireField(
+      tag = 17,
+      adapter = "com.ppdai.framework.raptor.proto.AllTypesPojo$NestedMessage#ADAPTER"
   )
   private NestedMessage nestedMessage;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.INT32,
-      order = 201,
-      name = "rep_int32",
-      repeated = true
+  @WireField(
+      tag = 201,
+      adapter = "com.squareup.wire.ProtoAdapter#INT32",
+      label = WireField.Label.REPEATED
   )
   private List<Integer> repInt32;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.UINT32,
-      order = 202,
-      name = "rep_uint32",
-      repeated = true
+  @WireField(
+      tag = 202,
+      adapter = "com.squareup.wire.ProtoAdapter#UINT32",
+      label = WireField.Label.REPEATED
   )
   private List<Integer> repUint32;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.SINT32,
-      order = 203,
-      name = "rep_sint32",
-      repeated = true
+  @WireField(
+      tag = 203,
+      adapter = "com.squareup.wire.ProtoAdapter#SINT32",
+      label = WireField.Label.REPEATED
   )
   private List<Integer> repSint32;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.FIXED32,
-      order = 204,
-      name = "rep_fixed32",
-      repeated = true
+  @WireField(
+      tag = 204,
+      adapter = "com.squareup.wire.ProtoAdapter#FIXED32",
+      label = WireField.Label.REPEATED
   )
   private List<Integer> repFixed32;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.SFIXED32,
-      order = 205,
-      name = "rep_sfixed32",
-      repeated = true
+  @WireField(
+      tag = 205,
+      adapter = "com.squareup.wire.ProtoAdapter#SFIXED32",
+      label = WireField.Label.REPEATED
   )
   private List<Integer> repSfixed32;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.INT64,
-      order = 206,
-      name = "rep_int64",
-      repeated = true
+  @WireField(
+      tag = 206,
+      adapter = "com.squareup.wire.ProtoAdapter#INT64",
+      label = WireField.Label.REPEATED
   )
   private List<Long> repInt64;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.UINT64,
-      order = 207,
-      name = "rep_uint64",
-      repeated = true
+  @WireField(
+      tag = 207,
+      adapter = "com.squareup.wire.ProtoAdapter#UINT64",
+      label = WireField.Label.REPEATED
   )
   private List<Long> repUint64;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.SINT64,
-      order = 208,
-      name = "rep_sint64",
-      repeated = true
+  @WireField(
+      tag = 208,
+      adapter = "com.squareup.wire.ProtoAdapter#SINT64",
+      label = WireField.Label.REPEATED
   )
   private List<Long> repSint64;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.FIXED64,
-      order = 209,
-      name = "rep_fixed64",
-      repeated = true
+  @WireField(
+      tag = 209,
+      adapter = "com.squareup.wire.ProtoAdapter#FIXED64",
+      label = WireField.Label.REPEATED
   )
   private List<Long> repFixed64;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.SFIXED64,
-      order = 210,
-      name = "rep_sfixed64",
-      repeated = true
+  @WireField(
+      tag = 210,
+      adapter = "com.squareup.wire.ProtoAdapter#SFIXED64",
+      label = WireField.Label.REPEATED
   )
   private List<Long> repSfixed64;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.BOOL,
-      order = 211,
-      name = "rep_bool",
-      repeated = true
+  @WireField(
+      tag = 211,
+      adapter = "com.squareup.wire.ProtoAdapter#BOOL",
+      label = WireField.Label.REPEATED
   )
   private List<Boolean> repBool;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.FLOAT,
-      order = 212,
-      name = "rep_float",
-      repeated = true
+  @WireField(
+      tag = 212,
+      adapter = "com.squareup.wire.ProtoAdapter#FLOAT",
+      label = WireField.Label.REPEATED
   )
   private List<Float> repFloat;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.DOUBLE,
-      order = 213,
-      name = "rep_double",
-      repeated = true
+  @WireField(
+      tag = 213,
+      adapter = "com.squareup.wire.ProtoAdapter#DOUBLE",
+      label = WireField.Label.REPEATED
   )
   private List<Double> repDouble;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.STRING,
-      order = 214,
-      name = "rep_string",
-      repeated = true
+  @WireField(
+      tag = 214,
+      adapter = "com.squareup.wire.ProtoAdapter#STRING",
+      label = WireField.Label.REPEATED
   )
   private List<String> repString;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.BYTES,
-      order = 215,
-      name = "rep_bytes",
-      repeated = true
+  @WireField(
+      tag = 215,
+      adapter = "com.squareup.wire.ProtoAdapter#BYTES",
+      label = WireField.Label.REPEATED
   )
   private List<ByteString> repBytes;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.ENUM,
-      order = 216,
-      name = "rep_nested_enum",
-      repeated = true
+  @WireField(
+      tag = 216,
+      adapter = "com.ppdai.framework.raptor.proto.AllTypesPojo$NestedEnum#ADAPTER",
+      label = WireField.Label.REPEATED
   )
   private List<NestedEnum> repNestedEnum;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.MESSAGE,
-      order = 217,
-      name = "rep_nested_message",
-      repeated = true
+  @WireField(
+      tag = 217,
+      adapter = "com.ppdai.framework.raptor.proto.AllTypesPojo$NestedMessage#ADAPTER",
+      label = WireField.Label.REPEATED
   )
   private List<NestedMessage> repNestedMessage;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.INT32,
-      keyType = WireFormat.FieldType.INT32,
-      order = 501,
-      name = "map_int32_int32",
-      isMap = true
+  @WireField(
+      tag = 501,
+      keyAdapter = "com.squareup.wire.ProtoAdapter#INT32",
+      adapter = "com.squareup.wire.ProtoAdapter#INT32"
   )
   private Map<Integer, Integer> mapInt32Int32;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.STRING,
-      keyType = WireFormat.FieldType.STRING,
-      order = 502,
-      name = "map_string_string",
-      isMap = true
+  @WireField(
+      tag = 502,
+      keyAdapter = "com.squareup.wire.ProtoAdapter#STRING",
+      adapter = "com.squareup.wire.ProtoAdapter#STRING"
   )
   private Map<String, String> mapStringString;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.STRING,
-      keyType = WireFormat.FieldType.STRING,
-      order = 503,
-      name = "map_string_message",
-      isMap = true
+  @WireField(
+      tag = 503,
+      keyAdapter = "com.squareup.wire.ProtoAdapter#STRING",
+      adapter = "com.ppdai.framework.raptor.proto.AllTypesPojo$NestedMessage#ADAPTER"
   )
   private Map<String, NestedMessage> mapStringMessage;
 
-  @RaptorField(
-      fieldType = WireFormat.FieldType.STRING,
-      keyType = WireFormat.FieldType.STRING,
-      order = 504,
-      name = "map_string_enum",
-      isMap = true
+  @WireField(
+      tag = 504,
+      keyAdapter = "com.squareup.wire.ProtoAdapter#STRING",
+      adapter = "com.ppdai.framework.raptor.proto.AllTypesPojo$NestedEnum#ADAPTER"
   )
   private Map<String, NestedEnum> mapStringEnum;
+
+  AllTypesPojo() {
+    super(ADAPTER, ByteString.EMPTY);
+  }
+
+  public AllTypesPojo(Integer int32, Integer uint32, Integer sint32, Integer fixed32,
+      Integer sfixed32, Long int64, Long uint64, Long sint64, Long fixed64, Long sfixed64,
+      Boolean bool, Float float_, Double double_, String string, ByteString bytes,
+      NestedEnum nestedEnum, NestedMessage nestedMessage, List<Integer> repInt32,
+      List<Integer> repUint32, List<Integer> repSint32, List<Integer> repFixed32,
+      List<Integer> repSfixed32, List<Long> repInt64, List<Long> repUint64, List<Long> repSint64,
+      List<Long> repFixed64, List<Long> repSfixed64, List<Boolean> repBool, List<Float> repFloat,
+      List<Double> repDouble, List<String> repString, List<ByteString> repBytes,
+      List<NestedEnum> repNestedEnum, List<NestedMessage> repNestedMessage,
+      Map<Integer, Integer> mapInt32Int32, Map<String, String> mapStringString,
+      Map<String, NestedMessage> mapStringMessage, Map<String, NestedEnum> mapStringEnum) {
+    this(int32, uint32, sint32, fixed32, sfixed32, int64, uint64, sint64, fixed64, sfixed64, bool, float_, double_, string, bytes, nestedEnum, nestedMessage, repInt32, repUint32, repSint32, repFixed32, repSfixed32, repInt64, repUint64, repSint64, repFixed64, repSfixed64, repBool, repFloat, repDouble, repString, repBytes, repNestedEnum, repNestedMessage, mapInt32Int32, mapStringString, mapStringMessage, mapStringEnum, ByteString.EMPTY);
+  }
+
+  public AllTypesPojo(Integer int32, Integer uint32, Integer sint32, Integer fixed32,
+      Integer sfixed32, Long int64, Long uint64, Long sint64, Long fixed64, Long sfixed64,
+      Boolean bool, Float float_, Double double_, String string, ByteString bytes,
+      NestedEnum nestedEnum, NestedMessage nestedMessage, List<Integer> repInt32,
+      List<Integer> repUint32, List<Integer> repSint32, List<Integer> repFixed32,
+      List<Integer> repSfixed32, List<Long> repInt64, List<Long> repUint64, List<Long> repSint64,
+      List<Long> repFixed64, List<Long> repSfixed64, List<Boolean> repBool, List<Float> repFloat,
+      List<Double> repDouble, List<String> repString, List<ByteString> repBytes,
+      List<NestedEnum> repNestedEnum, List<NestedMessage> repNestedMessage,
+      Map<Integer, Integer> mapInt32Int32, Map<String, String> mapStringString,
+      Map<String, NestedMessage> mapStringMessage, Map<String, NestedEnum> mapStringEnum,
+      ByteString unknownFields) {
+    super(ADAPTER, unknownFields);
+    this.int32 = int32;
+    this.uint32 = uint32;
+    this.sint32 = sint32;
+    this.fixed32 = fixed32;
+    this.sfixed32 = sfixed32;
+    this.int64 = int64;
+    this.uint64 = uint64;
+    this.sint64 = sint64;
+    this.fixed64 = fixed64;
+    this.sfixed64 = sfixed64;
+    this.bool = bool;
+    this.float_ = float_;
+    this.double_ = double_;
+    this.string = string;
+    this.bytes = bytes;
+    this.nestedEnum = nestedEnum;
+    this.nestedMessage = nestedMessage;
+    this.repInt32 = Internal.immutableCopyOf("repInt32", repInt32);
+    this.repUint32 = Internal.immutableCopyOf("repUint32", repUint32);
+    this.repSint32 = Internal.immutableCopyOf("repSint32", repSint32);
+    this.repFixed32 = Internal.immutableCopyOf("repFixed32", repFixed32);
+    this.repSfixed32 = Internal.immutableCopyOf("repSfixed32", repSfixed32);
+    this.repInt64 = Internal.immutableCopyOf("repInt64", repInt64);
+    this.repUint64 = Internal.immutableCopyOf("repUint64", repUint64);
+    this.repSint64 = Internal.immutableCopyOf("repSint64", repSint64);
+    this.repFixed64 = Internal.immutableCopyOf("repFixed64", repFixed64);
+    this.repSfixed64 = Internal.immutableCopyOf("repSfixed64", repSfixed64);
+    this.repBool = Internal.immutableCopyOf("repBool", repBool);
+    this.repFloat = Internal.immutableCopyOf("repFloat", repFloat);
+    this.repDouble = Internal.immutableCopyOf("repDouble", repDouble);
+    this.repString = Internal.immutableCopyOf("repString", repString);
+    this.repBytes = Internal.immutableCopyOf("repBytes", repBytes);
+    this.repNestedEnum = Internal.immutableCopyOf("repNestedEnum", repNestedEnum);
+    this.repNestedMessage = Internal.immutableCopyOf("repNestedMessage", repNestedMessage);
+    this.mapInt32Int32 = Internal.immutableCopyOf("mapInt32Int32", mapInt32Int32);
+    this.mapStringString = Internal.immutableCopyOf("mapStringString", mapStringString);
+    this.mapStringMessage = Internal.immutableCopyOf("mapStringMessage", mapStringMessage);
+    this.mapStringEnum = Internal.immutableCopyOf("mapStringEnum", mapStringEnum);
+  }
 
   public Integer getInt32() {
     return this.int32;
@@ -482,7 +523,6 @@ public final class AllTypesPojo {
   }
 
   public List<Integer> getRepInt32() {
-    if(this.repInt32 == null){this.repInt32 = new ArrayList();};
     return this.repInt32;
   }
 
@@ -491,7 +531,6 @@ public final class AllTypesPojo {
   }
 
   public List<Integer> getRepUint32() {
-    if(this.repUint32 == null){this.repUint32 = new ArrayList();};
     return this.repUint32;
   }
 
@@ -500,7 +539,6 @@ public final class AllTypesPojo {
   }
 
   public List<Integer> getRepSint32() {
-    if(this.repSint32 == null){this.repSint32 = new ArrayList();};
     return this.repSint32;
   }
 
@@ -509,7 +547,6 @@ public final class AllTypesPojo {
   }
 
   public List<Integer> getRepFixed32() {
-    if(this.repFixed32 == null){this.repFixed32 = new ArrayList();};
     return this.repFixed32;
   }
 
@@ -518,7 +555,6 @@ public final class AllTypesPojo {
   }
 
   public List<Integer> getRepSfixed32() {
-    if(this.repSfixed32 == null){this.repSfixed32 = new ArrayList();};
     return this.repSfixed32;
   }
 
@@ -527,7 +563,6 @@ public final class AllTypesPojo {
   }
 
   public List<Long> getRepInt64() {
-    if(this.repInt64 == null){this.repInt64 = new ArrayList();};
     return this.repInt64;
   }
 
@@ -536,7 +571,6 @@ public final class AllTypesPojo {
   }
 
   public List<Long> getRepUint64() {
-    if(this.repUint64 == null){this.repUint64 = new ArrayList();};
     return this.repUint64;
   }
 
@@ -545,7 +579,6 @@ public final class AllTypesPojo {
   }
 
   public List<Long> getRepSint64() {
-    if(this.repSint64 == null){this.repSint64 = new ArrayList();};
     return this.repSint64;
   }
 
@@ -554,7 +587,6 @@ public final class AllTypesPojo {
   }
 
   public List<Long> getRepFixed64() {
-    if(this.repFixed64 == null){this.repFixed64 = new ArrayList();};
     return this.repFixed64;
   }
 
@@ -563,7 +595,6 @@ public final class AllTypesPojo {
   }
 
   public List<Long> getRepSfixed64() {
-    if(this.repSfixed64 == null){this.repSfixed64 = new ArrayList();};
     return this.repSfixed64;
   }
 
@@ -572,7 +603,6 @@ public final class AllTypesPojo {
   }
 
   public List<Boolean> getRepBool() {
-    if(this.repBool == null){this.repBool = new ArrayList();};
     return this.repBool;
   }
 
@@ -581,7 +611,6 @@ public final class AllTypesPojo {
   }
 
   public List<Float> getRepFloat() {
-    if(this.repFloat == null){this.repFloat = new ArrayList();};
     return this.repFloat;
   }
 
@@ -590,7 +619,6 @@ public final class AllTypesPojo {
   }
 
   public List<Double> getRepDouble() {
-    if(this.repDouble == null){this.repDouble = new ArrayList();};
     return this.repDouble;
   }
 
@@ -599,7 +627,6 @@ public final class AllTypesPojo {
   }
 
   public List<String> getRepString() {
-    if(this.repString == null){this.repString = new ArrayList();};
     return this.repString;
   }
 
@@ -608,7 +635,6 @@ public final class AllTypesPojo {
   }
 
   public List<ByteString> getRepBytes() {
-    if(this.repBytes == null){this.repBytes = new ArrayList();};
     return this.repBytes;
   }
 
@@ -617,7 +643,6 @@ public final class AllTypesPojo {
   }
 
   public List<NestedEnum> getRepNestedEnum() {
-    if(this.repNestedEnum == null){this.repNestedEnum = new ArrayList();};
     return this.repNestedEnum;
   }
 
@@ -626,7 +651,6 @@ public final class AllTypesPojo {
   }
 
   public List<NestedMessage> getRepNestedMessage() {
-    if(this.repNestedMessage == null){this.repNestedMessage = new ArrayList();};
     return this.repNestedMessage;
   }
 
@@ -635,7 +659,6 @@ public final class AllTypesPojo {
   }
 
   public Map<Integer, Integer> getMapInt32Int32() {
-    if(this.mapInt32Int32 == null){this.mapInt32Int32 = new HashMap();};
     return this.mapInt32Int32;
   }
 
@@ -644,7 +667,6 @@ public final class AllTypesPojo {
   }
 
   public Map<String, String> getMapStringString() {
-    if(this.mapStringString == null){this.mapStringString = new HashMap();};
     return this.mapStringString;
   }
 
@@ -653,7 +675,6 @@ public final class AllTypesPojo {
   }
 
   public Map<String, NestedMessage> getMapStringMessage() {
-    if(this.mapStringMessage == null){this.mapStringMessage = new HashMap();};
     return this.mapStringMessage;
   }
 
@@ -662,12 +683,150 @@ public final class AllTypesPojo {
   }
 
   public Map<String, NestedEnum> getMapStringEnum() {
-    if(this.mapStringEnum == null){this.mapStringEnum = new HashMap();};
     return this.mapStringEnum;
   }
 
   public void setMapStringEnum(Map<String, NestedEnum> mapStringEnum) {
     this.mapStringEnum=mapStringEnum;
+  }
+
+  @Override
+  public Builder newBuilder() {
+    Builder builder = new Builder();
+    builder.int32 = int32;
+    builder.uint32 = uint32;
+    builder.sint32 = sint32;
+    builder.fixed32 = fixed32;
+    builder.sfixed32 = sfixed32;
+    builder.int64 = int64;
+    builder.uint64 = uint64;
+    builder.sint64 = sint64;
+    builder.fixed64 = fixed64;
+    builder.sfixed64 = sfixed64;
+    builder.bool = bool;
+    builder.float_ = float_;
+    builder.double_ = double_;
+    builder.string = string;
+    builder.bytes = bytes;
+    builder.nestedEnum = nestedEnum;
+    builder.nestedMessage = nestedMessage;
+    builder.repInt32 = Internal.copyOf("repInt32", repInt32);
+    builder.repUint32 = Internal.copyOf("repUint32", repUint32);
+    builder.repSint32 = Internal.copyOf("repSint32", repSint32);
+    builder.repFixed32 = Internal.copyOf("repFixed32", repFixed32);
+    builder.repSfixed32 = Internal.copyOf("repSfixed32", repSfixed32);
+    builder.repInt64 = Internal.copyOf("repInt64", repInt64);
+    builder.repUint64 = Internal.copyOf("repUint64", repUint64);
+    builder.repSint64 = Internal.copyOf("repSint64", repSint64);
+    builder.repFixed64 = Internal.copyOf("repFixed64", repFixed64);
+    builder.repSfixed64 = Internal.copyOf("repSfixed64", repSfixed64);
+    builder.repBool = Internal.copyOf("repBool", repBool);
+    builder.repFloat = Internal.copyOf("repFloat", repFloat);
+    builder.repDouble = Internal.copyOf("repDouble", repDouble);
+    builder.repString = Internal.copyOf("repString", repString);
+    builder.repBytes = Internal.copyOf("repBytes", repBytes);
+    builder.repNestedEnum = Internal.copyOf("repNestedEnum", repNestedEnum);
+    builder.repNestedMessage = Internal.copyOf("repNestedMessage", repNestedMessage);
+    builder.mapInt32Int32 = Internal.copyOf("mapInt32Int32", mapInt32Int32);
+    builder.mapStringString = Internal.copyOf("mapStringString", mapStringString);
+    builder.mapStringMessage = Internal.copyOf("mapStringMessage", mapStringMessage);
+    builder.mapStringEnum = Internal.copyOf("mapStringEnum", mapStringEnum);
+    builder.addUnknownFields(unknownFields());
+    return builder;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == this) return true;
+    if (!(other instanceof AllTypesPojo)) return false;
+    AllTypesPojo o = (AllTypesPojo) other;
+    return unknownFields().equals(o.unknownFields())
+        && Internal.equals(int32, o.int32)
+        && Internal.equals(uint32, o.uint32)
+        && Internal.equals(sint32, o.sint32)
+        && Internal.equals(fixed32, o.fixed32)
+        && Internal.equals(sfixed32, o.sfixed32)
+        && Internal.equals(int64, o.int64)
+        && Internal.equals(uint64, o.uint64)
+        && Internal.equals(sint64, o.sint64)
+        && Internal.equals(fixed64, o.fixed64)
+        && Internal.equals(sfixed64, o.sfixed64)
+        && Internal.equals(bool, o.bool)
+        && Internal.equals(float_, o.float_)
+        && Internal.equals(double_, o.double_)
+        && Internal.equals(string, o.string)
+        && Internal.equals(bytes, o.bytes)
+        && Internal.equals(nestedEnum, o.nestedEnum)
+        && Internal.equals(nestedMessage, o.nestedMessage)
+        && repInt32.equals(o.repInt32)
+        && repUint32.equals(o.repUint32)
+        && repSint32.equals(o.repSint32)
+        && repFixed32.equals(o.repFixed32)
+        && repSfixed32.equals(o.repSfixed32)
+        && repInt64.equals(o.repInt64)
+        && repUint64.equals(o.repUint64)
+        && repSint64.equals(o.repSint64)
+        && repFixed64.equals(o.repFixed64)
+        && repSfixed64.equals(o.repSfixed64)
+        && repBool.equals(o.repBool)
+        && repFloat.equals(o.repFloat)
+        && repDouble.equals(o.repDouble)
+        && repString.equals(o.repString)
+        && repBytes.equals(o.repBytes)
+        && repNestedEnum.equals(o.repNestedEnum)
+        && repNestedMessage.equals(o.repNestedMessage)
+        && mapInt32Int32.equals(o.mapInt32Int32)
+        && mapStringString.equals(o.mapStringString)
+        && mapStringMessage.equals(o.mapStringMessage)
+        && mapStringEnum.equals(o.mapStringEnum);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode;
+    if (result == 0) {
+      result = unknownFields().hashCode();
+      result = result * 37 + (int32 != null ? int32.hashCode() : 0);
+      result = result * 37 + (uint32 != null ? uint32.hashCode() : 0);
+      result = result * 37 + (sint32 != null ? sint32.hashCode() : 0);
+      result = result * 37 + (fixed32 != null ? fixed32.hashCode() : 0);
+      result = result * 37 + (sfixed32 != null ? sfixed32.hashCode() : 0);
+      result = result * 37 + (int64 != null ? int64.hashCode() : 0);
+      result = result * 37 + (uint64 != null ? uint64.hashCode() : 0);
+      result = result * 37 + (sint64 != null ? sint64.hashCode() : 0);
+      result = result * 37 + (fixed64 != null ? fixed64.hashCode() : 0);
+      result = result * 37 + (sfixed64 != null ? sfixed64.hashCode() : 0);
+      result = result * 37 + (bool != null ? bool.hashCode() : 0);
+      result = result * 37 + (float_ != null ? float_.hashCode() : 0);
+      result = result * 37 + (double_ != null ? double_.hashCode() : 0);
+      result = result * 37 + (string != null ? string.hashCode() : 0);
+      result = result * 37 + (bytes != null ? bytes.hashCode() : 0);
+      result = result * 37 + (nestedEnum != null ? nestedEnum.hashCode() : 0);
+      result = result * 37 + (nestedMessage != null ? nestedMessage.hashCode() : 0);
+      result = result * 37 + repInt32.hashCode();
+      result = result * 37 + repUint32.hashCode();
+      result = result * 37 + repSint32.hashCode();
+      result = result * 37 + repFixed32.hashCode();
+      result = result * 37 + repSfixed32.hashCode();
+      result = result * 37 + repInt64.hashCode();
+      result = result * 37 + repUint64.hashCode();
+      result = result * 37 + repSint64.hashCode();
+      result = result * 37 + repFixed64.hashCode();
+      result = result * 37 + repSfixed64.hashCode();
+      result = result * 37 + repBool.hashCode();
+      result = result * 37 + repFloat.hashCode();
+      result = result * 37 + repDouble.hashCode();
+      result = result * 37 + repString.hashCode();
+      result = result * 37 + repBytes.hashCode();
+      result = result * 37 + repNestedEnum.hashCode();
+      result = result * 37 + repNestedMessage.hashCode();
+      result = result * 37 + mapInt32Int32.hashCode();
+      result = result * 37 + mapStringString.hashCode();
+      result = result * 37 + mapStringMessage.hashCode();
+      result = result * 37 + mapStringEnum.hashCode();
+      super.hashCode = result;
+    }
+    return result;
   }
 
   @Override
@@ -714,6 +873,324 @@ public final class AllTypesPojo {
     return builder.replace(0, 2, "AllTypesPojo{").append('}').toString();
   }
 
+  public static final class Builder extends Message.Builder<AllTypesPojo, Builder> {
+    public Integer int32;
+
+    public Integer uint32;
+
+    public Integer sint32;
+
+    public Integer fixed32;
+
+    public Integer sfixed32;
+
+    public Long int64;
+
+    public Long uint64;
+
+    public Long sint64;
+
+    public Long fixed64;
+
+    public Long sfixed64;
+
+    public Boolean bool;
+
+    public Float float_;
+
+    public Double double_;
+
+    public String string;
+
+    public ByteString bytes;
+
+    public NestedEnum nestedEnum;
+
+    public NestedMessage nestedMessage;
+
+    public List<Integer> repInt32;
+
+    public List<Integer> repUint32;
+
+    public List<Integer> repSint32;
+
+    public List<Integer> repFixed32;
+
+    public List<Integer> repSfixed32;
+
+    public List<Long> repInt64;
+
+    public List<Long> repUint64;
+
+    public List<Long> repSint64;
+
+    public List<Long> repFixed64;
+
+    public List<Long> repSfixed64;
+
+    public List<Boolean> repBool;
+
+    public List<Float> repFloat;
+
+    public List<Double> repDouble;
+
+    public List<String> repString;
+
+    public List<ByteString> repBytes;
+
+    public List<NestedEnum> repNestedEnum;
+
+    public List<NestedMessage> repNestedMessage;
+
+    public Map<Integer, Integer> mapInt32Int32;
+
+    public Map<String, String> mapStringString;
+
+    public Map<String, NestedMessage> mapStringMessage;
+
+    public Map<String, NestedEnum> mapStringEnum;
+
+    public Builder() {
+      repInt32 = Internal.newMutableList();
+      repUint32 = Internal.newMutableList();
+      repSint32 = Internal.newMutableList();
+      repFixed32 = Internal.newMutableList();
+      repSfixed32 = Internal.newMutableList();
+      repInt64 = Internal.newMutableList();
+      repUint64 = Internal.newMutableList();
+      repSint64 = Internal.newMutableList();
+      repFixed64 = Internal.newMutableList();
+      repSfixed64 = Internal.newMutableList();
+      repBool = Internal.newMutableList();
+      repFloat = Internal.newMutableList();
+      repDouble = Internal.newMutableList();
+      repString = Internal.newMutableList();
+      repBytes = Internal.newMutableList();
+      repNestedEnum = Internal.newMutableList();
+      repNestedMessage = Internal.newMutableList();
+      mapInt32Int32 = Internal.newMutableMap();
+      mapStringString = Internal.newMutableMap();
+      mapStringMessage = Internal.newMutableMap();
+      mapStringEnum = Internal.newMutableMap();
+    }
+
+    public Builder int32(Integer int32) {
+      this.int32 = int32;
+      return this;
+    }
+
+    public Builder uint32(Integer uint32) {
+      this.uint32 = uint32;
+      return this;
+    }
+
+    public Builder sint32(Integer sint32) {
+      this.sint32 = sint32;
+      return this;
+    }
+
+    public Builder fixed32(Integer fixed32) {
+      this.fixed32 = fixed32;
+      return this;
+    }
+
+    public Builder sfixed32(Integer sfixed32) {
+      this.sfixed32 = sfixed32;
+      return this;
+    }
+
+    public Builder int64(Long int64) {
+      this.int64 = int64;
+      return this;
+    }
+
+    public Builder uint64(Long uint64) {
+      this.uint64 = uint64;
+      return this;
+    }
+
+    public Builder sint64(Long sint64) {
+      this.sint64 = sint64;
+      return this;
+    }
+
+    public Builder fixed64(Long fixed64) {
+      this.fixed64 = fixed64;
+      return this;
+    }
+
+    public Builder sfixed64(Long sfixed64) {
+      this.sfixed64 = sfixed64;
+      return this;
+    }
+
+    public Builder bool(Boolean bool) {
+      this.bool = bool;
+      return this;
+    }
+
+    public Builder float_(Float float_) {
+      this.float_ = float_;
+      return this;
+    }
+
+    public Builder double_(Double double_) {
+      this.double_ = double_;
+      return this;
+    }
+
+    public Builder string(String string) {
+      this.string = string;
+      return this;
+    }
+
+    public Builder bytes(ByteString bytes) {
+      this.bytes = bytes;
+      return this;
+    }
+
+    public Builder nestedEnum(NestedEnum nestedEnum) {
+      this.nestedEnum = nestedEnum;
+      return this;
+    }
+
+    public Builder nestedMessage(NestedMessage nestedMessage) {
+      this.nestedMessage = nestedMessage;
+      return this;
+    }
+
+    public Builder repInt32(List<Integer> repInt32) {
+      Internal.checkElementsNotNull(repInt32);
+      this.repInt32 = repInt32;
+      return this;
+    }
+
+    public Builder repUint32(List<Integer> repUint32) {
+      Internal.checkElementsNotNull(repUint32);
+      this.repUint32 = repUint32;
+      return this;
+    }
+
+    public Builder repSint32(List<Integer> repSint32) {
+      Internal.checkElementsNotNull(repSint32);
+      this.repSint32 = repSint32;
+      return this;
+    }
+
+    public Builder repFixed32(List<Integer> repFixed32) {
+      Internal.checkElementsNotNull(repFixed32);
+      this.repFixed32 = repFixed32;
+      return this;
+    }
+
+    public Builder repSfixed32(List<Integer> repSfixed32) {
+      Internal.checkElementsNotNull(repSfixed32);
+      this.repSfixed32 = repSfixed32;
+      return this;
+    }
+
+    public Builder repInt64(List<Long> repInt64) {
+      Internal.checkElementsNotNull(repInt64);
+      this.repInt64 = repInt64;
+      return this;
+    }
+
+    public Builder repUint64(List<Long> repUint64) {
+      Internal.checkElementsNotNull(repUint64);
+      this.repUint64 = repUint64;
+      return this;
+    }
+
+    public Builder repSint64(List<Long> repSint64) {
+      Internal.checkElementsNotNull(repSint64);
+      this.repSint64 = repSint64;
+      return this;
+    }
+
+    public Builder repFixed64(List<Long> repFixed64) {
+      Internal.checkElementsNotNull(repFixed64);
+      this.repFixed64 = repFixed64;
+      return this;
+    }
+
+    public Builder repSfixed64(List<Long> repSfixed64) {
+      Internal.checkElementsNotNull(repSfixed64);
+      this.repSfixed64 = repSfixed64;
+      return this;
+    }
+
+    public Builder repBool(List<Boolean> repBool) {
+      Internal.checkElementsNotNull(repBool);
+      this.repBool = repBool;
+      return this;
+    }
+
+    public Builder repFloat(List<Float> repFloat) {
+      Internal.checkElementsNotNull(repFloat);
+      this.repFloat = repFloat;
+      return this;
+    }
+
+    public Builder repDouble(List<Double> repDouble) {
+      Internal.checkElementsNotNull(repDouble);
+      this.repDouble = repDouble;
+      return this;
+    }
+
+    public Builder repString(List<String> repString) {
+      Internal.checkElementsNotNull(repString);
+      this.repString = repString;
+      return this;
+    }
+
+    public Builder repBytes(List<ByteString> repBytes) {
+      Internal.checkElementsNotNull(repBytes);
+      this.repBytes = repBytes;
+      return this;
+    }
+
+    public Builder repNestedEnum(List<NestedEnum> repNestedEnum) {
+      Internal.checkElementsNotNull(repNestedEnum);
+      this.repNestedEnum = repNestedEnum;
+      return this;
+    }
+
+    public Builder repNestedMessage(List<NestedMessage> repNestedMessage) {
+      Internal.checkElementsNotNull(repNestedMessage);
+      this.repNestedMessage = repNestedMessage;
+      return this;
+    }
+
+    public Builder mapInt32Int32(Map<Integer, Integer> mapInt32Int32) {
+      Internal.checkElementsNotNull(mapInt32Int32);
+      this.mapInt32Int32 = mapInt32Int32;
+      return this;
+    }
+
+    public Builder mapStringString(Map<String, String> mapStringString) {
+      Internal.checkElementsNotNull(mapStringString);
+      this.mapStringString = mapStringString;
+      return this;
+    }
+
+    public Builder mapStringMessage(Map<String, NestedMessage> mapStringMessage) {
+      Internal.checkElementsNotNull(mapStringMessage);
+      this.mapStringMessage = mapStringMessage;
+      return this;
+    }
+
+    public Builder mapStringEnum(Map<String, NestedEnum> mapStringEnum) {
+      Internal.checkElementsNotNull(mapStringEnum);
+      this.mapStringEnum = mapStringEnum;
+      return this;
+    }
+
+    @Override
+    public AllTypesPojo build() {
+      return new AllTypesPojo(int32, uint32, sint32, fixed32, sfixed32, int64, uint64, sint64, fixed64, sfixed64, bool, float_, double_, string, bytes, nestedEnum, nestedMessage, repInt32, repUint32, repSint32, repFixed32, repSfixed32, repInt64, repUint64, repSint64, repFixed64, repSfixed64, repBool, repFloat, repDouble, repString, repBytes, repNestedEnum, repNestedMessage, mapInt32Int32, mapStringString, mapStringMessage, mapStringEnum, super.buildUnknownFields());
+    }
+  }
+
   public enum NestedEnum implements WireEnum {
     A(0);
 
@@ -739,35 +1216,47 @@ public final class AllTypesPojo {
     public int getValue() {
       return value;
     }
-  }
 
-  public static final class ProtoAdapter_NestedEnum extends EnumAdapter<NestedEnum> {
-    ProtoAdapter_NestedEnum() {
-      super(NestedEnum.class);
-    }
+    private static final class ProtoAdapter_NestedEnum extends EnumAdapter<NestedEnum> {
+      ProtoAdapter_NestedEnum() {
+        super(NestedEnum.class);
+      }
 
-    @Override
-    protected NestedEnum fromValue(int value) {
-      return NestedEnum.fromValue(value);
+      @Override
+      protected NestedEnum fromValue(int value) {
+        return NestedEnum.fromValue(value);
+      }
     }
   }
 
   @RaptorMessage(
       protoFile = "all_types"
   )
-  public static final class NestedMessage {
+  public static final class NestedMessage extends Message<NestedMessage, NestedMessage.Builder> {
     public static final ProtoAdapter<NestedMessage> ADAPTER = new ProtoAdapter_NestedMessage();
 
     private static final long serialVersionUID = 0L;
 
     public static final Integer DEFAULT_A = 0;
 
-    @RaptorField(
-        fieldType = WireFormat.FieldType.INT32,
-        order = 1,
-        name = "a"
+    @WireField(
+        tag = 1,
+        adapter = "com.squareup.wire.ProtoAdapter#INT32"
     )
     private Integer a;
+
+    NestedMessage() {
+      super(ADAPTER, ByteString.EMPTY);
+    }
+
+    public NestedMessage(Integer a) {
+      this(a, ByteString.EMPTY);
+    }
+
+    public NestedMessage(Integer a, ByteString unknownFields) {
+      super(ADAPTER, unknownFields);
+      this.a = a;
+    }
 
     public Integer getA() {
       return this.a;
@@ -778,36 +1267,277 @@ public final class AllTypesPojo {
     }
 
     @Override
+    public Builder newBuilder() {
+      Builder builder = new Builder();
+      builder.a = a;
+      builder.addUnknownFields(unknownFields());
+      return builder;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+      if (other == this) return true;
+      if (!(other instanceof NestedMessage)) return false;
+      NestedMessage o = (NestedMessage) other;
+      return unknownFields().equals(o.unknownFields())
+          && Internal.equals(a, o.a);
+    }
+
+    @Override
+    public int hashCode() {
+      int result = super.hashCode;
+      if (result == 0) {
+        result = unknownFields().hashCode();
+        result = result * 37 + (a != null ? a.hashCode() : 0);
+        super.hashCode = result;
+      }
+      return result;
+    }
+
+    @Override
     public String toString() {
       StringBuilder builder = new StringBuilder();
       if (a != null) builder.append(", a=").append(a);
       return builder.replace(0, 2, "NestedMessage{").append('}').toString();
     }
+
+    public static final class Builder extends Message.Builder<NestedMessage, Builder> {
+      public Integer a;
+
+      public Builder() {
+      }
+
+      public Builder a(Integer a) {
+        this.a = a;
+        return this;
+      }
+
+      @Override
+      public NestedMessage build() {
+        return new NestedMessage(a, super.buildUnknownFields());
+      }
+    }
+
+    private static final class ProtoAdapter_NestedMessage extends ProtoAdapter<NestedMessage> {
+      public ProtoAdapter_NestedMessage() {
+        super(FieldEncoding.LENGTH_DELIMITED, NestedMessage.class);
+      }
+
+      @Override
+      public int encodedSize(NestedMessage value) {
+        return ProtoAdapter.INT32.encodedSizeWithTag(1, value.a)
+            + value.unknownFields().size();
+      }
+
+      @Override
+      public void encode(ProtoWriter writer, NestedMessage value) throws IOException {
+        ProtoAdapter.INT32.encodeWithTag(writer, 1, value.a);
+        writer.writeBytes(value.unknownFields());
+      }
+
+      @Override
+      public NestedMessage decode(ProtoReader reader) throws IOException {
+        Builder builder = new Builder();
+        long token = reader.beginMessage();
+        for (int tag; (tag = reader.nextTag()) != -1;) {
+          switch (tag) {
+            case 1: builder.a(ProtoAdapter.INT32.decode(reader)); break;
+            default: {
+              FieldEncoding fieldEncoding = reader.peekFieldEncoding();
+              Object value = fieldEncoding.rawProtoAdapter().decode(reader);
+              builder.addUnknownField(tag, fieldEncoding, value);
+            }
+          }
+        }
+        reader.endMessage(token);
+        return builder.build();
+      }
+
+      @Override
+      public NestedMessage redact(NestedMessage value) {
+        Builder builder = value.newBuilder();
+        builder.clearUnknownFields();
+        return builder.build();
+      }
+    }
   }
 
-  public static final class ProtoAdapter_NestedMessage extends ProtoAdapter<NestedMessage> {
-    public ProtoAdapter_NestedMessage() {
-      super(FieldEncoding.LENGTH_DELIMITED, NestedMessage.class);
+  private static final class ProtoAdapter_AllTypesPojo extends ProtoAdapter<AllTypesPojo> {
+    private final ProtoAdapter<Map<Integer, Integer>> map_int32_int32 = ProtoAdapter.newMapAdapter(ProtoAdapter.INT32, ProtoAdapter.INT32);
+
+    private final ProtoAdapter<Map<String, String>> map_string_string = ProtoAdapter.newMapAdapter(ProtoAdapter.STRING, ProtoAdapter.STRING);
+
+    private final ProtoAdapter<Map<String, NestedMessage>> map_string_message = ProtoAdapter.newMapAdapter(ProtoAdapter.STRING, NestedMessage.ADAPTER);
+
+    private final ProtoAdapter<Map<String, NestedEnum>> map_string_enum = ProtoAdapter.newMapAdapter(ProtoAdapter.STRING, NestedEnum.ADAPTER);
+
+    public ProtoAdapter_AllTypesPojo() {
+      super(FieldEncoding.LENGTH_DELIMITED, AllTypesPojo.class);
     }
 
-    public int encodedSize(NestedMessage value) {
-      return ProtoAdapter.INT32.encodedSizeWithTag(1, value.getA());
+    @Override
+    public int encodedSize(AllTypesPojo value) {
+      return ProtoAdapter.INT32.encodedSizeWithTag(1, value.int32)
+          + ProtoAdapter.UINT32.encodedSizeWithTag(2, value.uint32)
+          + ProtoAdapter.SINT32.encodedSizeWithTag(3, value.sint32)
+          + ProtoAdapter.FIXED32.encodedSizeWithTag(4, value.fixed32)
+          + ProtoAdapter.SFIXED32.encodedSizeWithTag(5, value.sfixed32)
+          + ProtoAdapter.INT64.encodedSizeWithTag(6, value.int64)
+          + ProtoAdapter.UINT64.encodedSizeWithTag(7, value.uint64)
+          + ProtoAdapter.SINT64.encodedSizeWithTag(8, value.sint64)
+          + ProtoAdapter.FIXED64.encodedSizeWithTag(9, value.fixed64)
+          + ProtoAdapter.SFIXED64.encodedSizeWithTag(10, value.sfixed64)
+          + ProtoAdapter.BOOL.encodedSizeWithTag(11, value.bool)
+          + ProtoAdapter.FLOAT.encodedSizeWithTag(12, value.float_)
+          + ProtoAdapter.DOUBLE.encodedSizeWithTag(13, value.double_)
+          + ProtoAdapter.STRING.encodedSizeWithTag(14, value.string)
+          + ProtoAdapter.BYTES.encodedSizeWithTag(15, value.bytes)
+          + NestedEnum.ADAPTER.encodedSizeWithTag(16, value.nestedEnum)
+          + NestedMessage.ADAPTER.encodedSizeWithTag(17, value.nestedMessage)
+          + ProtoAdapter.INT32.asRepeated().encodedSizeWithTag(201, value.repInt32)
+          + ProtoAdapter.UINT32.asRepeated().encodedSizeWithTag(202, value.repUint32)
+          + ProtoAdapter.SINT32.asRepeated().encodedSizeWithTag(203, value.repSint32)
+          + ProtoAdapter.FIXED32.asRepeated().encodedSizeWithTag(204, value.repFixed32)
+          + ProtoAdapter.SFIXED32.asRepeated().encodedSizeWithTag(205, value.repSfixed32)
+          + ProtoAdapter.INT64.asRepeated().encodedSizeWithTag(206, value.repInt64)
+          + ProtoAdapter.UINT64.asRepeated().encodedSizeWithTag(207, value.repUint64)
+          + ProtoAdapter.SINT64.asRepeated().encodedSizeWithTag(208, value.repSint64)
+          + ProtoAdapter.FIXED64.asRepeated().encodedSizeWithTag(209, value.repFixed64)
+          + ProtoAdapter.SFIXED64.asRepeated().encodedSizeWithTag(210, value.repSfixed64)
+          + ProtoAdapter.BOOL.asRepeated().encodedSizeWithTag(211, value.repBool)
+          + ProtoAdapter.FLOAT.asRepeated().encodedSizeWithTag(212, value.repFloat)
+          + ProtoAdapter.DOUBLE.asRepeated().encodedSizeWithTag(213, value.repDouble)
+          + ProtoAdapter.STRING.asRepeated().encodedSizeWithTag(214, value.repString)
+          + ProtoAdapter.BYTES.asRepeated().encodedSizeWithTag(215, value.repBytes)
+          + NestedEnum.ADAPTER.asRepeated().encodedSizeWithTag(216, value.repNestedEnum)
+          + NestedMessage.ADAPTER.asRepeated().encodedSizeWithTag(217, value.repNestedMessage)
+          + map_int32_int32.encodedSizeWithTag(501, value.mapInt32Int32)
+          + map_string_string.encodedSizeWithTag(502, value.mapStringString)
+          + map_string_message.encodedSizeWithTag(503, value.mapStringMessage)
+          + map_string_enum.encodedSizeWithTag(504, value.mapStringEnum)
+          + value.unknownFields().size();
     }
 
-    public void encode(ProtoWriter writer, NestedMessage value) throws IOException {
-      ProtoAdapter.INT32.encodeWithTag(writer, 1, value.getA());
+    @Override
+    public void encode(ProtoWriter writer, AllTypesPojo value) throws IOException {
+      ProtoAdapter.INT32.encodeWithTag(writer, 1, value.int32);
+      ProtoAdapter.UINT32.encodeWithTag(writer, 2, value.uint32);
+      ProtoAdapter.SINT32.encodeWithTag(writer, 3, value.sint32);
+      ProtoAdapter.FIXED32.encodeWithTag(writer, 4, value.fixed32);
+      ProtoAdapter.SFIXED32.encodeWithTag(writer, 5, value.sfixed32);
+      ProtoAdapter.INT64.encodeWithTag(writer, 6, value.int64);
+      ProtoAdapter.UINT64.encodeWithTag(writer, 7, value.uint64);
+      ProtoAdapter.SINT64.encodeWithTag(writer, 8, value.sint64);
+      ProtoAdapter.FIXED64.encodeWithTag(writer, 9, value.fixed64);
+      ProtoAdapter.SFIXED64.encodeWithTag(writer, 10, value.sfixed64);
+      ProtoAdapter.BOOL.encodeWithTag(writer, 11, value.bool);
+      ProtoAdapter.FLOAT.encodeWithTag(writer, 12, value.float_);
+      ProtoAdapter.DOUBLE.encodeWithTag(writer, 13, value.double_);
+      ProtoAdapter.STRING.encodeWithTag(writer, 14, value.string);
+      ProtoAdapter.BYTES.encodeWithTag(writer, 15, value.bytes);
+      NestedEnum.ADAPTER.encodeWithTag(writer, 16, value.nestedEnum);
+      NestedMessage.ADAPTER.encodeWithTag(writer, 17, value.nestedMessage);
+      ProtoAdapter.INT32.asRepeated().encodeWithTag(writer, 201, value.repInt32);
+      ProtoAdapter.UINT32.asRepeated().encodeWithTag(writer, 202, value.repUint32);
+      ProtoAdapter.SINT32.asRepeated().encodeWithTag(writer, 203, value.repSint32);
+      ProtoAdapter.FIXED32.asRepeated().encodeWithTag(writer, 204, value.repFixed32);
+      ProtoAdapter.SFIXED32.asRepeated().encodeWithTag(writer, 205, value.repSfixed32);
+      ProtoAdapter.INT64.asRepeated().encodeWithTag(writer, 206, value.repInt64);
+      ProtoAdapter.UINT64.asRepeated().encodeWithTag(writer, 207, value.repUint64);
+      ProtoAdapter.SINT64.asRepeated().encodeWithTag(writer, 208, value.repSint64);
+      ProtoAdapter.FIXED64.asRepeated().encodeWithTag(writer, 209, value.repFixed64);
+      ProtoAdapter.SFIXED64.asRepeated().encodeWithTag(writer, 210, value.repSfixed64);
+      ProtoAdapter.BOOL.asRepeated().encodeWithTag(writer, 211, value.repBool);
+      ProtoAdapter.FLOAT.asRepeated().encodeWithTag(writer, 212, value.repFloat);
+      ProtoAdapter.DOUBLE.asRepeated().encodeWithTag(writer, 213, value.repDouble);
+      ProtoAdapter.STRING.asRepeated().encodeWithTag(writer, 214, value.repString);
+      ProtoAdapter.BYTES.asRepeated().encodeWithTag(writer, 215, value.repBytes);
+      NestedEnum.ADAPTER.asRepeated().encodeWithTag(writer, 216, value.repNestedEnum);
+      NestedMessage.ADAPTER.asRepeated().encodeWithTag(writer, 217, value.repNestedMessage);
+      map_int32_int32.encodeWithTag(writer, 501, value.mapInt32Int32);
+      map_string_string.encodeWithTag(writer, 502, value.mapStringString);
+      map_string_message.encodeWithTag(writer, 503, value.mapStringMessage);
+      map_string_enum.encodeWithTag(writer, 504, value.mapStringEnum);
+      writer.writeBytes(value.unknownFields());
     }
 
-    public NestedMessage decode(ProtoReader reader) throws IOException {
-      NestedMessage result = new NestedMessage();
+    @Override
+    public AllTypesPojo decode(ProtoReader reader) throws IOException {
+      Builder builder = new Builder();
       long token = reader.beginMessage();
       for (int tag; (tag = reader.nextTag()) != -1;) {
         switch (tag) {
-          case 1: result.setA(ProtoAdapter.INT32.decode(reader)); break;
+          case 1: builder.int32(ProtoAdapter.INT32.decode(reader)); break;
+          case 2: builder.uint32(ProtoAdapter.UINT32.decode(reader)); break;
+          case 3: builder.sint32(ProtoAdapter.SINT32.decode(reader)); break;
+          case 4: builder.fixed32(ProtoAdapter.FIXED32.decode(reader)); break;
+          case 5: builder.sfixed32(ProtoAdapter.SFIXED32.decode(reader)); break;
+          case 6: builder.int64(ProtoAdapter.INT64.decode(reader)); break;
+          case 7: builder.uint64(ProtoAdapter.UINT64.decode(reader)); break;
+          case 8: builder.sint64(ProtoAdapter.SINT64.decode(reader)); break;
+          case 9: builder.fixed64(ProtoAdapter.FIXED64.decode(reader)); break;
+          case 10: builder.sfixed64(ProtoAdapter.SFIXED64.decode(reader)); break;
+          case 11: builder.bool(ProtoAdapter.BOOL.decode(reader)); break;
+          case 12: builder.float_(ProtoAdapter.FLOAT.decode(reader)); break;
+          case 13: builder.double_(ProtoAdapter.DOUBLE.decode(reader)); break;
+          case 14: builder.string(ProtoAdapter.STRING.decode(reader)); break;
+          case 15: builder.bytes(ProtoAdapter.BYTES.decode(reader)); break;
+          case 16: {
+            try {
+              builder.nestedEnum(NestedEnum.ADAPTER.decode(reader));
+            } catch (EnumConstantNotFoundException e) {
+              builder.addUnknownField(tag, FieldEncoding.VARINT, (long) e.value);
+            }
+            break;
+          }
+          case 17: builder.nestedMessage(NestedMessage.ADAPTER.decode(reader)); break;
+          case 201: builder.repInt32.add(ProtoAdapter.INT32.decode(reader)); break;
+          case 202: builder.repUint32.add(ProtoAdapter.UINT32.decode(reader)); break;
+          case 203: builder.repSint32.add(ProtoAdapter.SINT32.decode(reader)); break;
+          case 204: builder.repFixed32.add(ProtoAdapter.FIXED32.decode(reader)); break;
+          case 205: builder.repSfixed32.add(ProtoAdapter.SFIXED32.decode(reader)); break;
+          case 206: builder.repInt64.add(ProtoAdapter.INT64.decode(reader)); break;
+          case 207: builder.repUint64.add(ProtoAdapter.UINT64.decode(reader)); break;
+          case 208: builder.repSint64.add(ProtoAdapter.SINT64.decode(reader)); break;
+          case 209: builder.repFixed64.add(ProtoAdapter.FIXED64.decode(reader)); break;
+          case 210: builder.repSfixed64.add(ProtoAdapter.SFIXED64.decode(reader)); break;
+          case 211: builder.repBool.add(ProtoAdapter.BOOL.decode(reader)); break;
+          case 212: builder.repFloat.add(ProtoAdapter.FLOAT.decode(reader)); break;
+          case 213: builder.repDouble.add(ProtoAdapter.DOUBLE.decode(reader)); break;
+          case 214: builder.repString.add(ProtoAdapter.STRING.decode(reader)); break;
+          case 215: builder.repBytes.add(ProtoAdapter.BYTES.decode(reader)); break;
+          case 216: {
+            try {
+              builder.repNestedEnum.add(NestedEnum.ADAPTER.decode(reader));
+            } catch (EnumConstantNotFoundException e) {
+              builder.addUnknownField(tag, FieldEncoding.VARINT, (long) e.value);
+            }
+            break;
+          }
+          case 217: builder.repNestedMessage.add(NestedMessage.ADAPTER.decode(reader)); break;
+          case 501: builder.mapInt32Int32.putAll(map_int32_int32.decode(reader)); break;
+          case 502: builder.mapStringString.putAll(map_string_string.decode(reader)); break;
+          case 503: builder.mapStringMessage.putAll(map_string_message.decode(reader)); break;
+          case 504: builder.mapStringEnum.putAll(map_string_enum.decode(reader)); break;
+          default: {
+            FieldEncoding fieldEncoding = reader.peekFieldEncoding();
+            Object value = fieldEncoding.rawProtoAdapter().decode(reader);
+            builder.addUnknownField(tag, fieldEncoding, value);
+          }
         }
       }
       reader.endMessage(token);
-      return result;
+      return builder.build();
+    }
+
+    @Override
+    public AllTypesPojo redact(AllTypesPojo value) {
+      Builder builder = value.newBuilder();
+      if (builder.nestedMessage != null) builder.nestedMessage = NestedMessage.ADAPTER.redact(builder.nestedMessage);
+      Internal.redactElements(builder.repNestedMessage, NestedMessage.ADAPTER);
+      Internal.redactElements(builder.mapStringMessage, NestedMessage.ADAPTER);
+      builder.clearUnknownFields();
+      return builder.build();
     }
   }
 }

@@ -8,7 +8,6 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.wire.schema.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,15 +48,13 @@ public class JavaGeneratorTest {
         Type type = schema.getType("com.ppdai.raptor.codegen2.test.GetRandomStringQuery");
         ClassName javaTypeName = javaGenerator.generatedTypeName(type);
         ProtoFile protoFile = schema.protoFile("com/ppdai/raptor/codegen2/test/TestService1.proto");
-        Pair<TypeSpec, TypeSpec> typeSpecTypeSpecPair = javaGenerator.generateType(protoFile, type);
-        TypeSpec typeSpec =  typeSpecTypeSpecPair.getKey();
+        TypeSpec typeSpec = javaGenerator.generateType(protoFile, type);
         String cs = typeSpec.toString();
 
         Assert.assertTrue(StringUtils.isNotBlank(cs));
         System.out.println(cs);
 
-        writeJavaFile(javaTypeName,typeSpec,type.location().withPathOnly());
-        writeJavaFile(javaTypeName,typeSpecTypeSpecPair.getKey(),type.location().withPathOnly());
+        writeJavaFile(javaTypeName, typeSpec, type.location().withPathOnly());
 
     }
 
@@ -72,13 +69,14 @@ public class JavaGeneratorTest {
                 .withProfile(profile);
         Service service = schema.getService("com.ppdai.raptor.codegen2.test.TestService");
 
-        TypeSpec typeSpec = javaGenerator.generateService(schema.protoFile("com/ppdai/raptor/codegen2/test/TestService1.proto"),service);
-        ClassName typeName = (ClassName)javaGenerator.typeName(service.type());
+        TypeSpec typeSpec = javaGenerator.generateService(schema.protoFile("com/ppdai/raptor/codegen2/test/TestService1.proto"), service);
+        ClassName typeName = (ClassName) javaGenerator.typeName(service.type());
         System.out.println(typeSpec.toString());
 
-        writeJavaFile(typeName,typeSpec,service.location().withPathOnly());
+        writeJavaFile(typeName, typeSpec, service.location().withPathOnly());
 
     }
+
     @Test
     public void testGenerateAll() throws IOException {
         JavaGenerator javaGenerator = JavaGenerator.get(schema)
@@ -87,16 +85,14 @@ public class JavaGeneratorTest {
         for (ProtoFile protoFile : schema.protoFiles()) {
             for (Type type : protoFile.types()) {
                 ClassName javaTypeName = javaGenerator.generatedTypeName(type);
-                Pair<TypeSpec, TypeSpec> typeSpecTypeSpecPair = javaGenerator.generateType(protoFile, type);
-                TypeSpec typeSpec =  typeSpecTypeSpecPair.getKey();
-                writeJavaFile(javaTypeName,typeSpec,type.location().withPathOnly());
-                writeJavaFile(javaTypeName,typeSpecTypeSpecPair.getValue(),type.location().withPathOnly());
+                TypeSpec typeSpec = javaGenerator.generateType(protoFile, type);
+                writeJavaFile(javaTypeName, typeSpec, type.location().withPathOnly());
             }
 
             for (Service service : protoFile.services()) {
-                TypeSpec typeSpec = javaGenerator.generateService(protoFile,service);
-                ClassName typeName = (ClassName)javaGenerator.typeName(service.type());
-                writeJavaFile(typeName,typeSpec,service.location().withPathOnly());
+                TypeSpec typeSpec = javaGenerator.generateService(protoFile, service);
+                ClassName typeName = (ClassName) javaGenerator.typeName(service.type());
+                writeJavaFile(typeName, typeSpec, service.location().withPathOnly());
             }
         }
 

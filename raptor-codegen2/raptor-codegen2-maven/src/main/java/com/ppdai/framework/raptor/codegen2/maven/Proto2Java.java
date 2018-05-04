@@ -6,7 +6,6 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.wire.schema.*;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -18,7 +17,6 @@ import org.apache.maven.project.MavenProject;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -65,7 +63,7 @@ public class Proto2Java extends AbstractMojo {
 
             List<String> directories = protoPaths != null && protoPaths.length > 0
                     ? Arrays.asList(protoPaths)
-                    : Lists.newArrayList(protoSourceDirectory,raptorLocation);
+                    : Lists.newArrayList(protoSourceDirectory, raptorLocation);
 
             //load schema
             SchemaLoader schemaLoader = new SchemaLoader();
@@ -85,10 +83,8 @@ public class Proto2Java extends AbstractMojo {
             for (ProtoFile protoFile : schema.protoFiles()) {
                 for (Type type : protoFile.types()) {
                     ClassName javaTypeName = javaGenerator.generatedTypeName(type);
-                    Pair<TypeSpec, TypeSpec> typeSpecTypeSpecPair = javaGenerator.generateType(protoFile, type);
-                    TypeSpec typeSpec = typeSpecTypeSpecPair.getKey();
+                    TypeSpec typeSpec = javaGenerator.generateType(protoFile, type);
                     writeJavaFile(javaTypeName, typeSpec, type.location().withPathOnly());
-                    writeJavaFile(javaTypeName, typeSpecTypeSpecPair.getValue(), type.location().withPathOnly());
                 }
 
                 for (Service service : protoFile.services()) {

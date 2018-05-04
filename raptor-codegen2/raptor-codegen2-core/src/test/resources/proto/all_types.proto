@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package com.ppdai.framework.raptor.proto;
 option java_outer_classname = "AlltypesProtos";
-message AllTypes {
+message AllTypesPojo {
     enum NestedEnum {
         A = 0;
     }

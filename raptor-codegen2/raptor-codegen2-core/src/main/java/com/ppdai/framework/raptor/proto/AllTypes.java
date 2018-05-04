@@ -5,20 +5,32 @@ package com.ppdai.framework.raptor.proto;
 import com.google.protobuf.WireFormat;
 import com.ppdai.framework.raptor.annotation.RaptorField;
 import com.ppdai.framework.raptor.annotation.RaptorMessage;
-import com.squareup.wire.*;
-import okio.ByteString;
-
+import com.squareup.wire.EnumAdapter;
+import com.squareup.wire.FieldEncoding;
+import com.squareup.wire.ProtoAdapter;
+import com.squareup.wire.ProtoReader;
+import com.squareup.wire.ProtoWriter;
+import com.squareup.wire.WireEnum;
 import java.io.IOException;
+import java.lang.Boolean;
+import java.lang.Double;
+import java.lang.Float;
+import java.lang.Integer;
+import java.lang.Long;
+import java.lang.Override;
+import java.lang.String;
+import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import okio.ByteString;
 
 @RaptorMessage(
     protoFile = "all_types"
 )
-public final class AllTypesPojo {
-  public static final ProtoAdapter<AllTypesPojo> ADAPTER = new ProtoAdapter_AllTypesPojo();
+public final class AllTypes {
+  public static final ProtoAdapter<AllTypes> ADAPTER = new ProtoAdapter_AllTypes();
 
   private static final long serialVersionUID = 0L;
 
@@ -711,7 +723,7 @@ public final class AllTypesPojo {
     if (!mapStringString.isEmpty()) builder.append(", map_string_string=").append(mapStringString);
     if (!mapStringMessage.isEmpty()) builder.append(", map_string_message=").append(mapStringMessage);
     if (!mapStringEnum.isEmpty()) builder.append(", map_string_enum=").append(mapStringEnum);
-    return builder.replace(0, 2, "AllTypesPojo{").append('}').toString();
+    return builder.replace(0, 2, "AllTypes{").append('}').toString();
   }
 
   public enum NestedEnum implements WireEnum {

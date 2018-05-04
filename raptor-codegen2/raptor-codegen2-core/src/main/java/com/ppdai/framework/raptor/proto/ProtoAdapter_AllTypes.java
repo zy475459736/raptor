@@ -6,26 +6,27 @@ import com.squareup.wire.FieldEncoding;
 import com.squareup.wire.ProtoAdapter;
 import com.squareup.wire.ProtoReader;
 import com.squareup.wire.ProtoWriter;
-
 import java.io.IOException;
+import java.lang.Integer;
+import java.lang.String;
 import java.util.Map;
 
-public final class ProtoAdapter_AllTypesPojo
-        extends ProtoAdapter<AllTypesPojo>
+public final class ProtoAdapter_AllTypes
+        extends ProtoAdapter<AllTypes>
 {
   private final ProtoAdapter<Map<Integer, Integer>> map_int32_int32 = ProtoAdapter.newMapAdapter(ProtoAdapter.INT32, ProtoAdapter.INT32);
 
   private final ProtoAdapter<Map<String, String>> map_string_string = ProtoAdapter.newMapAdapter(ProtoAdapter.STRING, ProtoAdapter.STRING);
 
-  private final ProtoAdapter<Map<String, AllTypesPojo.NestedMessage>> map_string_message = ProtoAdapter.newMapAdapter(ProtoAdapter.STRING, AllTypesPojo.NestedMessage.ADAPTER);
+  private final ProtoAdapter<Map<String, AllTypes.NestedMessage>> map_string_message = ProtoAdapter.newMapAdapter(ProtoAdapter.STRING, AllTypes.NestedMessage.ADAPTER);
 
-  private final ProtoAdapter<Map<String, AllTypesPojo.NestedEnum>> map_string_enum = ProtoAdapter.newMapAdapter(ProtoAdapter.STRING, AllTypesPojo.NestedEnum.ADAPTER);
+  private final ProtoAdapter<Map<String, AllTypes.NestedEnum>> map_string_enum = ProtoAdapter.newMapAdapter(ProtoAdapter.STRING, AllTypes.NestedEnum.ADAPTER);
 
-  public ProtoAdapter_AllTypesPojo() {
-    super(FieldEncoding.LENGTH_DELIMITED, AllTypesPojo.class);
+  public ProtoAdapter_AllTypes() {
+    super(FieldEncoding.LENGTH_DELIMITED, AllTypes.class);
   }
 
-  public int encodedSize(AllTypesPojo value) {
+  public int encodedSize(AllTypes value) {
     return ProtoAdapter.INT32.encodedSizeWithTag(1, value.getInt32())
         + ProtoAdapter.UINT32.encodedSizeWithTag(2, value.getUint32())
         + ProtoAdapter.SINT32.encodedSizeWithTag(3, value.getSint32())
@@ -41,8 +42,8 @@ public final class ProtoAdapter_AllTypesPojo
         + ProtoAdapter.DOUBLE.encodedSizeWithTag(13, value.getDouble_())
         + ProtoAdapter.STRING.encodedSizeWithTag(14, value.getString())
         + ProtoAdapter.BYTES.encodedSizeWithTag(15, value.getBytes())
-        + AllTypesPojo.NestedEnum.ADAPTER.encodedSizeWithTag(16, value.getNestedEnum())
-        + AllTypesPojo.NestedMessage.ADAPTER.encodedSizeWithTag(17, value.getNestedMessage())
+        + AllTypes.NestedEnum.ADAPTER.encodedSizeWithTag(16, value.getNestedEnum())
+        + AllTypes.NestedMessage.ADAPTER.encodedSizeWithTag(17, value.getNestedMessage())
         + ProtoAdapter.INT32.asRepeated().encodedSizeWithTag(201, value.getRepInt32())
         + ProtoAdapter.UINT32.asRepeated().encodedSizeWithTag(202, value.getRepUint32())
         + ProtoAdapter.SINT32.asRepeated().encodedSizeWithTag(203, value.getRepSint32())
@@ -58,15 +59,15 @@ public final class ProtoAdapter_AllTypesPojo
         + ProtoAdapter.DOUBLE.asRepeated().encodedSizeWithTag(213, value.getRepDouble())
         + ProtoAdapter.STRING.asRepeated().encodedSizeWithTag(214, value.getRepString())
         + ProtoAdapter.BYTES.asRepeated().encodedSizeWithTag(215, value.getRepBytes())
-        + AllTypesPojo.NestedEnum.ADAPTER.asRepeated().encodedSizeWithTag(216, value.getRepNestedEnum())
-        + AllTypesPojo.NestedMessage.ADAPTER.asRepeated().encodedSizeWithTag(217, value.getRepNestedMessage())
+        + AllTypes.NestedEnum.ADAPTER.asRepeated().encodedSizeWithTag(216, value.getRepNestedEnum())
+        + AllTypes.NestedMessage.ADAPTER.asRepeated().encodedSizeWithTag(217, value.getRepNestedMessage())
         + map_int32_int32.encodedSizeWithTag(501, value.getMapInt32Int32())
         + map_string_string.encodedSizeWithTag(502, value.getMapStringString())
         + map_string_message.encodedSizeWithTag(503, value.getMapStringMessage())
         + map_string_enum.encodedSizeWithTag(504, value.getMapStringEnum());
   }
 
-  public void encode(ProtoWriter writer, AllTypesPojo value) throws IOException {
+  public void encode(ProtoWriter writer, AllTypes value) throws IOException {
     ProtoAdapter.INT32.encodeWithTag(writer, 1, value.getInt32());
     ProtoAdapter.UINT32.encodeWithTag(writer, 2, value.getUint32());
     ProtoAdapter.SINT32.encodeWithTag(writer, 3, value.getSint32());
@@ -82,8 +83,8 @@ public final class ProtoAdapter_AllTypesPojo
     ProtoAdapter.DOUBLE.encodeWithTag(writer, 13, value.getDouble_());
     ProtoAdapter.STRING.encodeWithTag(writer, 14, value.getString());
     ProtoAdapter.BYTES.encodeWithTag(writer, 15, value.getBytes());
-    AllTypesPojo.NestedEnum.ADAPTER.encodeWithTag(writer, 16, value.getNestedEnum());
-    AllTypesPojo.NestedMessage.ADAPTER.encodeWithTag(writer, 17, value.getNestedMessage());
+    AllTypes.NestedEnum.ADAPTER.encodeWithTag(writer, 16, value.getNestedEnum());
+    AllTypes.NestedMessage.ADAPTER.encodeWithTag(writer, 17, value.getNestedMessage());
     ProtoAdapter.INT32.asRepeated().encodeWithTag(writer, 201, value.getRepInt32());
     ProtoAdapter.UINT32.asRepeated().encodeWithTag(writer, 202, value.getRepUint32());
     ProtoAdapter.SINT32.asRepeated().encodeWithTag(writer, 203, value.getRepSint32());
@@ -99,16 +100,16 @@ public final class ProtoAdapter_AllTypesPojo
     ProtoAdapter.DOUBLE.asRepeated().encodeWithTag(writer, 213, value.getRepDouble());
     ProtoAdapter.STRING.asRepeated().encodeWithTag(writer, 214, value.getRepString());
     ProtoAdapter.BYTES.asRepeated().encodeWithTag(writer, 215, value.getRepBytes());
-    AllTypesPojo.NestedEnum.ADAPTER.asRepeated().encodeWithTag(writer, 216, value.getRepNestedEnum());
-    AllTypesPojo.NestedMessage.ADAPTER.asRepeated().encodeWithTag(writer, 217, value.getRepNestedMessage());
+    AllTypes.NestedEnum.ADAPTER.asRepeated().encodeWithTag(writer, 216, value.getRepNestedEnum());
+    AllTypes.NestedMessage.ADAPTER.asRepeated().encodeWithTag(writer, 217, value.getRepNestedMessage());
     map_int32_int32.encodeWithTag(writer, 501, value.getMapInt32Int32());
     map_string_string.encodeWithTag(writer, 502, value.getMapStringString());
     map_string_message.encodeWithTag(writer, 503, value.getMapStringMessage());
     map_string_enum.encodeWithTag(writer, 504, value.getMapStringEnum());
   }
 
-  public AllTypesPojo decode(ProtoReader reader) throws IOException {
-    AllTypesPojo result = new AllTypesPojo();
+  public AllTypes decode(ProtoReader reader) throws IOException {
+    AllTypes result = new AllTypes();
     long token = reader.beginMessage();
     for (int tag; (tag = reader.nextTag()) != -1;) {
       switch (tag) {
@@ -129,12 +130,12 @@ public final class ProtoAdapter_AllTypesPojo
         case 15: result.setBytes(ProtoAdapter.BYTES.decode(reader)); break;
         case 16: {
           try {
-            result.setNestedEnum(AllTypesPojo.NestedEnum.ADAPTER.decode(reader));
-          } catch (EnumConstantNotFoundException e) {
+            result.setNestedEnum(AllTypes.NestedEnum.ADAPTER.decode(reader));
+          } catch (ProtoAdapter.EnumConstantNotFoundException e) {
           }
           break;
         }
-        case 17: result.setNestedMessage(AllTypesPojo.NestedMessage.ADAPTER.decode(reader)); break;
+        case 17: result.setNestedMessage(AllTypes.NestedMessage.ADAPTER.decode(reader)); break;
         case 201: result.getRepInt32().add(ProtoAdapter.INT32.decode(reader)); break;
         case 202: result.getRepUint32().add(ProtoAdapter.UINT32.decode(reader)); break;
         case 203: result.getRepSint32().add(ProtoAdapter.SINT32.decode(reader)); break;
@@ -152,12 +153,12 @@ public final class ProtoAdapter_AllTypesPojo
         case 215: result.getRepBytes().add(ProtoAdapter.BYTES.decode(reader)); break;
         case 216: {
           try {
-            result.getRepNestedEnum().add(AllTypesPojo.NestedEnum.ADAPTER.decode(reader));
-          } catch (EnumConstantNotFoundException e) {
+            result.getRepNestedEnum().add(AllTypes.NestedEnum.ADAPTER.decode(reader));
+          } catch (ProtoAdapter.EnumConstantNotFoundException e) {
           }
           break;
         }
-        case 217: result.getRepNestedMessage().add(AllTypesPojo.NestedMessage.ADAPTER.decode(reader)); break;
+        case 217: result.getRepNestedMessage().add(AllTypes.NestedMessage.ADAPTER.decode(reader)); break;
         case 501: result.getMapInt32Int32().putAll(map_int32_int32.decode(reader)); break;
         case 502: result.getMapStringString().putAll(map_string_string.decode(reader)); break;
         case 503: result.getMapStringMessage().putAll(map_string_message.decode(reader)); break;

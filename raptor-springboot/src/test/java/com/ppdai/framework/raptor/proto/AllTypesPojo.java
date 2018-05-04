@@ -315,6 +315,10 @@ public final class AllTypesPojo extends Message<AllTypesPojo, AllTypesPojo.Build
   )
   private Map<String, NestedEnum> mapStringEnum;
 
+  AllTypesPojo() {
+    super(ADAPTER, ByteString.EMPTY);
+  }
+
   public AllTypesPojo(Integer int32, Integer uint32, Integer sint32, Integer fixed32,
       Integer sfixed32, Long int64, Long uint64, Long sint64, Long fixed64, Long sfixed64,
       Boolean bool, Float float_, Double double_, String string, ByteString bytes,
@@ -1240,6 +1244,10 @@ public final class AllTypesPojo extends Message<AllTypesPojo, AllTypesPojo.Build
         adapter = "com.squareup.wire.ProtoAdapter#INT32"
     )
     private Integer a;
+
+    NestedMessage() {
+      super(ADAPTER, ByteString.EMPTY);
+    }
 
     public NestedMessage(Integer a) {
       this(a, ByteString.EMPTY);

@@ -566,6 +566,7 @@ public final class JavaGenerator {
             builder.addMethod(buildSetMethod(fieldJavaType, fieldName));
         }
 
+        builder.addMethod(noArgumentConstructor(nameAllocator));
         builder.addMethod(messageFieldsConstructor(nameAllocator, type));
         builder.addMethod(messageFieldsAndUnknownFieldsConstructor(nameAllocator, type));
 
@@ -590,6 +591,14 @@ public final class JavaGenerator {
         }
 
         return builder.build();
+    }
+
+    private MethodSpec noArgumentConstructor(NameAllocator nameAllocator) {
+        MethodSpec.Builder result = MethodSpec.constructorBuilder();
+        NameAllocator localNameAllocator = nameAllocator.clone();
+        String adapterName = localNameAllocator.get("ADAPTER");
+        result.addStatement("super($N, $T.EMPTY)", adapterName, BYTE_STRING);
+        return result.build();
     }
 
     private MethodSpec buildSetMethod(TypeName fieldJavaType, String fieldName) {

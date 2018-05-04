@@ -57,7 +57,10 @@
             <groupId>com.squareup.wire</groupId>
             <artifactId>wire-runtime</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.squareup.wire</groupId>
+            <artifactId>wire-gson-support</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

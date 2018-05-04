@@ -33,6 +33,11 @@
             </dependency>
 
             <dependency>
+                <groupId>com.squareup.wire</groupId>
+                <artifactId>wire-gson-support</artifactId>
+                <version>2.3.0-RC1</version>
+            </dependency>
+            <dependency>
                 <groupId>com.ppdai.framework</groupId>
                 <artifactId>raptor-core</artifactId>
                 <version>${project.version}</version>

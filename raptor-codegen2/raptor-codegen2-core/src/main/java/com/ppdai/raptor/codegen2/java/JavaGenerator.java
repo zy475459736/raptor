@@ -595,6 +595,7 @@ public final class JavaGenerator {
 
     private MethodSpec noArgumentConstructor(NameAllocator nameAllocator) {
         MethodSpec.Builder result = MethodSpec.constructorBuilder();
+        result.addModifiers(PUBLIC);
         NameAllocator localNameAllocator = nameAllocator.clone();
         String adapterName = localNameAllocator.get("ADAPTER");
         result.addStatement("super($N, $T.EMPTY)", adapterName, BYTE_STRING);

@@ -18,7 +18,7 @@ public class MessageMetaInfo {
     private ProtoFileMetaInfo protoFileMetaInfo;
 
 
-    public static MessageMetaInfo readFrom(ProtoFile protoFile,MessageType messageType){
+    public static MessageMetaInfo readFrom(ProtoFile protoFile, MessageType messageType) {
         ProtoFileMetaInfo protoFileMetaInfo = ProtoFileMetaInfo.readFrom(protoFile);
         String summary = OptionUtil.readSummary(messageType.documentation());
 
@@ -28,12 +28,12 @@ public class MessageMetaInfo {
                 .build();
     }
 
-    public AnnotationSpec generateMessageSpec(){
+    public AnnotationSpec generateMessageSpec() {
         AnnotationSpec.Builder builder = AnnotationSpec.builder(RaptorMessage.class);
-        OptionUtil.setAnnotationMember(builder,"version","$S",protoFileMetaInfo.getVersion());
-        OptionUtil.setAnnotationMember(builder,"protoFile","$S",protoFileMetaInfo.getProtoFile());
-        OptionUtil.setAnnotationMember(builder,"crc32","$S",protoFileMetaInfo.getCrc32());
-        OptionUtil.setAnnotationMember(builder,"summary","$S",summary);
+        OptionUtil.setAnnotationMember(builder, "version", "$S", protoFileMetaInfo.getVersion());
+        OptionUtil.setAnnotationMember(builder, "protoFile", "$S", protoFileMetaInfo.getProtoFile());
+        OptionUtil.setAnnotationMember(builder, "crc32", "$S", protoFileMetaInfo.getCrc32());
+        OptionUtil.setAnnotationMember(builder, "summary", "$S", summary);
         return builder.build();
     }
 }

@@ -22,7 +22,7 @@ import java.io.IOException;
  * @author zhangchengxi
  * Date 2018/4/26
  */
-public class JavaGerneratorTest {
+public class JavaGeneratorTest {
 
     private static final String PROTO_FILE_DIR = "src/test/resources/proto";
     private static final String GENERATED_SOURCE_DIR = "target/generated-sources/annotations";
@@ -72,7 +72,7 @@ public class JavaGerneratorTest {
                 .withProfile(profile);
         Service service = schema.getService("com.ppdai.raptor.codegen2.test.TestService");
 
-        TypeSpec typeSpec = javaGenerator.generateService(null,service);
+        TypeSpec typeSpec = javaGenerator.generateService(schema.protoFile("com/ppdai/raptor/codegen2/test/TestService1.proto"),service);
         ClassName typeName = (ClassName)javaGenerator.typeName(service.type());
         System.out.println(typeSpec.toString());
 

@@ -2,6 +2,7 @@ package com.ppdai.raptor.codegen2.java.option;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.ppdai.framework.raptor.annotation.RaptorMethod;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.wire.schema.Options;
@@ -10,11 +11,9 @@ import com.squareup.wire.schema.Rpc;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -31,9 +30,11 @@ public class MethodMetaInfo {
     private static final String PATH_STR = "path";
     private static final String METHOD_STR = "method";
     private static final String PARAMS_STR = "pathParamTypes";
+    private static final String PATH_PARAMS_STR = "requestParams";
     private static final ProtoMember PATH = ProtoMember.get(METHOD_OPTIONS, PATH_STR);
     private static final ProtoMember METHOD = ProtoMember.get(METHOD_OPTIONS, METHOD_STR);
     private static final ProtoMember PARAM_TYPES = ProtoMember.get(METHOD_OPTIONS, PARAMS_STR);
+    private static final ProtoMember PATH_PARAMS = ProtoMember.get(METHOD_OPTIONS, PATH_PARAMS_STR);
 
     private static Pattern PATH_PARAM_PATTERN = Pattern.compile("\\{(.*?)}");
 
@@ -41,6 +42,7 @@ public class MethodMetaInfo {
     private String path;
     private List<PathParam> pathParams;
     private Method method;
+    private Map<String, String> requestParams;
     private String summary;
 
     public static MethodMetaInfo readFrom(Rpc rpc) {
@@ -51,14 +53,43 @@ public class MethodMetaInfo {
         String paramTypesStr = OptionUtil.readStringOption(options, PARAM_TYPES);
         String summary = OptionUtil.readSummary(rpc.documentation());
         List<PathParam> pathParams = buildPathParams(path, paramTypesStr);
+        String requestParamsStr = OptionUtil.readStringOption(options, PATH_PARAMS);
+        Map<String, String> requestParams = buildRequestParams(requestParamsStr);
+
 
         return MethodMetaInfo.builder()
                 .path(path)
                 .method(Method.get(method))
                 .pathParams(pathParams)
+                .requestParams(requestParams)
                 .summary(summary)
                 .build();
     }
+
+    private static Map<String, String> buildRequestParams(String requestParamsStr) {
+        if (Objects.isNull(requestParamsStr)) {
+            return Maps.newHashMap();
+        }
+
+        List<String> requestParamPairs
+                = Arrays.stream(requestParamsStr.split(","))
+                .map(String::trim)
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toList());
+
+        HashMap<String, String> requestParams = Maps.newHashMap();
+        for (String requestParamPair : requestParamPairs) {
+            int location = requestParamPair.indexOf("=");
+            if (location <= 0 || location >= requestParamPair.length()-1) {
+                throw new RuntimeException("illegal requestParams :" + requestParamsStr);
+            }
+            requestParams.put(requestParamPair.substring(0,location),requestParamPair.substring(location+1));
+
+        }
+        return requestParams;
+
+    }
+
 
     private static List<PathParam> buildPathParams(String path, String paramTypesStr) {
         List<String> pathParamNames = getPathParams(path);
@@ -89,7 +120,7 @@ public class MethodMetaInfo {
     }
 
     private static List<String> getPathParams(String path) {
-        if(Objects.isNull(path)){
+        if (Objects.isNull(path)) {
             return Lists.newArrayList();
         }
         Matcher matcher = PATH_PARAM_PATTERN.matcher(path);
@@ -103,7 +134,7 @@ public class MethodMetaInfo {
 
     public AnnotationSpec generateRaptorMethod() {
         AnnotationSpec.Builder builder = AnnotationSpec.builder(RaptorMethod.class);
-        OptionUtil.setAnnotationMember(builder,"summary", "$S", summary);
+        OptionUtil.setAnnotationMember(builder, "summary", "$S", summary);
         return builder.build();
 
     }

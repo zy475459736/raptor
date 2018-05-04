@@ -25,6 +25,7 @@ public class RaptorMessageConverter extends AbstractHttpMessageConverter<Object>
     public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
     public static final MediaType PROTOBUF = new MediaType("application", "x-protobuf", DEFAULT_CHARSET);
 
+    //TODO 增加json序列化器
     private final Gson gson = new GsonBuilder()
 //            .registerTypeAdapterFactory(new RaptorTypeAdapterFactory())
             .disableHtmlEscaping()
@@ -36,8 +37,8 @@ public class RaptorMessageConverter extends AbstractHttpMessageConverter<Object>
 
     @Override
     @SuppressWarnings("unchecked")
-    protected void writeInternal(Object o, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-        if (o == null) {
+    protected void writeInternal(Object obj, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+        if (obj == null) {
             return;
         }
         MediaType contentType = outputMessage.getHeaders().getContentType();
@@ -50,10 +51,12 @@ public class RaptorMessageConverter extends AbstractHttpMessageConverter<Object>
         }
 
         if (MediaType.APPLICATION_JSON.isCompatibleWith(contentType)) {
-            gson.toJson(o, new OutputStreamWriter(outputMessage.getBody(), charset));
+            OutputStreamWriter writer = new OutputStreamWriter(outputMessage.getBody(), charset);
+            gson.toJson(obj, writer);
+            writer.flush();
         } else {
-            ProtoAdapter protoAdapter = ProtoAdapter.get(o.getClass());
-            protoAdapter.encode(outputMessage.getBody(), o);
+            ProtoAdapter protoAdapter = ProtoAdapter.get(obj.getClass());
+            protoAdapter.encode(outputMessage.getBody(), obj);
         }
     }
 

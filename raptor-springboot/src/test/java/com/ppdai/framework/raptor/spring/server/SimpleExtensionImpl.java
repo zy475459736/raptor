@@ -2,10 +2,14 @@ package com.ppdai.framework.raptor.spring.server;
 
 import com.ppdai.framework.raptor.proto.AllTypesPojo;
 import com.ppdai.framework.raptor.proto.SimpleExtension;
+import lombok.Data;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +32,19 @@ public class SimpleExtensionImpl implements SimpleExtension {
         return map;
     }
 
+    @RequestMapping(value = "/test3", method = RequestMethod.POST)
+    public Map<String, String> test3(User user) {
+        Map<String, String> map = new HashMap<>();
+        map.put("a", "123");
+        return map;
+    }
+
+    @Data
+    public static class User {
+        private String name;
+        private int age;
+    }
+
     @Override
     public AllTypesPojo testGet1(AllTypesPojo request) {
         return request;
@@ -45,7 +62,13 @@ public class SimpleExtensionImpl implements SimpleExtension {
 
     @Override
     public AllTypesPojo testPost2(AllTypesPojo request, String p1, @PathVariable("p2") int p2) {
-        return new AllTypesPojo();
+        AllTypesPojo newObject = new AllTypesPojo();
+        newObject.setString("ddd");
+        newObject.setInt32(222);
+        newObject.setRepBool(Arrays.asList(true, false, false));
+        newObject.setDouble_(222.0);
+        newObject.setMapInt32Int32(MapUtils.putAll(new HashMap<>(), new Integer[]{1, 2, 3, 4}));
+        return newObject;
     }
 
     @Override

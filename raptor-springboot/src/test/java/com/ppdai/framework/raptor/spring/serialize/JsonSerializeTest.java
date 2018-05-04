@@ -3,6 +3,7 @@ package com.ppdai.framework.raptor.spring.serialize;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ppdai.framework.raptor.proto.AllTypesPojo;
+import com.squareup.wire.WireTypeAdapterFactory;
 import org.junit.Test;
 
 /**
@@ -11,7 +12,7 @@ import org.junit.Test;
 public class JsonSerializeTest {
 
     private final Gson gson = new GsonBuilder()
-//            .registerTypeAdapterFactory(new RaptorTypeAdapterFactory())
+            .registerTypeAdapterFactory(new WireTypeAdapterFactory())
             .disableHtmlEscaping()
             .create();
 

@@ -1,5 +1,19 @@
-# 详细参考文档
-请参考[wiki](http://git.ppdaicorp.com/foundation-framework/raptor/wikis/home)
+
+[![Build Status](https://travis-ci.org/ppdai-incubator/raptor.svg?branch=master)](https://travis-ci.org/ppdai-incubator/raptor)
+[![Coverage Status](https://coveralls.io/repos/github/ppdai-incubator/raptor/badge.svg)](https://coveralls.io/github/ppdai-incubator/raptor)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+# ![](docs/wiki/assets/logo.png)Raptor
+拍拍贷微服务rpc框架
+
+1. 契约驱动(Contract-First)开发模式，采用protobuf契约，自动生成服务器端接口和客户端代码
+2. 基于HTTP协议，一套框架同时覆盖内部服务开发和对外开放场景
+3. 同时支持JSON和二进制序列化协议
+4. RPC/REST混合模式，既可以使用客户端以RPC/HTTP/Binary方式调用，也可以通过浏览器以REST/HTTP/JSON方式调用
+5. 支持多种强类型客户端自动生成，Java/C#/Python/iOS/Android...
+6. 设计实现简单轻量，依赖少，可以和Spring(Boot)无缝集成
+
+**详细参考文档请参考 [wiki](https://github.com/ppdai-incubator/raptor/wiki)**
 
 # 拍拍贷微服务体系
 

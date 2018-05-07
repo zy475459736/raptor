@@ -30,6 +30,7 @@ public class TypeFormatUtil {
         DEFAULT_TYPE_PROPERTY.put("google.protobuf.Value", new ObjectProperty());
         DEFAULT_TYPE_PROPERTY.put("google.protobuf.ListValue", new ObjectProperty());
         DEFAULT_TYPE_PROPERTY.put("google.protobuf.Duration", new StringProperty());
+        DEFAULT_TYPE_PROPERTY.put("google.protobuf.Any", new ObjectProperty());
 
     }
 

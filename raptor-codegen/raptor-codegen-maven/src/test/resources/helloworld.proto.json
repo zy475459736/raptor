@@ -1,6 +1,7 @@
 {
   "swagger" : "2.0",
   "info" : {
+    "description" : "",
     "version" : "version not set",
     "title" : "helloworld.proto"
   },
@@ -39,7 +40,8 @@
     "com.ppdai.framework.raptor.proto.ResultOuterClass.Result" : {
       "properties" : {
         "url" : {
-          "type" : "string"
+          "type" : "string",
+          "description" : "field comment\n"
         },
         "title" : {
           "type" : "string"
@@ -78,7 +80,8 @@
     "Helloworld.HelloRequest" : {
       "properties" : {
         "name" : {
-          "type" : "string"
+          "type" : "string",
+          "description" : " hello name\n"
         },
         "corpus" : {
           "$ref" : "#/definitions/Helloworld.HelloRequest.Corpus"

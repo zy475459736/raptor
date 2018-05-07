@@ -4,6 +4,8 @@ import com.google.protobuf.DescriptorProtos;
 import com.ppdai.framework.raptor.codegen.core.constant.ProtobufConstant;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 /**
  * Created by zhangyicong on 18-2-27.
  */
@@ -12,6 +14,8 @@ public class FieldType extends AbstractType{
     private DescriptorProtos.FieldDescriptorProto.Label label;
     private DescriptorProtos.FieldDescriptorProto.Type type;
     private String typeName;
+    private List<Integer> path;
+
 
 
     public String getMessage() {
@@ -49,5 +53,13 @@ public class FieldType extends AbstractType{
 
     public String getTypeName() {
         return typeName;
+    }
+
+    public List<Integer> getPath() {
+        return path;
+    }
+
+    public void setPath(List<Integer> path) {
+        this.path = path;
     }
 }

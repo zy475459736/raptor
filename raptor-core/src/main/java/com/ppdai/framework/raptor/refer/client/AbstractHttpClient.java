@@ -125,26 +125,21 @@ public abstract class AbstractHttpClient implements Client {
     }
 
     protected String buildPath(Request request, URL serviceUrl) {
-        String basePath = RaptorConstants.PATH_SEPARATOR;
-        boolean isConfigBasePath = false;
-        String basePath1 = formatPath(serviceUrl.getPath());
-        if (StringUtils.isNotBlank(basePath1)) {
-            isConfigBasePath = true;
-            basePath += basePath1 + RaptorConstants.PATH_SEPARATOR;
-        }
+        String basePath = formatPath(serviceUrl.getPath()) + RaptorConstants.PATH_SEPARATOR;
+
         if (serviceUrl.hasParameter(URLParamType.basePath.name())) {
-            isConfigBasePath = true;
-            String basePath2 = formatPath(serviceUrl.getParameter(URLParamType.basePath.name()));
-            if (StringUtils.isNotBlank(basePath2)) {
-                basePath += basePath2 + RaptorConstants.PATH_SEPARATOR;
+            String basePathFromParameter = formatPath(serviceUrl.getParameter(URLParamType.basePath.name()));
+            if (StringUtils.isNotBlank(basePathFromParameter)) {
+                basePath += basePathFromParameter + RaptorConstants.PATH_SEPARATOR;
             }
-        }
-        if (!isConfigBasePath) {
-            //basePath没有配置，用默认值
+        } else {
             basePath += URLParamType.basePath.getValue() + RaptorConstants.PATH_SEPARATOR;
         }
         String path = basePath + request.getInterfaceName() + RaptorConstants.PATH_SEPARATOR;
         path += request.getMethodName();
+        if (!path.startsWith(RaptorConstants.PATH_SEPARATOR)) {
+            path = RaptorConstants.PATH_SEPARATOR + path;
+        }
         return path;
     }
 
@@ -156,7 +151,7 @@ public abstract class AbstractHttpClient implements Client {
      */
     private String formatPath(String path) {
         if (StringUtils.isBlank(path)) {
-            return path;
+            return "";
         }
         StringUtils.removeStart(path, RaptorConstants.PATH_SEPARATOR);
         StringUtils.removeEnd(path, RaptorConstants.PATH_SEPARATOR);

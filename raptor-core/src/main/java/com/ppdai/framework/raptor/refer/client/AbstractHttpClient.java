@@ -125,22 +125,41 @@ public abstract class AbstractHttpClient implements Client {
     }
 
     protected String buildPath(Request request, URL serviceUrl) {
-        //前面加上'/'
-        String path = serviceUrl.getPath();
-        if (StringUtils.isBlank(path)) {
-            path = "";
+        String basePath = RaptorConstants.PATH_SEPARATOR;
+        boolean isConfigBasePath = false;
+        String basePath1 = formatPath(serviceUrl.getPath());
+        if (StringUtils.isNotBlank(basePath1)) {
+            isConfigBasePath = true;
+            basePath += basePath1 + RaptorConstants.PATH_SEPARATOR;
         }
-        if (!StringUtils.startsWith(path, RaptorConstants.PATH_SEPARATOR)) {
-            path = RaptorConstants.PATH_SEPARATOR + path;
+        if (serviceUrl.hasParameter(URLParamType.basePath.name())) {
+            isConfigBasePath = true;
+            String basePath2 = formatPath(serviceUrl.getParameter(URLParamType.basePath.name()));
+            if (StringUtils.isNotBlank(basePath2)) {
+                basePath += basePath2 + RaptorConstants.PATH_SEPARATOR;
+            }
         }
-        //后面加上'/'
-        if (!StringUtils.endsWith(path, RaptorConstants.PATH_SEPARATOR)) {
-            path += RaptorConstants.PATH_SEPARATOR;
+        if (!isConfigBasePath) {
+            //basePath没有配置，用默认值
+            basePath += URLParamType.basePath.getValue() + RaptorConstants.PATH_SEPARATOR;
         }
-        String basePath = serviceUrl.getParameter(URLParamType.basePath.getName(), URLParamType.basePath.getValue());
-        path += basePath + RaptorConstants.PATH_SEPARATOR;
-        path += request.getInterfaceName() + RaptorConstants.PATH_SEPARATOR;
+        String path = basePath + request.getInterfaceName() + RaptorConstants.PATH_SEPARATOR;
         path += request.getMethodName();
+        return path;
+    }
+
+    /**
+     * 去掉前后的/
+     *
+     * @param path
+     * @return
+     */
+    private String formatPath(String path) {
+        if (StringUtils.isBlank(path)) {
+            return path;
+        }
+        StringUtils.removeStart(path, RaptorConstants.PATH_SEPARATOR);
+        StringUtils.removeEnd(path, RaptorConstants.PATH_SEPARATOR);
         return path;
     }
 

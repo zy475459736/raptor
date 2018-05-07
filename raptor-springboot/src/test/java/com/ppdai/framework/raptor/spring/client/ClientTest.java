@@ -58,7 +58,7 @@ public class ClientTest {
             simple3.sayHello(helloRequest);
         } catch (Exception e) {
             String s = path.get();
-            Assert.assertEquals("http://test1.ppdai.com/context/raptor/com.ppdai.framework.raptor.proto.Simple/sayHello", s);
+            Assert.assertEquals("http://test1.ppdai.com/context/com.ppdai.framework.raptor.proto.Simple/sayHello", s);
         }
     }
 

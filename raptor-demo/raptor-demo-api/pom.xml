@@ -27,17 +27,12 @@
         <plugins>
             <plugin>
                 <groupId>com.ppdai.framework</groupId>
-                <artifactId>raptor-codegen-maven</artifactId>
+                <artifactId>raptor-codegen2-maven</artifactId>
                 <version>${project.version}</version>
-                <configuration>
-                    <includeStdTypes>true</includeStdTypes>
-                    <releaseUrl>http://maven.repo.ppdai.com/nexus/content/groups/public/</releaseUrl>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>proto2java</goal>
-                            <goal>proto2swagger</goal>
                         </goals>
                     </execution>
                 </executions>

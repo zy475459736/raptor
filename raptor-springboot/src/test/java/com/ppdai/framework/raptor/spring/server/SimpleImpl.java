@@ -7,7 +7,6 @@ import com.ppdai.framework.raptor.spring.aop.AopAnnotation1;
 import com.ppdai.framework.raptor.spring.aop.AopAnnotation2;
 import org.apache.commons.lang3.RandomUtils;
 
-import javax.transaction.Transactional;
 
 @RaptorService
 public class SimpleImpl implements Simple {

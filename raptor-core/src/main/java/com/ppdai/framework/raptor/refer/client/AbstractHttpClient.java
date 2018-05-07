@@ -125,16 +125,22 @@ public abstract class AbstractHttpClient implements Client {
     }
 
     protected String buildPath(Request request, URL serviceUrl) {
-        //前后的'/'去掉
-        String path = StringUtils.removeStart(serviceUrl.getPath(), RaptorConstants.PATH_SEPARATOR);
-        path = StringUtils.removeEnd(path, RaptorConstants.PATH_SEPARATOR);
-
-        if (StringUtils.isBlank(path)) {
-            path = URLParamType.basePath.getValue() + RaptorConstants.PATH_SEPARATOR + request.getInterfaceName();
-        }
         //前面加上'/'
-        path = RaptorConstants.PATH_SEPARATOR + path + RaptorConstants.PATH_SEPARATOR + request.getMethodName();
-
+        String path = serviceUrl.getPath();
+        if (StringUtils.isBlank(path)) {
+            path = "";
+        }
+        if (!StringUtils.startsWith(path, RaptorConstants.PATH_SEPARATOR)) {
+            path = RaptorConstants.PATH_SEPARATOR + path;
+        }
+        //后面加上'/'
+        if (!StringUtils.endsWith(path, RaptorConstants.PATH_SEPARATOR)) {
+            path += RaptorConstants.PATH_SEPARATOR;
+        }
+        String basePath = serviceUrl.getParameter(URLParamType.basePath.getName(), URLParamType.basePath.getValue());
+        path += basePath + RaptorConstants.PATH_SEPARATOR;
+        path += request.getInterfaceName() + RaptorConstants.PATH_SEPARATOR;
+        path += request.getMethodName();
         return path;
     }
 

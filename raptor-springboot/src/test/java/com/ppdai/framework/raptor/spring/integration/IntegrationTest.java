@@ -21,6 +21,9 @@ public class IntegrationTest {
     @RaptorClient
     private Simple simple1;
 
+    @RaptorClient(url = "http://localhost:8080/context")
+    private Simple simple3;
+
     @Test
     public void testRpcCall() {
         Helloworld.HelloRequest helloRequest = Helloworld.HelloRequest.newBuilder().setName("ppdai").build();

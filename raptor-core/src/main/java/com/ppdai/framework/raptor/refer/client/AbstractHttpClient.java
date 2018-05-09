@@ -125,16 +125,36 @@ public abstract class AbstractHttpClient implements Client {
     }
 
     protected String buildPath(Request request, URL serviceUrl) {
-        //前后的'/'去掉
-        String path = StringUtils.removeStart(serviceUrl.getPath(), RaptorConstants.PATH_SEPARATOR);
-        path = StringUtils.removeEnd(path, RaptorConstants.PATH_SEPARATOR);
+        String basePath = formatPath(serviceUrl.getPath()) + RaptorConstants.PATH_SEPARATOR;
 
-        if (StringUtils.isBlank(path)) {
-            path = URLParamType.basePath.getValue() + RaptorConstants.PATH_SEPARATOR + request.getInterfaceName();
+        if (serviceUrl.hasParameter(URLParamType.basePath.name())) {
+            String basePathFromParameter = formatPath(serviceUrl.getParameter(URLParamType.basePath.name()));
+            if (StringUtils.isNotBlank(basePathFromParameter)) {
+                basePath += basePathFromParameter + RaptorConstants.PATH_SEPARATOR;
+            }
+        } else {
+            basePath += URLParamType.basePath.getValue() + RaptorConstants.PATH_SEPARATOR;
         }
-        //前面加上'/'
-        path = RaptorConstants.PATH_SEPARATOR + path + RaptorConstants.PATH_SEPARATOR + request.getMethodName();
+        String path = basePath + request.getInterfaceName() + RaptorConstants.PATH_SEPARATOR;
+        path += request.getMethodName();
+        if (!path.startsWith(RaptorConstants.PATH_SEPARATOR)) {
+            path = RaptorConstants.PATH_SEPARATOR + path;
+        }
+        return path;
+    }
 
+    /**
+     * 去掉前后的/
+     *
+     * @param path
+     * @return
+     */
+    private String formatPath(String path) {
+        if (StringUtils.isBlank(path)) {
+            return "";
+        }
+        StringUtils.removeStart(path, RaptorConstants.PATH_SEPARATOR);
+        StringUtils.removeEnd(path, RaptorConstants.PATH_SEPARATOR);
         return path;
     }
 

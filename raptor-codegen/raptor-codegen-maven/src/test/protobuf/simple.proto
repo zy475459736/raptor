@@ -1,3 +1,4 @@
+// comment on syntax
 syntax = "proto3";
 
 package com.ppdai.framework.raptor.proto.test;

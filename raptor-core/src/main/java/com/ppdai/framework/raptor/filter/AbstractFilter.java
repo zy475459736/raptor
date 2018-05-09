@@ -14,15 +14,24 @@ import static com.ppdai.framework.raptor.common.ParamNameConstants.HOST_SERVER;
 public class AbstractFilter {
 
     protected String getClientHost(Request request) {
-        return request.getAttachments().get(HOST_CLIENT);
+        if (request != null && request.getAttachments() != null) {
+            return request.getAttachments().get(HOST_CLIENT);
+        }
+        return null;
     }
 
     protected String getServerHost(Response response) {
-        return response.getAttachments().get(HOST_SERVER);
+        if (response != null && response.getAttachments() != null) {
+            return response.getAttachments().get(HOST_SERVER);
+        }
+        return null;
     }
 
     protected String getInterfaceVersion(URL serviceUrl) {
-        return serviceUrl.getVersion();
+        if (serviceUrl != null) {
+            return serviceUrl.getVersion();
+        }
+        return null;
     }
 
     protected String getAppId() {

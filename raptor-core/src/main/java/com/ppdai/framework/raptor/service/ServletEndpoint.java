@@ -68,12 +68,12 @@ public class ServletEndpoint extends HttpServlet implements Endpoint {
                 transportResponse(request, response, httpRequest, httpResponse);
             }
         } catch (Exception e) {
-            transportException(e, response, httpRequest, httpResponse);
             if (request != null) {
                 log.error("Raptor request error, request={}", request, e);
             } else {
                 log.error("Raptor request error.", e);
             }
+            transportException(e, response, httpRequest, httpResponse);
         }
     }
 

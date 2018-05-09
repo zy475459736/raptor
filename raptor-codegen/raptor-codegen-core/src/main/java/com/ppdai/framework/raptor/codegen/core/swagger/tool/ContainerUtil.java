@@ -12,15 +12,15 @@ import com.ppdai.framework.raptor.codegen.core.swagger.type.FieldType;
 import com.ppdai.framework.raptor.codegen.core.swagger.type.MessageType;
 import com.ppdai.framework.raptor.codegen.core.swagger.type.Type;
 import com.ppdai.framework.raptor.codegen.core.utils.Utils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 /**
@@ -87,11 +87,32 @@ public class ContainerUtil {
     public static MessageContainer addMessages(DescriptorProtos.FileDescriptorProto fdp,
                                                MetaContainer metaContainer) {
 
-        MessageContainer messageContainer = metaContainer.getMessageContainer();
 
-        addMessageProto(messageContainer, fdp.getPackage(), getClassName(fdp), null, fdp.getMessageTypeList());
+        MessageContainer messageContainer = new MessageContainer();
 
-        return messageContainer;
+        addMessageProto(messageContainer, fdp.getPackage(), getClassName(fdp), null, fdp.getMessageTypeList(),null);
+
+        appendComment(messageContainer,fdp);
+
+        metaContainer.getMessageContainer().merge(messageContainer);
+
+        return metaContainer.getMessageContainer();
+    }
+
+    private static void appendComment(MessageContainer messageContainer, DescriptorProtos.FileDescriptorProto fdp) {
+        List<DescriptorProtos.SourceCodeInfo.Location> locationList = fdp.getSourceCodeInfo().getLocationList();
+        Map<List<Integer>, DescriptorProtos.SourceCodeInfo.Location> locationMap = locationList.stream()
+                .collect(Collectors.toMap(DescriptorProtos.SourceCodeInfo.Location::getPathList, Function.identity(),(u1,u2)->u1));
+
+        for (MessageType messageType : messageContainer.getMessageTypeList()) {
+            for (FieldType fieldType : messageType.getFieldTypeList()) {
+                DescriptorProtos.SourceCodeInfo.Location location = locationMap.get(fieldType.getPath());
+                if(Objects.nonNull(location)){
+                    String leadingComments = location.getLeadingComments();
+                    fieldType.setLeadingComment(leadingComments);
+                }
+            }
+        }
     }
 
     private static String getClassName(DescriptorProtos.FileDescriptorProto fdp) {
@@ -116,12 +137,26 @@ public class ContainerUtil {
                                         String packageName,
                                         String className,
                                         String parent,
-                                        List<DescriptorProtos.DescriptorProto> dpList) {
-        for (DescriptorProtos.DescriptorProto dp : dpList) {
-            messageContainer.addMessageProto(packageName, className, parent, dp);
+                                        List<DescriptorProtos.DescriptorProto> dpList,
+                                        List<Integer> parentPath) {
+
+
+        for (int i = 0; i < dpList.size(); i++) {
+            List<Integer>  currentPath;
+            if(CollectionUtils.isEmpty(parentPath)){
+                currentPath =Lists.newArrayList(DescriptorProtosTagNumbers.FileDescriptorProto.MESSAGETYPE);
+            }else{
+                currentPath = new ArrayList<>(parentPath);
+                currentPath.add(DescriptorProtosTagNumbers.DescriptorProto.NESTED_TYPE);
+            }
+            currentPath.add(i);
+
+            DescriptorProtos.DescriptorProto dp = dpList.get(i);
+            messageContainer.addMessageProto(packageName, className, parent, dp,currentPath);
             addMessageProto(messageContainer, packageName, className, (parent != null ? parent + "." : "") + dp.getName(),
-                    dp.getNestedTypeList());
+                    dp.getNestedTypeList(),currentPath);
         }
+
     }
 
     public static void addServices(DescriptorProtos.FileDescriptorProto fdp, MetaContainer metaContainer) {

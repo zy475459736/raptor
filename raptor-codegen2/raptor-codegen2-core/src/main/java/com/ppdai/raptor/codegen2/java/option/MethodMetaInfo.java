@@ -67,7 +67,7 @@ public class MethodMetaInfo {
     }
 
     private static Map<String, String> buildRequestParams(List<String> requestParamsStr) {
-        if (CollectionUtils.isNotEmpty(requestParamsStr)) {
+        if (CollectionUtils.isEmpty(requestParamsStr)) {
             return Maps.newHashMap();
         }
 

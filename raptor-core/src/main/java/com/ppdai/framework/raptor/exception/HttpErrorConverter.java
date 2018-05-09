@@ -30,7 +30,7 @@ public class HttpErrorConverter {
 
         ErrorProto.ErrorMessage errorMessage = ErrorProto.ErrorMessage.newBuilder()
                 .setCode(RaptorMessageConstant.SERVICE_DEFAULT_ERROR_CODE)
-                .setMessage(e.getMessage()).build();
+                .setMessage(e.getMessage() == null ? e.toString() : e.getMessage()).build();
 
         if (e instanceof ExceptionAttachment) {
             Map<String, String> attachments = ((ExceptionAttachment) e).getAttachments();

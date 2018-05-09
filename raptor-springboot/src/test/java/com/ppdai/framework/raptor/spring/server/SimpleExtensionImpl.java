@@ -46,7 +46,7 @@ public class SimpleExtensionImpl implements SimpleExtension {
     }
 
     @Override
-    public AllTypesPojo testGet1(AllTypesPojo request) {
+    public AllTypesPojo testGet1(AllTypesPojo request, String p1) {
         return request;
     }
 
@@ -56,7 +56,7 @@ public class SimpleExtensionImpl implements SimpleExtension {
     }
 
     @Override
-    public AllTypesPojo testPost1(AllTypesPojo request) {
+    public AllTypesPojo testPost1(AllTypesPojo request, String p1) {
         return request;
     }
 
@@ -72,7 +72,7 @@ public class SimpleExtensionImpl implements SimpleExtension {
     }
 
     @Override
-    public AllTypesPojo testPut1(AllTypesPojo request) {
+    public AllTypesPojo testPut1(AllTypesPojo request, String p1) {
         return request;
     }
 

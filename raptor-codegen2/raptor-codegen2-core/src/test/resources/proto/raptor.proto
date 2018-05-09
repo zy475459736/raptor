@@ -14,8 +14,8 @@ extend google.protobuf.ServiceOptions {
 extend google.protobuf.MethodOptions {
     string method = 62001;
     string path = 62002;
-    string pathParamTypes = 62003;
-    string requestParams = 62004;
+    repeated string pathParam= 62003;
+    repeated string requestParam = 62004;
 }
 
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * @author yinzuolong
  */
-@RaptorInterface(appId = "10010001", appName = "demo", version = "1.0")
+@RaptorInterface(appId = "10010001", appName = "demo", version = "1.0", library = "spring")
 @RequestMapping("/test")
 public interface SimpleExtension {
 

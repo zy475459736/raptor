@@ -107,7 +107,7 @@ public class URL {
     }
 
     public boolean isValid() {
-        return StringUtils.isNoneBlank(this.host);
+        return StringUtils.isNotBlank(this.host);
     }
 
     public URL createCopy() {

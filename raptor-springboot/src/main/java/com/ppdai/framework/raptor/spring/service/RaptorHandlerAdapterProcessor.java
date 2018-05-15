@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.autoconfig.service;
+package com.ppdai.framework.raptor.spring.service;
 
 import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
 import lombok.extern.slf4j.Slf4j;

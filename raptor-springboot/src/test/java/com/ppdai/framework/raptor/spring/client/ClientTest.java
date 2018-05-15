@@ -1,6 +1,7 @@
 package com.ppdai.framework.raptor.spring.client;
 
 import com.ppdai.framework.raptor.proto.Simple;
+import com.ppdai.framework.raptor.proto.SimpleExtension;
 import com.ppdai.framework.raptor.spring.TestApplication;
 import com.ppdai.framework.raptor.spring.annotation.RaptorClient;
 import org.junit.Assert;
@@ -23,6 +24,9 @@ public class ClientTest {
 
     @RaptorClient(url = "${simple2}")
     private Simple simple2;
+
+    @RaptorClient
+    private SimpleExtension simpleExtension;
 
     @Test
     public void testInit() {

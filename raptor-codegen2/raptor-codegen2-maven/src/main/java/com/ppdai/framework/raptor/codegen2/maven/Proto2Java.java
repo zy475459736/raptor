@@ -47,7 +47,7 @@ public class Proto2Java extends AbstractMojo {
     private String generatedSourceDirectory;
 
     @Parameter(
-            defaultValue = "project",
+            defaultValue = "${project}",
             required = true,
             readonly = true)
     private MavenProject project;

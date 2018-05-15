@@ -13,8 +13,6 @@ option (version) = "version.0.1";
 
 service TestService{
 
-    option (servicePath) = "/servicePath";
-
     /* asdfghhjk */
     rpc getRandomString (GetRandomStringQuery) returns (RandomStringResponse) {
         option (method) = "get";
@@ -23,8 +21,10 @@ service TestService{
     rpc SlowResponder (GetRandomStringQuery) returns (RandomStringResponse) {
         option (method) = "get";
         option (path) = "/test/{id}/{name}";
-        option (pathParamTypes) = "int,string";
-        option (requestParams) = "gender=bool,age=int";
+        option (pathParam) = "id=int";
+        option (pathParam) = "name=string";
+        option (requestParam) = "gender=bool";
+        option (requestParam) = "age=int";
     }
     rpc SetHealthCheckStatus (SetHealthCheckStatusCommand) returns (SetHealthCheckStatusResponse) {
         option (path) = "/test/{name}/{gender}";

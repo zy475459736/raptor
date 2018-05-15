@@ -29,11 +29,11 @@ import static com.squareup.wire.schema.Options.METHOD_OPTIONS;
 public class MethodMetaInfo {
     private static final String PATH_STR = "path";
     private static final String METHOD_STR = "method";
-    private static final String PARAMS_STR = "pathParamTypes";
-    private static final String PATH_PARAMS_STR = "requestParams";
+    private static final String PARAMS_STR = "pathParam";
+    private static final String PATH_PARAMS_STR = "requestParam";
     private static final ProtoMember PATH = ProtoMember.get(METHOD_OPTIONS, PATH_STR);
     private static final ProtoMember METHOD = ProtoMember.get(METHOD_OPTIONS, METHOD_STR);
-    private static final ProtoMember PARAM_TYPES = ProtoMember.get(METHOD_OPTIONS, PARAMS_STR);
+    private static final ProtoMember REQUEST_PARAMS = ProtoMember.get(METHOD_OPTIONS, PARAMS_STR);
     private static final ProtoMember PATH_PARAMS = ProtoMember.get(METHOD_OPTIONS, PATH_PARAMS_STR);
 
     private static Pattern PATH_PARAM_PATTERN = Pattern.compile("\\{(.*?)}");
@@ -50,10 +50,10 @@ public class MethodMetaInfo {
 
         String path = OptionUtil.readStringOption(options, PATH);
         String method = OptionUtil.readStringOption(options, METHOD);
-        String paramTypesStr = OptionUtil.readStringOption(options, PARAM_TYPES);
+        List<String> paramTypesStr = OptionUtil.readStringList(options, REQUEST_PARAMS);
         String summary = OptionUtil.readSummary(rpc.documentation());
-        List<PathParam> pathParams = buildPathParams(path, paramTypesStr);
-        String requestParamsStr = OptionUtil.readStringOption(options, PATH_PARAMS);
+        List<PathParam> pathParams = buildPathParams(paramTypesStr);
+        List<String> requestParamsStr = OptionUtil.readStringList(options, PATH_PARAMS);
         Map<String, String> requestParams = buildRequestParams(requestParamsStr);
 
 
@@ -66,13 +66,13 @@ public class MethodMetaInfo {
                 .build();
     }
 
-    private static Map<String, String> buildRequestParams(String requestParamsStr) {
-        if (Objects.isNull(requestParamsStr)) {
+    private static Map<String, String> buildRequestParams(List<String> requestParamsStr) {
+        if (CollectionUtils.isEmpty(requestParamsStr)) {
             return Maps.newHashMap();
         }
 
         List<String> requestParamPairs
-                = Arrays.stream(requestParamsStr.split(","))
+                = requestParamsStr.stream()
                 .map(String::trim)
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList());
@@ -80,10 +80,10 @@ public class MethodMetaInfo {
         HashMap<String, String> requestParams = Maps.newHashMap();
         for (String requestParamPair : requestParamPairs) {
             int location = requestParamPair.indexOf("=");
-            if (location <= 0 || location >= requestParamPair.length()-1) {
+            if (location <= 0 || location >= requestParamPair.length() - 1) {
                 throw new RuntimeException("illegal requestParams :" + requestParamsStr);
             }
-            requestParams.put(requestParamPair.substring(0,location),requestParamPair.substring(location+1));
+            requestParams.put(requestParamPair.substring(0, location), requestParamPair.substring(location + 1));
 
         }
         return requestParams;
@@ -91,45 +91,26 @@ public class MethodMetaInfo {
     }
 
 
-    private static List<PathParam> buildPathParams(String path, String paramTypesStr) {
-        List<String> pathParamNames = getPathParams(path);
+    private static List<PathParam> buildPathParams(List<String> paramParams) {
 
         List<String> types;
-        if (Objects.isNull(paramTypesStr)) {
+        if (CollectionUtils.isEmpty(paramParams)) {
             types = Lists.newArrayList();
         } else {
-            types = Arrays.stream(paramTypesStr.split(","))
+            types = paramParams.stream()
                     .map(String::trim)
                     .collect(Collectors.toList());
         }
-
         ImmutableList.Builder<PathParam> builder = ImmutableList.builder();
-        if (CollectionUtils.isEmpty(types)) {
-            for (String pathParamName : pathParamNames) {
-                builder.add(new PathParam(pathParamName, "string"));
+        for (String type : types) {
+            int location = type.indexOf("=");
+            if (location <= 0 || location >= type.length() - 1) {
+                throw new RuntimeException("illegal requestParams :" + type);
             }
-        } else if (pathParamNames.size() == types.size()) {
-            for (int i = 0; i < pathParamNames.size(); i++) {
-                builder.add(new PathParam(pathParamNames.get(i), types.get(i)));
-            }
-        } else {
-            throw new RuntimeException("path param number is not equal to type number,path:" + path + ",type:" + paramTypesStr);
+            PathParam pathParam = new PathParam(type.substring(0, location), type.substring(location + 1));
+            builder.add(pathParam);
         }
-
         return builder.build();
-    }
-
-    private static List<String> getPathParams(String path) {
-        if (Objects.isNull(path)) {
-            return Lists.newArrayList();
-        }
-        Matcher matcher = PATH_PARAM_PATTERN.matcher(path);
-        ArrayList<String> result = Lists.newArrayList();
-        while (matcher.find()) {
-            String group = matcher.group(1);
-            result.add(group);
-        }
-        return result;
     }
 
     public AnnotationSpec generateRaptorMethod() {

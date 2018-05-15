@@ -32,6 +32,7 @@ import com.squareup.wire.ProtoAdapter.EnumConstantNotFoundException;
 import com.squareup.wire.internal.Internal;
 import com.squareup.wire.schema.*;
 import okio.ByteString;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -566,7 +567,10 @@ public final class JavaGenerator {
             builder.addMethod(buildSetMethod(fieldJavaType, fieldName));
         }
 
-        builder.addMethod(noArgumentConstructor(nameAllocator));
+        //防止产生两个无参构造函数
+        if(CollectionUtils.isNotEmpty(type.fieldsAndOneOfFields())){
+            builder.addMethod(noArgumentConstructor(nameAllocator));
+        }
         builder.addMethod(messageFieldsConstructor(nameAllocator, type));
         builder.addMethod(messageFieldsAndUnknownFieldsConstructor(nameAllocator, type));
 

@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -47,6 +48,25 @@ public class ServletEndpoint extends HttpServlet implements Endpoint {
         } catch (Exception e) {
             throw new RaptorFrameworkException("ServletEndpoint init error.", e);
         }
+        if (Objects.isNull(this.baseUrl)) {
+            String protocol = getInitParameter("protocol");
+            String host = getInitParameter("host");
+            String port = getInitParameter("port");
+            String path = getInitParameter("path");
+            int portNumber;
+            try {
+                portNumber = Integer.parseInt(port);
+            } catch (NumberFormatException e) {
+                portNumber = 0;
+            }
+            this.baseUrl = URL.builder()
+                    .protocol(protocol)
+                    .host(host)
+                    .port(portNumber)
+                    .path(path)
+                    .build();
+        }
+
     }
 
     @Override

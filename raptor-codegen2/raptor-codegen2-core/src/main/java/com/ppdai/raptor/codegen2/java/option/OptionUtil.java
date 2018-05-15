@@ -1,6 +1,7 @@
 package com.ppdai.raptor.codegen2.java.option;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
@@ -9,10 +10,12 @@ import com.squareup.wire.schema.ProtoMember;
 import okio.ByteString;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author zhangchengxi
@@ -72,15 +75,22 @@ public class OptionUtil {
         return null;
     }
 
-    public static void main(String[] args) {
-        String testText = "line1 \n line2 \n line3 @Summary this is summary\n line4\n";
-        System.out.println(readSummary(testText));
-    }
-
     public static AnnotationSpec.Builder setAnnotationMember(AnnotationSpec.Builder builder, String name, String format, Object... args) {
         if (Arrays.stream(args).anyMatch(Objects::nonNull)) {
             builder.addMember(name, format, args);
         }
         return builder;
+    }
+
+    public static List<String> readStringList(Options options, ProtoMember key) {
+        Object value = options.map().get(key);
+        if(value  instanceof  List){
+            return ((List<Object>) value).stream()
+                    .filter(String.class::isInstance)
+                    .map(String.class::cast)
+                    .collect(Collectors.toList());
+        }
+        return Lists.newArrayList();
+
     }
 }

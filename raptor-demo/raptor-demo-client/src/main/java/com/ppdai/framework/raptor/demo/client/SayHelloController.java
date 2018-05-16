@@ -31,8 +31,8 @@ public class SayHelloController {
         helloRequest.setCats(Arrays.asList(new Cat("black"), new Cat("white")));
         helloRequest.setResult(new HelloRequest.Result("http://ppdai.com", HelloRequest.Result.Corpus.NEWS));
         helloRequest.setTbytes(ByteString.encodeUtf8("拍拍贷"));
-        helloRequest.setTdouble(1.01);
-        helloRequest.setTfloat(1.02f);
+        helloRequest.setTDouble(1.01);
+        helloRequest.setTFloat(1.02f);
         helloRequest.setTfixed32(23);
         helloRequest.setTfixed64(23232222332332323L);
         helloRequest.setTint32(123);

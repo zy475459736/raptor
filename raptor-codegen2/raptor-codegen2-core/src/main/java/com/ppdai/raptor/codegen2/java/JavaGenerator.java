@@ -26,6 +26,7 @@ import com.google.protobuf.WireFormat;
 import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.common.URLParamType;
 import com.ppdai.raptor.codegen2.java.option.*;
+import com.ppdai.raptor.codegen2.java.util.CaseFormatUtil;
 import com.squareup.javapoet.*;
 import com.squareup.wire.*;
 import com.squareup.wire.ProtoAdapter.EnumConstantNotFoundException;
@@ -154,7 +155,7 @@ public final class JavaGenerator {
                 String suggestion = collidingNames.contains(field.name())
                         ? field.qualifiedName()
                         : field.name();
-                nameAllocator.newName(LOWER_UNDERSCORE.to(LOWER_CAMEL, suggestion), field);
+                nameAllocator.newName(CaseFormatUtil.determineFormat(suggestion).to(LOWER_CAMEL, suggestion), field);
             }
             return nameAllocator;
         }

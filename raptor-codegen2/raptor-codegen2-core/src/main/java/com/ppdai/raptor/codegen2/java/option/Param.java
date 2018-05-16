@@ -21,7 +21,7 @@ import java.util.Objects;
  */
 @Data
 @Builder
-public class PathParam {
+public class Param {
     private static final ProtoType PATH_PARAM_TYPE = ProtoType.get("PathParam");
     private static final ProtoMember REQUEST_MAPPING_NAME = ProtoMember.get(PATH_PARAM_TYPE, "name");
     private static final ProtoMember REQUEST_MAPPING_TYPE = ProtoMember.get(PATH_PARAM_TYPE, "type");
@@ -48,12 +48,6 @@ public class PathParam {
 
     private String name;
     private String type;
-
-    public static PathParam readFrom(Map<ProtoMember, String> map) {
-        String name = map.get(REQUEST_MAPPING_NAME);
-        String type = map.get(REQUEST_MAPPING_TYPE);
-        return new PathParam(name, type);
-    }
 
 
 

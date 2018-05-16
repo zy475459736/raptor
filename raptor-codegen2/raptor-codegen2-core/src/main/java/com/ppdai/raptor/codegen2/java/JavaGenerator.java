@@ -34,14 +34,14 @@ import com.squareup.wire.schema.*;
 import okio.ByteString;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.base.CaseFormat.*;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -568,7 +568,7 @@ public final class JavaGenerator {
         }
 
         //防止产生两个无参构造函数
-        if(CollectionUtils.isNotEmpty(type.fieldsAndOneOfFields())){
+        if (CollectionUtils.isNotEmpty(type.fieldsAndOneOfFields())) {
             builder.addMethod(noArgumentConstructor(nameAllocator));
         }
         builder.addMethod(messageFieldsConstructor(nameAllocator, type));
@@ -1630,40 +1630,51 @@ public final class JavaGenerator {
 
         List<ParameterSpec> result = Lists.newArrayList();
         MethodMetaInfo methodMetaInfo = MethodMetaInfo.readFrom(rpc);
-        Map<String, String> requestParams = methodMetaInfo.getRequestParams();
+        List<Param> requestParams = methodMetaInfo.getRequestParams();
+        List<Param> headerParams = methodMetaInfo.getHeaderParams();
+        List<Param> pathParams = methodMetaInfo.getPathParams();
 
-        HashSet<String> keyNames = Sets.newHashSet();
 
+        //validation
+        Map<String, Long> nameFrequency = Stream.of(requestParams, headerParams, pathParams)
+                .flatMap(List::stream)
+                .map(Param::getName)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
-        for (PathParam pathParam : methodMetaInfo.getPathParams()) {
-            String pathParamName = pathParam.getName();
-            if (keyNames.contains(pathParamName)) {
-                throw new RuntimeException("duplicate keys");
-            } else {
-                keyNames.add(pathParamName);
-            }
+        List<String> dupNames = nameFrequency.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
 
-            ParameterSpec.Builder builder = ParameterSpec.builder(OptionUtil.getJavaType(pathParam.getType()), pathParamName);
-            AnnotationSpec pathVariable = AnnotationSpec.builder(PathVariable.class).addMember("value", "$S", pathParamName).build();
-            builder.addAnnotation(pathVariable);
-            result.add(builder.build());
-
+        //有重复key
+        if (CollectionUtils.isNotEmpty(dupNames)) {
+            String nameString = StringUtils.join(dupNames, ",");
+            throw new RuntimeException("duplicate param keys:"+nameString);
         }
-        for (Map.Entry<String, String> requestParam : requestParams.entrySet()) {
-            String requestParamName = requestParam.getKey();
-            if (keyNames.contains(requestParamName)) {
-                throw new RuntimeException("duplicate keys");
-            } else {
-                keyNames.add(requestParamName);
-            }
-            ParameterSpec.Builder builder = ParameterSpec.builder(OptionUtil.getJavaType(requestParam.getValue()), requestParamName);
-            AnnotationSpec pathVariable = AnnotationSpec.builder(RequestParam.class).addMember("value", "$S", requestParamName).build();
-            builder.addAnnotation(pathVariable);
-            result.add(builder.build());
-        }
+
+        List<ParameterSpec> requestParamSpecs = buildParams(requestParams,RequestParam.class);
+        List<ParameterSpec> headerParamSpecs = buildParams(headerParams, RequestHeader.class);
+        List<ParameterSpec> pathParamSpecs = buildParams(pathParams,PathVariable.class);
+
+        result.addAll(requestParamSpecs);
+        result.addAll(headerParamSpecs);
+        result.addAll(pathParamSpecs);
 
         return result;
 
+    }
+
+    private List<ParameterSpec> buildParams(List<Param> params,Class clazz) {
+        ArrayList<ParameterSpec> result = Lists.newArrayList();
+        for (Param requestParam : params) {
+            String requestParamName = requestParam.getName();
+            ParameterSpec.Builder builder = ParameterSpec.builder(OptionUtil.getJavaType(requestParam.getType()), requestParamName);
+            AnnotationSpec pathVariable = AnnotationSpec.builder(clazz).addMember("value", "$S", requestParamName).build();
+            builder.addAnnotation(pathVariable);
+            result.add(builder.build());
+        }
+        return result;
     }
 
     @SuppressWarnings("unchecked")

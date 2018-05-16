@@ -28,7 +28,7 @@
             <plugin>
                 <groupId>com.ppdai.framework</groupId>
                 <artifactId>raptor-codegen-maven</artifactId>
-                <version>${project.version}</version>
+                <version>0.1.0-RC4</version>
                 <executions>
                     <execution>
                         <goals>

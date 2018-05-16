@@ -27,10 +27,10 @@
             <artifactId>wire-runtime</artifactId>
             <version>2.3.0-RC1</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.google.protobuf</groupId>-->
+            <!--<artifactId>protobuf-java</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.ppdai.framework</groupId>
             <artifactId>raptor-core</artifactId>
@@ -39,6 +39,11 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/proto</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>com.ppdai.framework</groupId>

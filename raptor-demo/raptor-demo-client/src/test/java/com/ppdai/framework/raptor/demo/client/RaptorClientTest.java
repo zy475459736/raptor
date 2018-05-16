@@ -1,6 +1,7 @@
 package com.ppdai.framework.raptor.demo.client;
 
-import com.ppdai.framework.raptor.proto.Helloworld;
+import com.ppdai.framework.raptor.proto.HelloReply;
+import com.ppdai.framework.raptor.proto.HelloRequest;
 import com.ppdai.framework.raptor.proto.Simple;
 import com.ppdai.framework.raptor.spring.annotation.RaptorClient;
 import org.apache.commons.lang3.StringUtils;
@@ -19,8 +20,9 @@ public class RaptorClientTest {
 
     @Test
     public void testClient() {
-        Helloworld.HelloRequest helloRequest = Helloworld.HelloRequest.newBuilder().setName("ppdai").build();
-        Helloworld.HelloReply reply = simple.sayHello(helloRequest);
+        HelloRequest helloRequest = new HelloRequest();
+        helloRequest.setName("ppdai");
+        HelloReply reply = simple.sayHello(helloRequest);
         System.out.println(reply);
         Assert.assertTrue(StringUtils.startsWith(reply.getMessage(), "Hello ppdai"));
     }

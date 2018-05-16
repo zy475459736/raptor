@@ -18,7 +18,6 @@
     <modules>
         <module>raptor-core</module>
         <module>raptor-springboot</module>
-        <module>raptor-codegen</module>
         <module>raptor-demo</module>
         <module>raptor-benchmark</module>
         <module>raptor-codegen2</module>

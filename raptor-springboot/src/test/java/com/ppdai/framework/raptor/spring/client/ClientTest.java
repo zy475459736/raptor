@@ -1,7 +1,7 @@
 package com.ppdai.framework.raptor.spring.client;
 
+import com.ppdai.framework.raptor.proto.MoreService;
 import com.ppdai.framework.raptor.proto.Simple;
-import com.ppdai.framework.raptor.proto.SimpleExtension;
 import com.ppdai.framework.raptor.spring.TestApplication;
 import com.ppdai.framework.raptor.spring.annotation.RaptorClient;
 import org.junit.Assert;
@@ -26,7 +26,7 @@ public class ClientTest {
     private Simple simple2;
 
     @RaptorClient
-    private SimpleExtension simpleExtension;
+    private MoreService simpleExtension;
 
     @Test
     public void testInit() {

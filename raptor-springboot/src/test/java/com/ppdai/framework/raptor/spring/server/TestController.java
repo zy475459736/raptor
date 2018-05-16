@@ -1,6 +1,7 @@
 package com.ppdai.framework.raptor.spring.server;
 
-import com.ppdai.framework.raptor.proto.Helloworld;
+import com.ppdai.framework.raptor.proto.HelloReply;
+import com.ppdai.framework.raptor.proto.HelloRequest;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,15 +20,15 @@ public class TestController {
     }
 
     @RequestMapping(value = "/sayHelloBin", method = RequestMethod.POST)
-    public Helloworld.HelloReply sayHelloBin(@RequestBody Helloworld.HelloRequest request) {
+    public HelloReply sayHelloBin(@RequestBody HelloRequest request) {
         String hello = "Hello " + request.getName() + ". " + RandomUtils.nextInt();
-        return Helloworld.HelloReply.newBuilder().setMessage(hello).build();
+        return new HelloReply(hello, null, null, null);
     }
 
     @RequestMapping(value = "/sayHelloJson", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Helloworld.HelloReply sayHelloJson(@RequestBody Helloworld.HelloRequest request) {
+    public HelloReply sayHelloJson(@RequestBody HelloRequest request) {
         String hello = "Hello " + request.getName() + ". " + RandomUtils.nextInt();
-        return Helloworld.HelloReply.newBuilder().setMessage(hello).build();
+        return new HelloReply(hello, null, null, null);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.ppdai.framework.raptor.spring.aop;
 
-import com.ppdai.framework.raptor.proto.Helloworld;
+import com.ppdai.framework.raptor.proto.HelloRequest;
 import com.ppdai.framework.raptor.proto.Simple;
 import com.ppdai.framework.raptor.spring.TestApplication;
 import org.junit.Test;
@@ -21,6 +21,8 @@ public class AopTest {
 
     @Test
     public void name() {
-        simple.sayHello(Helloworld.HelloRequest.newBuilder().setName("test").build());
+        HelloRequest request = new HelloRequest();
+        request.setName("test");
+        simple.sayHello(request);
     }
 }

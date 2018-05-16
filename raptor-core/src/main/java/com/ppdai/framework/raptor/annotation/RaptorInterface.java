@@ -15,6 +15,8 @@ public @interface RaptorInterface {
 
     String protoFile() default "";
 
+    String library() default "";
+
     String crc32() default "";
 
     String summary() default "";

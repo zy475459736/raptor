@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.autoconfig.service;
+package com.ppdai.framework.raptor.spring.service;
 
 import com.ppdai.framework.raptor.annotation.RaptorInterface;
 import com.ppdai.framework.raptor.exception.RaptorServiceException;

@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.autoconfig.service;
+package com.ppdai.framework.raptor.spring.service;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;

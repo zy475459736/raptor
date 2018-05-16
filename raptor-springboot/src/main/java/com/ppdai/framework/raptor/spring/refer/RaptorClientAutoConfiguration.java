@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.autoconfig.refer;
+package com.ppdai.framework.raptor.spring.refer;
 
 import com.ppdai.framework.raptor.filter.refer.ReferAccessLogFilter;
 import com.ppdai.framework.raptor.filter.refer.ReferFilter;
@@ -6,7 +6,6 @@ import com.ppdai.framework.raptor.filter.refer.ReferMetricsFilter;
 import com.ppdai.framework.raptor.refer.ReferProxyBuilder;
 import com.ppdai.framework.raptor.refer.client.ApacheHttpClient;
 import com.ppdai.framework.raptor.refer.client.Client;
-import com.ppdai.framework.raptor.refer.repository.AbstractUrlRepository;
 import com.ppdai.framework.raptor.spring.endpoint.RaptorRefersActuatorEndpoint;
 import com.ppdai.framework.raptor.spring.properties.ApacheHttpClientProperties;
 import org.springframework.beans.BeanUtils;
@@ -31,19 +30,19 @@ import java.util.List;
 public class RaptorClientAutoConfiguration implements EnvironmentAware {
 
     private Environment environment;
-
-    private final static String DEFAULT_PREFIX = "raptor.url.";
-    private final static String PREFIX_KEY = "raptor.url.prefix";
-
     @Autowired
     private ApacheHttpClientProperties apacheHttpClientProperties;
 
     @Bean
     @ConditionalOnProperty(name = "raptor.urlRepository", havingValue = "springEnv", matchIfMissing = true)
-    public AbstractUrlRepository createUrlRepository() {
+    public SpringEnvUrlRepository createUrlRepository() {
         SpringEnvUrlRepository springEnvUrlRepository = new SpringEnvUrlRepository(environment);
-        springEnvUrlRepository.setKeyPrefix(environment.getProperty(PREFIX_KEY, DEFAULT_PREFIX));
         return springEnvUrlRepository;
+    }
+
+    @Bean
+    public RaptorClientFactory.Default createDefaultRaptorClientFactory(ReferProxyBuilder referProxyBuilder) {
+        return new RaptorClientFactory.Default(referProxyBuilder);
     }
 
     @Bean
@@ -62,8 +61,8 @@ public class RaptorClientAutoConfiguration implements EnvironmentAware {
     }
 
     @Bean
-    public RaptorClientRegistry createClientRegistry(AbstractUrlRepository urlRepository, ReferProxyBuilder referProxyBuilder) {
-        return new RaptorClientRegistry(urlRepository, referProxyBuilder);
+    public RaptorClientRegistry createClientRegistry() {
+        return new RaptorClientRegistry();
     }
 
     @Override
@@ -89,7 +88,7 @@ public class RaptorClientAutoConfiguration implements EnvironmentAware {
 
         @Bean
         public RaptorRefersActuatorEndpoint createRaptorReferActuatorEndpoint(RaptorClientRegistry raptorClientRegistry) {
-            return new RaptorRefersActuatorEndpoint(raptorClientRegistry.getClientCache());
+            return new RaptorRefersActuatorEndpoint(raptorClientRegistry.getAllRegistried());
         }
 
     }

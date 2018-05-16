@@ -1,7 +1,9 @@
 package com.ppdai.framework.raptor.codegen2.maven;
 
 import com.google.common.collect.Lists;
+import com.ppdai.raptor.codegen2.java.filter.CodegenFilter;
 import com.ppdai.raptor.codegen2.java.JavaGenerator;
+import com.ppdai.raptor.codegen2.java.filter.CodegenFilterFactory;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
@@ -80,17 +82,21 @@ public class Proto2Java extends AbstractMojo {
 
             JavaGenerator javaGenerator = JavaGenerator.get(schema);
 
-            for (ProtoFile protoFile : schema.protoFiles()) {
-                for (Type type : protoFile.types()) {
-                    ClassName javaTypeName = javaGenerator.generatedTypeName(type);
-                    TypeSpec typeSpec = javaGenerator.generateType(protoFile, type);
-                    writeJavaFile(javaTypeName, typeSpec, type.location().withPathOnly());
-                }
 
-                for (Service service : protoFile.services()) {
-                    TypeSpec typeSpec = javaGenerator.generateService(protoFile, service);
-                    ClassName typeName = (ClassName) javaGenerator.typeName(service.type());
-                    writeJavaFile(typeName, typeSpec, service.location().withPathOnly());
+            CodegenFilter codegenFilter = CodegenFilterFactory.create();
+            for (ProtoFile protoFile : schema.protoFiles()) {
+                if(codegenFilter.filterByProtoFile(protoFile)){
+                    for (Type type : protoFile.types()) {
+                        ClassName javaTypeName = javaGenerator.generatedTypeName(type);
+                        TypeSpec typeSpec = javaGenerator.generateType(protoFile, type);
+                        writeJavaFile(javaTypeName, typeSpec, type.location().withPathOnly());
+                    }
+
+                    for (Service service : protoFile.services()) {
+                        TypeSpec typeSpec = javaGenerator.generateService(protoFile, service);
+                        ClassName typeName = (ClassName) javaGenerator.typeName(service.type());
+                        writeJavaFile(typeName, typeSpec, service.location().withPathOnly());
+                    }
                 }
             }
         } catch (Exception e) {

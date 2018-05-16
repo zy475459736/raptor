@@ -25,6 +25,8 @@ service TestService{
         option (pathParam) = "name=string";
         option (requestParam) = "gender=bool";
         option (requestParam) = "age=int";
+        option (headerParam) = "header1=int";
+        option (headerParam) = "header2=int";
     }
     rpc SetHealthCheckStatus (SetHealthCheckStatusCommand) returns (SetHealthCheckStatusResponse) {
         option (path) = "/test/{name}/{gender}";

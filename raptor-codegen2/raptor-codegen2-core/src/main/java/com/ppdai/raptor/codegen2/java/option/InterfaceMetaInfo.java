@@ -50,6 +50,8 @@ public class InterfaceMetaInfo {
         OptionUtil.setAnnotationMember(builder, "protoFile", "$S", protoFileMetaInfo.getProtoFile());
         OptionUtil.setAnnotationMember(builder, "crc32", "$S", protoFileMetaInfo.getCrc32());
         OptionUtil.setAnnotationMember(builder, "summary", "$S", summary);
+        // TODO: 2018/5/16 先写死spring
+        OptionUtil.setAnnotationMember(builder, "library", "$S", "spring");
 
         return builder.build();
 

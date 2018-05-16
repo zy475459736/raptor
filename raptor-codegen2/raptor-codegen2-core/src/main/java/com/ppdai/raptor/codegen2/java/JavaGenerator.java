@@ -1696,6 +1696,15 @@ public final class JavaGenerator {
         Method method = methodMetaInfo.getMethod();
         if (Objects.nonNull(method)) {
             builder.addMember("method", "$T.$L", RequestMethod.class, method.getName());
+        }else{
+            if(Objects.isNull(path)){
+                //没有指定method,没有path ,默认POST
+                builder.addMember("method","$T.$L", RequestMethod.class, "POST");
+            }else{
+                //没有指定method,但是有path ,默认GET
+                builder.addMember("method","$T.$L", RequestMethod.class, "GET");
+
+            }
         }
 
         return builder.build();

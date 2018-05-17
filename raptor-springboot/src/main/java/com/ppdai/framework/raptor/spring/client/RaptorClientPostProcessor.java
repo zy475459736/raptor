@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.refer;
+package com.ppdai.framework.raptor.spring.client;
 
 import com.ppdai.framework.raptor.annotation.RaptorInterface;
 import com.ppdai.framework.raptor.rpc.URL;

@@ -55,21 +55,21 @@ public class RaptorServiceAutoConfiguration {
         return new ServletEndpoint(baseUrl);
     }
 
-    @Bean
-    public ServletRegistrationBean registerServlet(ServletEndpoint servletEndpoint) {
-        ServletRegistrationBean registrationBean = new ServletRegistrationBean();
-        registrationBean.setServlet(servletEndpoint);
-        Map<String, String> initParams = new HashMap<>();
-        registrationBean.setInitParameters(initParams);
-        List<String> urlMappings = new ArrayList<>();
-        //先把开头的/删除，在加上/，保护下
-        String path = RaptorConstants.PATH_SEPARATOR + StringUtils.removeStart(servletEndpoint.getBaseUrl().getPath(), RaptorConstants.PATH_SEPARATOR);
-        path = StringUtils.removeEnd(path, RaptorConstants.PATH_SEPARATOR);
-        urlMappings.add(path + "/*");
-        registrationBean.setUrlMappings(urlMappings);
-        registrationBean.setLoadOnStartup(1);
-        return registrationBean;
-    }
+//    @Bean
+//    public ServletRegistrationBean registerServlet(ServletEndpoint servletEndpoint) {
+//        ServletRegistrationBean registrationBean = new ServletRegistrationBean();
+//        registrationBean.setServlet(servletEndpoint);
+//        Map<String, String> initParams = new HashMap<>();
+//        registrationBean.setInitParameters(initParams);
+//        List<String> urlMappings = new ArrayList<>();
+//        //先把开头的/删除，在加上/，保护下
+//        String path = RaptorConstants.PATH_SEPARATOR + StringUtils.removeStart(servletEndpoint.getBaseUrl().getPath(), RaptorConstants.PATH_SEPARATOR);
+//        path = StringUtils.removeEnd(path, RaptorConstants.PATH_SEPARATOR);
+//        urlMappings.add(path + "/*");
+//        registrationBean.setUrlMappings(urlMappings);
+//        registrationBean.setLoadOnStartup(1);
+//        return registrationBean;
+//    }
 
     @Bean
     public ProviderBuilder createProviderBuilder(ObjectProvider<List<ProviderFilter>> providerFilters) {

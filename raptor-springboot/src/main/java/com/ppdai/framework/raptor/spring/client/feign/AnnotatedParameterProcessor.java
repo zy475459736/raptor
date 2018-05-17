@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.refer.feign;
+package com.ppdai.framework.raptor.spring.client.feign;
 
 import feign.MethodMetadata;
 

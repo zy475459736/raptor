@@ -1,7 +1,7 @@
-package com.ppdai.framework.raptor.spring.refer.feign;
+package com.ppdai.framework.raptor.spring.client.feign;
 
 import com.ppdai.framework.raptor.rpc.URL;
-import com.ppdai.framework.raptor.spring.refer.RaptorClientFactory;
+import com.ppdai.framework.raptor.spring.client.RaptorClientFactory;
 import feign.*;
 import feign.codec.Decoder;
 import feign.codec.Encoder;

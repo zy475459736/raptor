@@ -1,10 +1,10 @@
-package com.ppdai.framework.raptor.spring.refer.feign;
+package com.ppdai.framework.raptor.spring.client.feign;
 
 
 import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
-import com.ppdai.framework.raptor.spring.refer.feign.support.RaptorMessageDecoder;
-import com.ppdai.framework.raptor.spring.refer.feign.support.RaptorMessageEncoder;
-import com.ppdai.framework.raptor.spring.refer.feign.support.SpringMvcContract;
+import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageDecoder;
+import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageEncoder;
+import com.ppdai.framework.raptor.spring.client.feign.support.SpringMvcContract;
 import feign.Client;
 import feign.Contract;
 import feign.RequestInterceptor;

@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.refer.feign.support;
+package com.ppdai.framework.raptor.spring.client.feign.support;
 
 import feign.RequestTemplate;
 import feign.codec.EncodeException;

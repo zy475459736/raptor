@@ -6,15 +6,15 @@ import com.ppdai.framework.raptor.proto.HelloReply;
 import com.ppdai.framework.raptor.proto.HelloRequest;
 import com.ppdai.framework.raptor.proto.Result;
 import com.ppdai.framework.raptor.proto.Simple;
-import com.ppdai.framework.raptor.spring.annotation.RaptorService;
 import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-@RaptorService
+@RestController
 public class SimpleImpl implements Simple {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SimpleImpl.class);
@@ -30,7 +30,7 @@ public class SimpleImpl implements Simple {
                 + "cats: " + request.getCats() + ", "
                 + "result: " + request.getResult() + ", "
                 + "bool: " + request.getTbool() + ", "
-                + "bytes: " + request.getTbytes().base64() + ", "
+                + "bytes: " + (request.getTbytes() == null ? "null" : request.getTbytes().base64()) + ", "
                 + "double: " + request.getTDouble() + ", "
                 + "fixed32: " + request.getTfixed32() + ", "
                 + "fixed64: " + request.getTfixed64() + ", "

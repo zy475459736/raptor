@@ -1670,7 +1670,8 @@ public final class JavaGenerator {
         ArrayList<ParameterSpec> result = Lists.newArrayList();
         for (Param requestParam : params) {
             String requestParamName = requestParam.getName();
-            ParameterSpec.Builder builder = ParameterSpec.builder(OptionUtil.getJavaType(requestParam.getType()), requestParamName);
+            String validName = requestParamName.replace("-", "_");
+            ParameterSpec.Builder builder = ParameterSpec.builder(OptionUtil.getJavaType(requestParam.getType()), validName);
             AnnotationSpec pathVariable = AnnotationSpec.builder(clazz).addMember("value", "$S", requestParamName).build();
             builder.addAnnotation(pathVariable);
             result.add(builder.build());

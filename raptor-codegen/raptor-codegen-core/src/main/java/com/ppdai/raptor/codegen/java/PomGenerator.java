@@ -1,8 +1,6 @@
 package com.ppdai.raptor.codegen.java;
 
 import com.ppdai.raptor.codegen.java.maven.PomModel;
-import lombok.Builder;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -18,8 +16,18 @@ import java.io.OutputStream;
  * Date 2018/5/17
  */
 @Slf4j
-public class PomGenerator extends PomModel{
+public class PomGenerator {
     public static final String EXAMPLE_POM_PATH = "/ExamplePom.xml";
+
+    private PomModel pomModel;
+
+    public PomGenerator(PomModel pomModel) {
+        this.pomModel = pomModel;
+    }
+
+    public PomGenerator() {
+        this.pomModel = PomModel.builder().build();
+    }
 
 
     public Model readExamplePom() {
@@ -36,24 +44,24 @@ public class PomGenerator extends PomModel{
 
     public Model buildModel() {
         Model model = readExamplePom();
-        model.setArtifactId(getArtifactId());
-        model.setGroupId(getGroupId());
-        model.setVersion(getVersion());
+        model.setArtifactId(pomModel.getArtifactId());
+        model.setGroupId(pomModel.getGroupId());
+        model.setVersion(pomModel.getVersion());
         return model;
     }
 
-    public void writeTo(OutputStream outputStream,Model model){
+    public void writeTo(OutputStream outputStream, Model model) {
         MavenXpp3Writer mavenXpp3Writer = new MavenXpp3Writer();
         try {
-            mavenXpp3Writer.write(outputStream,model);
+            mavenXpp3Writer.write(outputStream, model);
         } catch (IOException e) {
-            log.error("write pom model error",e);
-            throw new RuntimeException("write pom model error",e);
+            log.error("write pom model error", e);
+            throw new RuntimeException("write pom model error", e);
         }
     }
 
-    public void writeTo(OutputStream outputStream){
-        writeTo(outputStream,buildModel());
+    public void writeTo(OutputStream outputStream) {
+        writeTo(outputStream, buildModel());
     }
 
 

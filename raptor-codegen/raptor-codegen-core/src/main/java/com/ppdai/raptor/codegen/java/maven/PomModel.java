@@ -1,13 +1,15 @@
 package com.ppdai.raptor.codegen.java.maven;
 
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author zhangchengxi
  * Date 2018/5/17
  */
-@Setter
+@Data
+@Builder
 public class PomModel {
     private static final String DEFAULT_GOURP_ID = "com.ppdai.raptor.framework";
     private static final String DEFAULT_ARTIFACT_ID = "raptor-demo";

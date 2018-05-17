@@ -20,7 +20,7 @@
         <module>raptor-springboot</module>
         <module>raptor-demo</module>
         <module>raptor-benchmark</module>
-        <module>raptor-codegen2</module>
+        <module>raptor-codegen</module>
     </modules>
     <dependencyManagement>
         <dependencies>

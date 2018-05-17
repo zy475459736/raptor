@@ -47,7 +47,7 @@
         <plugins>
             <plugin>
                 <groupId>com.ppdai.framework</groupId>
-                <artifactId>raptor-codegen2-maven</artifactId>
+                <artifactId>raptor-codegen-maven</artifactId>
                 <version>${project.version}</version>
                 <executions>
                     <execution>

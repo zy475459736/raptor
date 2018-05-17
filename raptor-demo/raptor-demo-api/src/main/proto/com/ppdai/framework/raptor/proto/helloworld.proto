@@ -20,6 +20,7 @@ service MoreService {
         option (method) = "get";
         option (path) = "/get1";
         option (requestParam) = "p1=string";
+        option (headerParam) = "p2=string";
     }
     rpc testGet2 (HelloRequest) returns (HelloReply) {
         option (method) = "get";
@@ -118,9 +119,9 @@ message HelloRequest {
 
 message HelloReply {
     string message = 1;
-    HelloRequest.Corpus corpus = 2;
-    repeated Result results = 3;
-    int32 code = 4;
+    int32 code = 2;
+    HelloRequest request = 3;
+    map<string, string> result = 4;
 }
 
 message Cat {

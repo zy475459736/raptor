@@ -10,7 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.*;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -41,8 +41,8 @@ public class MethodMetaInfo {
     private String path;
     private List<Param> pathParams;
     private Method method;
-    private List<Param>  requestParams;
-    private List<Param>  headerParams;
+    private List<Param> requestParams;
+    private List<Param> headerParams;
     private String summary;
 
     public static MethodMetaInfo readFrom(Rpc rpc) {
@@ -56,11 +56,10 @@ public class MethodMetaInfo {
         List<Param> pathParams = buildParams(paramTypesStr);
 
         List<String> requestParamsStr = OptionUtil.readStringList(options, PATH_PARAMS);
-        List<Param>  requestParams = buildParams(requestParamsStr);
+        List<Param> requestParams = buildParams(requestParamsStr);
 
         List<String> headerParamsStr = OptionUtil.readStringList(options, HEAD_PARAMS);
-        List<Param>  headerParams = buildParams(headerParamsStr);
-
+        List<Param> headerParams = buildParams(headerParamsStr);
 
 
         return MethodMetaInfo.builder()
@@ -75,7 +74,7 @@ public class MethodMetaInfo {
 
     private static List<Param> buildParams(List<String> paramStr) {
         List<Param> result = Lists.newArrayList();
-        if(CollectionUtils.isEmpty(paramStr)){
+        if (CollectionUtils.isEmpty(paramStr)) {
             return result;
         }
 
@@ -83,12 +82,19 @@ public class MethodMetaInfo {
         List<String> params = paramStr.stream().map(String::trim).collect(Collectors.toList());
         for (String param : params) {
             int location = param.indexOf("=");
-            if (location <= 0 || location >= param.length() - 1) {
-                throw new RuntimeException("illegal requestParams :" + param);
+
+            String name;
+            String type;
+            if (location == -1) {
+                name = param;
+                type = "string";
+            } else {
+                name = param.substring(0, location);
+                type = param.substring(location + 1);
             }
             Param p = Param.builder()
-                    .name(param.substring(0, location))
-                    .type(param.substring(location + 1))
+                    .name(name)
+                    .type(type)
                     .build();
             result.add(p);
         }

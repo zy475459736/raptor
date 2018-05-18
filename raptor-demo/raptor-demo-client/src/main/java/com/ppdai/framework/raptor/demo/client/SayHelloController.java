@@ -7,7 +7,6 @@ import com.ppdai.framework.raptor.proto.Simple;
 import com.ppdai.framework.raptor.spring.annotation.RaptorClient;
 import okio.ByteString;
 import org.apache.commons.collections4.MapUtils;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.HashMap;
 
-@Component
 @RestController
 public class SayHelloController {
 
@@ -65,7 +63,7 @@ public class SayHelloController {
     }
 
     @RequestMapping("/get1")
-    public Object testGet1(@RequestParam("p1") String p1,@RequestParam("p2")  String p2) {
+    public Object testGet1(@RequestParam("p1") String p1, @RequestParam("p2") String p2) {
         HelloRequest helloRequest = getTestRequest();
 
         return moreService.testGet1(helloRequest, p1, p2);

@@ -23,9 +23,9 @@ import java.util.Map;
 /**
  * @author yinzuolong
  */
-public class RaptorControllerMethodProcessor extends AbstractMessageConverterMethodProcessor {
+public class RaptorHandlerMethodProcessor extends AbstractMessageConverterMethodProcessor {
 
-    public RaptorControllerMethodProcessor(List<HttpMessageConverter<?>> converters) {
+    public RaptorHandlerMethodProcessor(List<HttpMessageConverter<?>> converters) {
         super(converters);
     }
 

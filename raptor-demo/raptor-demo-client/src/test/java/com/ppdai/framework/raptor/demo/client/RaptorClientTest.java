@@ -24,7 +24,7 @@ public class RaptorClientTest {
         helloRequest.setName("ppdai");
         HelloReply reply = simple.sayHello(helloRequest);
         System.out.println(reply);
-        Assert.assertTrue(StringUtils.startsWith(reply.getMessage(), "Hello ppdai"));
+        Assert.assertTrue(StringUtils.startsWith(reply.getMessage(), "Hello"));
     }
 
     //TODO mockserver

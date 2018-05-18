@@ -1,8 +1,8 @@
 package com.ppdai.framework.raptor.demo.client;
 
 import com.ppdai.framework.raptor.proto.Cat;
-import com.ppdai.framework.raptor.proto.HelloReply;
 import com.ppdai.framework.raptor.proto.HelloRequest;
+import com.ppdai.framework.raptor.proto.MoreService;
 import com.ppdai.framework.raptor.proto.Simple;
 import com.ppdai.framework.raptor.spring.annotation.RaptorClient;
 import okio.ByteString;
@@ -22,10 +22,11 @@ public class SayHelloController {
     @RaptorClient
     private Simple simple;
 
-    @RequestMapping("/sayhello")
-    public Object routeSayHello(@RequestParam("name") String name) {
+    @RaptorClient
+    private MoreService moreService;
+
+    private HelloRequest getTestRequest() {
         HelloRequest helloRequest = new HelloRequest();
-        helloRequest.setName(name);
         helloRequest.setCorpus(HelloRequest.Corpus.UNIVERSAL);
         helloRequest.setSnippets(Arrays.asList("snippets1", "snippets2"));
         helloRequest.setCats(Arrays.asList(new Cat("black"), new Cat("white")));
@@ -52,10 +53,56 @@ public class SayHelloController {
         helloRequest.setMapInt32Int32(MapUtils.putAll(new HashMap<>(), new Object[]{1, 2, 3, 4}));
         helloRequest.setMapStringMessage(MapUtils.putAll(new HashMap<>(), new Object[]{"c1", result, "c2", result}));
         helloRequest.setMapStringEnum(MapUtils.putAll(new HashMap<>(), new Object[]{"c1", HelloRequest.Corpus.IMAGES, "c2", HelloRequest.Corpus.PRODUCTS}));
-
-        HelloReply helloReply = simple.sayHello(helloRequest);
-
-        return helloReply != null ? helloReply.toString() : "null";
+        return helloRequest;
     }
 
+    @RequestMapping("/sayhello")
+    public Object sayHello(@RequestParam("name") String name) {
+        HelloRequest helloRequest = getTestRequest();
+        helloRequest.setName(name);
+
+        return simple.sayHello(helloRequest);
+    }
+
+    @RequestMapping("/get1")
+    public Object testGet1(@RequestParam("p1") String p1,@RequestParam("p2")  String p2) {
+        HelloRequest helloRequest = getTestRequest();
+
+        return moreService.testGet1(helloRequest, p1, p2);
+    }
+
+    @RequestMapping("/get2")
+    public Object testGet2(@RequestParam("p1") String p1) {
+        HelloRequest helloRequest = getTestRequest();
+
+        return moreService.testGet2(helloRequest, p1);
+    }
+
+    @RequestMapping("/post1")
+    public Object testPost1(@RequestParam("p1") String p1) {
+        HelloRequest helloRequest = getTestRequest();
+
+        return moreService.testPost1(helloRequest, p1);
+    }
+
+    @RequestMapping("/post2")
+    public Object testPost2(@RequestParam("p1") String p1, @RequestParam("p2") int p2, @RequestParam("p3") String p3) {
+        HelloRequest helloRequest = getTestRequest();
+
+        return moreService.testPost2(helloRequest, p3, p1, p2);
+    }
+
+    @RequestMapping("/put1")
+    public Object testPut1(@RequestParam("p1") String p1) {
+        HelloRequest helloRequest = getTestRequest();
+
+        return moreService.testPut1(helloRequest, p1);
+    }
+
+    @RequestMapping("/delete1")
+    public Object testDelete1(@RequestParam("p2") int p2) {
+        HelloRequest helloRequest = getTestRequest();
+
+        return moreService.testDelete1(helloRequest, p2);
+    }
 }

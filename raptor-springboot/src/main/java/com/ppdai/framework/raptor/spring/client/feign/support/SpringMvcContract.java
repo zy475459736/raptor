@@ -1,10 +1,9 @@
-package com.ppdai.framework.raptor.spring.refer.feign.support;
+package com.ppdai.framework.raptor.spring.client.feign.support;
 
-import com.ppdai.framework.raptor.annotation.RaptorMessage;
-import com.ppdai.framework.raptor.spring.refer.feign.AnnotatedParameterProcessor;
-import com.ppdai.framework.raptor.spring.refer.feign.annotation.PathVariableParameterProcessor;
-import com.ppdai.framework.raptor.spring.refer.feign.annotation.RequestHeaderParameterProcessor;
-import com.ppdai.framework.raptor.spring.refer.feign.annotation.RequestParamParameterProcessor;
+import com.ppdai.framework.raptor.spring.client.feign.AnnotatedParameterProcessor;
+import com.ppdai.framework.raptor.spring.client.feign.annotation.PathVariableParameterProcessor;
+import com.ppdai.framework.raptor.spring.client.feign.annotation.RequestHeaderParameterProcessor;
+import com.ppdai.framework.raptor.spring.client.feign.annotation.RequestParamParameterProcessor;
 import feign.Contract;
 import feign.Feign;
 import feign.MethodMetadata;

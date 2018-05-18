@@ -1,5 +1,5 @@
 
-package com.ppdai.framework.raptor.spring.refer.feign.support;
+package com.ppdai.framework.raptor.spring.client.feign.support;
 
 import feign.FeignException;
 import feign.Response;

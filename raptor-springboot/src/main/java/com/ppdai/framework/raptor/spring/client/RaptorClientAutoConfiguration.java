@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.refer;
+package com.ppdai.framework.raptor.spring.client;
 
 import com.ppdai.framework.raptor.filter.refer.ReferAccessLogFilter;
 import com.ppdai.framework.raptor.filter.refer.ReferFilter;

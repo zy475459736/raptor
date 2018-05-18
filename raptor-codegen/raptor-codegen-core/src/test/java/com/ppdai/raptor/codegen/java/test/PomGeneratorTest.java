@@ -1,6 +1,7 @@
 package com.ppdai.raptor.codegen.java.test;
 
 import com.ppdai.raptor.codegen.java.PomGenerator;
+import com.ppdai.raptor.codegen.java.maven.PomModel;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -28,10 +29,8 @@ public class PomGeneratorTest {
         String version = "version";
         String groupId = "groupId";
 
-        PomGenerator pomGenerator = new PomGenerator();
-        pomGenerator.setArtifactId(artifactId);
-        pomGenerator.setGroupId(groupId);
-        pomGenerator.setVersion(version);
+        PomModel pomModel = PomModel.builder().artifactId(artifactId).groupId(groupId).version(version).build();
+        PomGenerator pomGenerator = new PomGenerator(pomModel);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         pomGenerator.writeTo(baos);
         String s = baos.toString();

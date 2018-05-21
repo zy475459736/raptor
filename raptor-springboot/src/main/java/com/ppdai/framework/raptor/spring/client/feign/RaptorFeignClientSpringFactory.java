@@ -1,5 +1,6 @@
 package com.ppdai.framework.raptor.spring.client.feign;
 
+import com.ppdai.framework.raptor.common.URLParamType;
 import com.ppdai.framework.raptor.rpc.URL;
 import com.ppdai.framework.raptor.spring.client.RaptorClientFactory;
 import feign.*;
@@ -9,6 +10,7 @@ import feign.codec.ErrorDecoder;
 import feign.slf4j.Slf4jLogger;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -28,12 +30,32 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
     private Client client;
     private Retryer retryer;
     private List<RequestInterceptor> requestInterceptors;
+    private Request.Options options;
 
     @Override
     public <T> T create(Class<T> type, URL url) {
         Feign.Builder builder = feignBuilder();
         builder.logger(new Slf4jLogger(type));
+        builder.options(createOptions(url));
         return builder.target(type, url.getUri());
+    }
+
+    private Request.Options createOptions(URL url) {
+        Request.Options options = this.options;
+        if (options == null) {
+            options = new Request.Options();
+        }
+        int connectTimeout = options.connectTimeoutMillis();
+        int readTimeoutMillis = options.readTimeoutMillis();
+        String connectTimeoutParam = url.getParameter(URLParamType.connectTimeout.getName());
+        if (!StringUtils.isEmpty(connectTimeoutParam)) {
+            connectTimeout = Integer.parseInt(connectTimeoutParam);
+        }
+        String socketTimeoutParam = url.getParameter(URLParamType.socketTimeout.getName());
+        if (!StringUtils.isEmpty(socketTimeoutParam)) {
+            readTimeoutMillis = Integer.parseInt(socketTimeoutParam);
+        }
+        return new Request.Options(connectTimeout, readTimeoutMillis);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.ppdai.framework.raptor.spring.client.feign;
 
 
-import com.ppdai.framework.raptor.client.ApacheHttpClientManager;
+import com.ppdai.framework.raptor.client.ApacheHttpClientBuilder;
 import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageDecoder;
 import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageEncoder;
 import com.ppdai.framework.raptor.spring.client.feign.support.SpringMvcContract;
@@ -12,7 +12,6 @@ import feign.codec.Decoder;
 import feign.codec.Encoder;
 import feign.codec.ErrorDecoder;
 import feign.httpclient.ApacheHttpClient;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,16 +98,22 @@ public class RaptorFeignClientAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         @ConditionalOnProperty(name = "raptor.feign.client", havingValue = "apache", matchIfMissing = true)
-        public Client createApacheHttpClient(ApacheHttpClientManager feignApacheClientManager) {
+        public Client createApacheHttpClient(ApacheHttpClientBuilder feignApacheClientManager) {
             return new ApacheHttpClient(feignApacheClientManager.getHttpClient());
         }
 
         @Bean
-        public ApacheHttpClientManager createFeignApacheClientBuilder() {
-            ApacheHttpClientManager feignApacheClientManager = new ApacheHttpClientManager();
-            BeanUtils.copyProperties(apacheHttpClientProperties, feignApacheClientManager);
-            feignApacheClientManager.init();
-            return feignApacheClientManager;
+        public ApacheHttpClientBuilder createFeignApacheClientBuilder() {
+            ApacheHttpClientBuilder builder = ApacheHttpClientBuilder.create();
+            builder.connectTimeout(apacheHttpClientProperties.getConnectTimeout())
+                    .socketTimeout(apacheHttpClientProperties.getSocketTimeout())
+                    .connectionRequestTimeout(apacheHttpClientProperties.getConnectionRequestTimeout())
+                    .retryCount(apacheHttpClientProperties.getRetryCount())
+                    .requestSentRetryEnabled(apacheHttpClientProperties.isRequestSentRetryEnabled())
+                    .poolMaxTotal(apacheHttpClientProperties.getPoolMaxTotal())
+                    .poolMaxPreRoute(apacheHttpClientProperties.getPoolMaxPreRoute());
+            builder.build();
+            return builder;
         }
 
         @Bean

@@ -1,7 +1,6 @@
 package com.ppdai.framework.raptor.client;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolException;
@@ -35,12 +34,10 @@ import java.util.TimerTask;
 /**
  * @author yinzuolong
  */
-@Setter
 @Getter
-public class ApacheHttpClientManager {
+public class ApacheHttpClientBuilder {
 
     private boolean sslHostnameValidationEnabled;
-
     private int connectTimeout = -1;
     private int socketTimeout = -1;
     private int connectionRequestTimeout = -1;
@@ -52,17 +49,25 @@ public class ApacheHttpClientManager {
     private PoolingHttpClientConnectionManager connectionManager;
     private CloseableHttpClient httpClient;
 
-    private final Timer connectionManagerTimer = new Timer("ApacheHttpClientManager.connectionManagerTimer", true);
+    private final Timer connectionManagerTimer = new Timer("ApacheHttpClientBuilder.connectionManagerTimer", true);
 
-    public void init() {
+    public static ApacheHttpClientBuilder create() {
+        return new ApacheHttpClientBuilder();
+    }
+
+    private ApacheHttpClientBuilder() {
+
+    }
+
+    public void build() {
         this.httpClient = newClient();
         this.connectionManagerTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (ApacheHttpClientManager.this.connectionManager == null) {
+                if (ApacheHttpClientBuilder.this.connectionManager == null) {
                     return;
                 }
-                ApacheHttpClientManager.this.connectionManager.closeExpiredConnections();
+                ApacheHttpClientBuilder.this.connectionManager.closeExpiredConnections();
             }
         }, 30000, 5000);
     }
@@ -71,6 +76,46 @@ public class ApacheHttpClientManager {
         return httpClient;
     }
 
+    public ApacheHttpClientBuilder connectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+        return this;
+    }
+
+    public ApacheHttpClientBuilder socketTimeout(int socketTimeout) {
+        this.socketTimeout = socketTimeout;
+        return this;
+    }
+
+    public ApacheHttpClientBuilder connectionRequestTimeout(int connectionRequestTimeout) {
+        this.connectionRequestTimeout = connectionRequestTimeout;
+        return this;
+    }
+
+    public ApacheHttpClientBuilder retryCount(int retryCount) {
+        this.retryCount = retryCount;
+        return this;
+    }
+
+    public ApacheHttpClientBuilder requestSentRetryEnabled(boolean requestSentRetryEnabled) {
+        this.requestSentRetryEnabled = requestSentRetryEnabled;
+        return this;
+    }
+
+
+    public ApacheHttpClientBuilder poolMaxPreRoute(int poolMaxPreRoute) {
+        this.poolMaxPreRoute = poolMaxPreRoute;
+        return this;
+    }
+
+    public ApacheHttpClientBuilder poolMaxTotal(int poolMaxTotal) {
+        this.poolMaxTotal = poolMaxTotal;
+        return this;
+    }
+
+    public ApacheHttpClientBuilder sslHostnameValidationEnabled(boolean sslHostnameValidationEnabled) {
+        this.sslHostnameValidationEnabled = sslHostnameValidationEnabled;
+        return this;
+    }
 
     protected PoolingHttpClientConnectionManager newConnectionManager() {
         try {
@@ -112,7 +157,6 @@ public class ApacheHttpClientManager {
             throw new RuntimeException(ex);
         }
     }
-
 
     protected CloseableHttpClient newClient() {
         final RequestConfig requestConfig = RequestConfig.custom()

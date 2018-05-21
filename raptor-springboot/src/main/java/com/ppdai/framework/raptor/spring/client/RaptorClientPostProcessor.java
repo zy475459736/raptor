@@ -48,7 +48,7 @@ public class RaptorClientPostProcessor implements BeanPostProcessor, ResourceLoa
                     }
                 }
             } catch (Exception e) {
-                throw new BeanInitializationException(String.format("Failed to init remote service reference at filed %s in class %s",
+                throw new BeanInitializationException(String.format("Failed to build remote service reference at filed %s in class %s",
                         field.getName(), bean.getClass().getName()), e);
             }
         }

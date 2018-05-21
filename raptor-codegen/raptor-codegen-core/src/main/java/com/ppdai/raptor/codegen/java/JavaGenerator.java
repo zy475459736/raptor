@@ -1072,7 +1072,7 @@ public final class JavaGenerator {
         for (Field field : type.fieldsAndOneOfFields()) {
             String fieldName = nameAllocator.get(field);
             if (field.isRepeated() || field.type().isMap()) {
-                result.addCode("if (!$N.isEmpty()) ", fieldName);
+                result.addCode("if ($N != null  && !$N.isEmpty()) ", fieldName,fieldName);
             } else if (!field.isRequired()) {
                 result.addCode("if ($N != null) ", fieldName);
             }

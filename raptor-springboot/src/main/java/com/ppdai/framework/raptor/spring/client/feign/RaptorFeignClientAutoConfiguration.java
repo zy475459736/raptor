@@ -1,6 +1,7 @@
 package com.ppdai.framework.raptor.spring.client.feign;
 
 
+import com.ppdai.framework.raptor.client.ApacheHttpClientManager;
 import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageDecoder;
 import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageEncoder;
 import com.ppdai.framework.raptor.spring.client.feign.support.SpringMvcContract;
@@ -98,13 +99,13 @@ public class RaptorFeignClientAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         @ConditionalOnProperty(name = "raptor.feign.client", havingValue = "apache", matchIfMissing = true)
-        public Client createApacheHttpClient(FeignApacheClientManager feignApacheClientManager) {
+        public Client createApacheHttpClient(ApacheHttpClientManager feignApacheClientManager) {
             return new ApacheHttpClient(feignApacheClientManager.getHttpClient());
         }
 
         @Bean
-        public FeignApacheClientManager createFeignApacheClientBuilder() {
-            FeignApacheClientManager feignApacheClientManager = new FeignApacheClientManager();
+        public ApacheHttpClientManager createFeignApacheClientBuilder() {
+            ApacheHttpClientManager feignApacheClientManager = new ApacheHttpClientManager();
             BeanUtils.copyProperties(apacheHttpClientProperties, feignApacheClientManager);
             feignApacheClientManager.init();
             return feignApacheClientManager;

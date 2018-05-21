@@ -5,5 +5,4 @@ package com.ppdai.framework.raptor.annotation;
  */
 public @interface RaptorMethod {
 
-    String summary() default "";
 }

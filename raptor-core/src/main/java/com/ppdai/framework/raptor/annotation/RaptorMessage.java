@@ -17,5 +17,4 @@ public @interface RaptorMessage {
 
     String crc32() default "";
 
-    String summary() default "";
 }

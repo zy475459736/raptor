@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.client.feign;
+package com.ppdai.framework.raptor.client;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +37,7 @@ import java.util.TimerTask;
  */
 @Setter
 @Getter
-public class FeignApacheClientManager {
+public class ApacheHttpClientManager {
 
     private boolean sslHostnameValidationEnabled;
 
@@ -52,17 +52,17 @@ public class FeignApacheClientManager {
     private PoolingHttpClientConnectionManager connectionManager;
     private CloseableHttpClient httpClient;
 
-    private final Timer connectionManagerTimer = new Timer("FeignApacheClientManager.connectionManagerTimer", true);
+    private final Timer connectionManagerTimer = new Timer("ApacheHttpClientManager.connectionManagerTimer", true);
 
     public void init() {
         this.httpClient = newClient();
         this.connectionManagerTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (FeignApacheClientManager.this.connectionManager == null) {
+                if (ApacheHttpClientManager.this.connectionManager == null) {
                     return;
                 }
-                FeignApacheClientManager.this.connectionManager.closeExpiredConnections();
+                ApacheHttpClientManager.this.connectionManager.closeExpiredConnections();
             }
         }, 30000, 5000);
     }

@@ -5,14 +5,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 
-@Import({RaptorServiceRegistryProcessor.class,
-        RaptorHandlerMappingPostProcessor.class,
+@Import({RaptorHandlerMappingPostProcessor.class,
         RaptorHandlerAdapterPostProcessor.class,
         RaptorHandlerMethodProcessor.class})
 @Configuration
 public class RaptorServiceAutoConfiguration {
     @Autowired
     private Environment env;
-
-
+    
 }

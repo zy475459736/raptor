@@ -23,7 +23,7 @@ public class RaptorClientTest {
         HelloRequest helloRequest = new HelloRequest();
         helloRequest.setName("ppdai");
         HelloReply reply = simple.sayHello(helloRequest);
-        System.out.println(reply);
+//        System.out.println(reply);
         Assert.assertTrue(StringUtils.startsWith(reply.getMessage(), "Hello"));
     }
 

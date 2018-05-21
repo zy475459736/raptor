@@ -1,7 +1,5 @@
 package com.ppdai.framework.raptor.commmon;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.ppdai.framework.raptor.common.CommonSelfIdGenerator;
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,7 +22,7 @@ public class CommonSelfIdGeneratorTest {
         CountDownLatch countDownLatch  = new CountDownLatch(nthread);
 
         Callable<List<Long>> generate = () -> {
-            ArrayList<Long> ids = Lists.newArrayList();
+            ArrayList<Long> ids = new ArrayList<>();
             countDownLatch.countDown();
             countDownLatch.await();
             for (int i = 0; i < idPerThread; i++) {
@@ -35,14 +33,14 @@ public class CommonSelfIdGeneratorTest {
         };
 
         ExecutorService executorService = Executors.newFixedThreadPool(nthread);
-        List<Future<List<Long>>> futureList = Lists.newArrayList();
+        List<Future<List<Long>>> futureList = new ArrayList();
         for (int i = 0; i < nthread; i++) {
             Future<List<Long>> futureResult = executorService.submit(generate);
             futureList.add(futureResult);
         }
         countDownLatch.await();
 
-        HashSet<Long> allIds = Sets.newHashSet();
+        HashSet<Long> allIds =new HashSet();
         for (Future<List<Long>> result : futureList) {
             List<Long> longs = result.get();
             allIds.addAll(longs);

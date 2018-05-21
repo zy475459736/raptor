@@ -25,7 +25,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.google.protobuf.WireFormat;
 import com.ppdai.framework.raptor.annotation.RaptorField;
 import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.common.URLParamType;
@@ -72,7 +71,6 @@ public final class JavaGenerator {
     static final ClassName STRING = ClassName.get(String.class);
     static final ClassName LIST = ClassName.get(List.class);
     static final ClassName ADAPTER = ClassName.get(ProtoAdapter.class);
-    static final ClassName ENUM_ADAPTER = ClassName.get(EnumAdapter.class);
     static final ClassName NULLABLE = ClassName.get("android.support.annotation", "Nullable");
 
     private static final Ordering<Field> TAG_ORDERING = Ordering.from(new Comparator<Field>() {
@@ -102,26 +100,6 @@ public final class JavaGenerator {
                     .put(FIELD_OPTIONS, ClassName.get("com.google.protobuf", "MessageOptions"))
                     .put(ENUM_OPTIONS, ClassName.get("com.google.protobuf", "FieldOptions"))
                     .put(MESSAGE_OPTIONS, ClassName.get("com.google.protobuf", "EnumOptions"))
-                    .build();
-
-    private static final Map<ProtoType, WireFormat.FieldType> FIELD_TYPE_MAP =
-            ImmutableMap.<ProtoType, WireFormat.FieldType>builder()
-                    .put(ProtoType.DOUBLE, WireFormat.FieldType.DOUBLE)
-                    .put(ProtoType.FLOAT, WireFormat.FieldType.FLOAT)
-                    .put(ProtoType.INT64, WireFormat.FieldType.INT64)
-                    .put(ProtoType.UINT64, WireFormat.FieldType.UINT64)
-                    .put(ProtoType.INT32, WireFormat.FieldType.INT32)
-                    .put(ProtoType.FIXED64, WireFormat.FieldType.FIXED64)
-                    .put(ProtoType.FIXED32, WireFormat.FieldType.FIXED32)
-                    .put(ProtoType.BOOL, WireFormat.FieldType.BOOL)
-                    .put(ProtoType.STRING, WireFormat.FieldType.STRING)
-//                    .put(ProtoType.GROUP, WireFormat.FieldType.GROUP)  //not support group
-                    .put(ProtoType.BYTES, WireFormat.FieldType.BYTES)
-                    .put(ProtoType.UINT32, WireFormat.FieldType.UINT32)
-                    .put(ProtoType.SFIXED32, WireFormat.FieldType.SFIXED32)
-                    .put(ProtoType.SFIXED64, WireFormat.FieldType.SFIXED64)
-                    .put(ProtoType.SINT32, WireFormat.FieldType.SINT32)
-                    .put(ProtoType.SINT64, WireFormat.FieldType.SINT64)
                     .build();
 
 
@@ -966,10 +944,9 @@ public final class JavaGenerator {
         AnnotationSpec.Builder result = AnnotationSpec.builder(RaptorField.class);
 
         ProtoType type = field.type();
-        WireFormat.FieldType wireType = getWireType(type);
-        result.addMember("fieldType", "$T.$L", WireFormat.FieldType.class, wireType);
+        result.addMember("fieldType", "$S", getTypeString(type));
         if (type.isMap()) {
-            result.addMember("keyType", "$T.$L", WireFormat.FieldType.class, getWireType(type.keyType()));
+            result.addMember("keyType", "$S", getTypeString(type.keyType()));
         }
 
         int tag = field.tag();
@@ -993,18 +970,16 @@ public final class JavaGenerator {
         return result.build();
     }
 
-    private WireFormat.FieldType getWireType(ProtoType type) {
+    private String  getTypeString(ProtoType type) {
         checkNotNull(type);
         if (type.isScalar()) {
-            WireFormat.FieldType fieldType = FIELD_TYPE_MAP.get(type);
-            Objects.nonNull(fieldType);
-            return fieldType;
+            return type.toString();
         } else if (type.isMap()) {
-            return getWireType(type.keyType());
+            return type.valueType().toString();
         } else if (isEnum(type)) {
-            return WireFormat.FieldType.ENUM;
+            return "enum";
         } else {
-            return WireFormat.FieldType.MESSAGE;
+            return "message";
         }
     }
 

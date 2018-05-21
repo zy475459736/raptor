@@ -18,36 +18,22 @@ service MoreService {
     option (servicePath) = "/more";
     rpc testGet1 (HelloRequest) returns (HelloReply) {
         option (method) = "get";
-        option (path) = "/get1";
-        option (requestParam) = "p1=string";
-        option (headerParam) = "p2=string";
     }
     rpc testGet2 (HelloRequest) returns (HelloReply) {
         option (method) = "get";
-        option (path) = "/get2/{p1}";
-        option (pathParam) = "p1=string";
+        option (path) = "/get2";
     }
     rpc testPost1 (HelloRequest) returns (HelloReply) {
         option (method) = "post";
         option (path) = "/post1";
-        option (requestParam) = "p1=string";
-    }
-    rpc testPost2 (HelloRequest) returns (HelloReply) {
-        option (method) = "post";
-        option (path) = "/post2/{p1}/{p2}";
-        option (pathParam) = "p1=string";
-        option (pathParam) = "p2=int";
-        option (requestParam) = "p3=string";
     }
     rpc testPut1 (HelloRequest) returns (HelloReply) {
         option (method) = "put";
         option (path) = "/put1";
-        option (requestParam) = "p1=string";
     }
     rpc testDelete1 (HelloRequest) returns (HelloReply) {
         option (method) = "delete";
-        option (path) = "/delete/{p2}";
-        option (pathParam) = "p2=int";
+        option (path) = "/delete";
     }
 }
 message HelloRequest {

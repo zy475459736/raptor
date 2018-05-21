@@ -62,45 +62,34 @@ public class SayHelloController {
         return simple.sayHello(helloRequest);
     }
 
-    @RequestMapping("/get1")
-    public Object testGet1(@RequestParam("p1") String p1, @RequestParam("p2") String p2) {
-        HelloRequest helloRequest = getTestRequest();
 
-        return moreService.testGet1(helloRequest, p1, p2);
+    @RequestMapping("get")
+    public Object testGet1() {
+        HelloRequest helloRequest = getTestRequest();
+        return moreService.testGet1(helloRequest);
     }
 
-    @RequestMapping("/get2")
-    public Object testGet2(@RequestParam("p1") String p1) {
+    @RequestMapping("get2")
+    public Object testGet2() {
         HelloRequest helloRequest = getTestRequest();
-
-        return moreService.testGet2(helloRequest, p1);
+        return moreService.testGet2(helloRequest);
     }
 
-    @RequestMapping("/post1")
-    public Object testPost1(@RequestParam("p1") String p1) {
+    @RequestMapping("post1")
+    public Object testPost1() {
         HelloRequest helloRequest = getTestRequest();
-
-        return moreService.testPost1(helloRequest, p1);
+        return moreService.testPost1(helloRequest);
     }
 
-    @RequestMapping("/post2")
-    public Object testPost2(@RequestParam("p1") String p1, @RequestParam("p2") int p2, @RequestParam("p3") String p3) {
+    @RequestMapping("put1")
+    public Object testPut1() {
         HelloRequest helloRequest = getTestRequest();
-
-        return moreService.testPost2(helloRequest, p3, p1, p2);
+        return moreService.testPut1(helloRequest);
     }
 
-    @RequestMapping("/put1")
-    public Object testPut1(@RequestParam("p1") String p1) {
+    @RequestMapping("delete")
+    public Object testDelete1() {
         HelloRequest helloRequest = getTestRequest();
-
-        return moreService.testPut1(helloRequest, p1);
-    }
-
-    @RequestMapping("/delete1")
-    public Object testDelete1(@RequestParam("p2") int p2) {
-        HelloRequest helloRequest = getTestRequest();
-
-        return moreService.testDelete1(helloRequest, p2);
+        return moreService.testDelete1(helloRequest);
     }
 }

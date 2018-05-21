@@ -570,13 +570,10 @@ public final class JavaGenerator {
             builder.addMethod(buildSetMethod(fieldJavaType, fieldName));
         }
 
-        builder.addMethod(noArgumentConstructor(nameAllocator));
-
-
         //防止产生两个无参构造函数
-//        if (CollectionUtils.isNotEmpty(type.fieldsAndOneOfFields())) {
-//            builder.addMethod(noArgumentConstructor(nameAllocator));
-//        }
+        if (CollectionUtils.isNotEmpty(type.fieldsAndOneOfFields())) {
+            builder.addMethod(noArgumentConstructor(nameAllocator));
+        }
 //        builder.addMethod(messageFieldsConstructor(nameAllocator, type));
         builder.addMethod(messageFieldsAndUnknownFieldsConstructor(nameAllocator, type));
 

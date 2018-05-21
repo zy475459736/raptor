@@ -21,7 +21,10 @@ import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import com.google.protobuf.WireFormat;
 import com.ppdai.framework.raptor.annotation.RaptorField;
 import com.ppdai.framework.raptor.common.RaptorConstants;
@@ -45,7 +48,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.google.common.base.CaseFormat.*;
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.squareup.wire.schema.Options.*;
@@ -1053,6 +1057,9 @@ public final class JavaGenerator {
                     typeName(type.valueType()));
         }
         TypeName messageType = typeName(type);
+        if(messageType.equals(BYTE_STRING)){
+            messageType =  ArrayTypeName.of(byte.class);
+        }
         return field.isRepeated() ? listOf(messageType) : messageType;
     }
 
@@ -1145,23 +1152,23 @@ public final class JavaGenerator {
     //   this(builder.optional_int32, builder.optional_int64, null);
     // }
     //
-    private MethodSpec messageFieldsConstructor(NameAllocator nameAllocator, MessageType type) {
-        MethodSpec.Builder result = MethodSpec.constructorBuilder();
-        result.addModifiers(PUBLIC);
-        result.addCode("this(");
-        for (Field field : type.fieldsAndOneOfFields()) {
-            TypeName javaType = fieldType(field);
-            String fieldName = nameAllocator.get(field);
-            ParameterSpec.Builder param = ParameterSpec.builder(javaType, fieldName);
-            if (emitAndroid && field.isOptional()) {
-                param.addAnnotation(NULLABLE);
-            }
-            result.addParameter(param.build());
-            result.addCode("$L, ", fieldName);
-        }
-        result.addCode("$T.EMPTY);\n", BYTE_STRING);
-        return result.build();
-    }
+//    private MethodSpec messageFieldsConstructor(NameAllocator nameAllocator, MessageType type) {
+//        MethodSpec.Builder result = MethodSpec.constructorBuilder();
+//        result.addModifiers(PUBLIC);
+//        result.addCode("this(");
+//        for (Field field : type.fieldsAndOneOfFields()) {
+//            TypeName javaType = fieldType(field);
+//            String fieldName = nameAllocator.get(field);
+//            ParameterSpec.Builder param = ParameterSpec.builder(javaType, fieldName);
+//            if (emitAndroid && field.isOptional()) {
+//                param.addAnnotation(NULLABLE);
+//            }
+//            result.addParameter(param.build());
+//            result.addCode("$L, ", fieldName);
+//        }
+//        result.addCode("$T.EMPTY);\n", BYTE_STRING);
+//        return result.build();
+//    }
 
     // Example:
     //
@@ -1590,7 +1597,7 @@ public final class JavaGenerator {
 
         } else if (javaType.equals(BYTE_STRING)) {
             if (value == null) {
-                return CodeBlock.of("$T.EMPTY", ByteString.class);
+                return CodeBlock.of("null");
             } else {
                 return CodeBlock.of("$T.decodeBase64($S)", ByteString.class,
                         ByteString.of(String.valueOf(value).getBytes(Charsets.ISO_8859_1)).base64());
@@ -1672,12 +1679,12 @@ public final class JavaGenerator {
         //有重复key
         if (CollectionUtils.isNotEmpty(dupNames)) {
             String nameString = StringUtils.join(dupNames, ",");
-            throw new RuntimeException("duplicate param keys:"+nameString);
+            throw new RuntimeException("duplicate param keys:" + nameString);
         }
 
-        List<ParameterSpec> requestParamSpecs = buildParams(requestParams,RequestParam.class);
+        List<ParameterSpec> requestParamSpecs = buildParams(requestParams, RequestParam.class);
         List<ParameterSpec> headerParamSpecs = buildParams(headerParams, RequestHeader.class);
-        List<ParameterSpec> pathParamSpecs = buildParams(pathParams,PathVariable.class);
+        List<ParameterSpec> pathParamSpecs = buildParams(pathParams, PathVariable.class);
 
         result.addAll(requestParamSpecs);
         result.addAll(headerParamSpecs);
@@ -1687,7 +1694,7 @@ public final class JavaGenerator {
 
     }
 
-    private List<ParameterSpec> buildParams(List<Param> params,Class clazz) {
+    private List<ParameterSpec> buildParams(List<Param> params, Class clazz) {
         ArrayList<ParameterSpec> result = Lists.newArrayList();
         for (Param requestParam : params) {
             String requestParamName = requestParam.getName();
@@ -1718,13 +1725,13 @@ public final class JavaGenerator {
         Method method = methodMetaInfo.getMethod();
         if (Objects.nonNull(method)) {
             builder.addMember("method", "$T.$L", RequestMethod.class, method.getName());
-        }else{
-            if(Objects.isNull(path)){
+        } else {
+            if (Objects.isNull(path)) {
                 //没有指定method,没有path ,默认POST
-                builder.addMember("method","$T.$L", RequestMethod.class, "POST");
-            }else{
+                builder.addMember("method", "$T.$L", RequestMethod.class, "POST");
+            } else {
                 //没有指定method,但是有path ,默认GET
-                builder.addMember("method","$T.$L", RequestMethod.class, "GET");
+                builder.addMember("method", "$T.$L", RequestMethod.class, "GET");
 
             }
         }

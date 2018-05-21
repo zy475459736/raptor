@@ -1,4 +1,4 @@
-package com.ppdai.raptor.codegen.java.test;
+package com.ppdai.raptor.codegen.test.java;
 
 import com.ppdai.raptor.codegen.java.PomGenerator;
 import com.ppdai.raptor.codegen.java.maven.PomModel;

@@ -1,8 +1,9 @@
-package com.ppdai.raptor.codegen.java.test;
+package com.ppdai.raptor.codegen.test.java;
 
 import com.ppdai.raptor.codegen.java.JavaGenerator;
 import com.ppdai.raptor.codegen.java.Profile;
 import com.ppdai.raptor.codegen.java.ProfileLoader;
+import com.ppdai.raptor.codegen.test.AbstractCodegenTest;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
@@ -21,20 +22,8 @@ import java.io.IOException;
  * @author zhangchengxi
  * Date 2018/4/26
  */
-public class JavaGeneratorTest {
+public class JavaGeneratorTest extends AbstractCodegenTest {
 
-    private static final String PROTO_FILE_DIR = "src/test/resources/proto";
-    private static final String GENERATED_SOURCE_DIR = "target/generated-sources/annotations";
-    private Schema schema;
-    private Profile profile;
-
-    @Before
-    public void setup() throws IOException {
-        SchemaLoader schemaLoader = new SchemaLoader();
-        schemaLoader.addSource(new File(PROTO_FILE_DIR));
-        schema = schemaLoader.load();
-        profile = loadProfile(schema);
-    }
 
     @After
     public void clean() {
@@ -56,10 +45,6 @@ public class JavaGeneratorTest {
 
         writeJavaFile(javaTypeName, typeSpec, type.location().withPathOnly());
 
-    }
-
-    private Profile loadProfile(Schema schema) throws IOException {
-        return new ProfileLoader("java").schema(schema).load();
     }
 
 

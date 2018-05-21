@@ -4,25 +4,24 @@ package com.ppdai.raptor.codegen.swagger;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.squareup.wire.schema.*;
-import com.sun.tools.internal.ws.processor.model.Response;
-import io.swagger.oas.models.*;
-import io.swagger.oas.models.callbacks.Callback;
-import io.swagger.oas.models.examples.Example;
-import io.swagger.oas.models.headers.Header;
-import io.swagger.oas.models.info.Contact;
-import io.swagger.oas.models.info.Info;
-import io.swagger.oas.models.info.License;
-import io.swagger.oas.models.links.Link;
-import io.swagger.oas.models.media.*;
-import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.parameters.Parameter;
-import io.swagger.oas.models.parameters.RequestBody;
-import io.swagger.oas.models.responses.ApiResponse;
-import io.swagger.oas.models.responses.ApiResponses;
-import io.swagger.oas.models.servers.Server;
-import io.swagger.oas.models.servers.ServerVariable;
-import io.swagger.oas.models.servers.ServerVariables;
-import io.swagger.oas.models.tags.Tag;
+import io.swagger.v3.oas.models.*;
+import io.swagger.v3.oas.models.callbacks.Callback;
+import io.swagger.v3.oas.models.examples.Example;
+import io.swagger.v3.oas.models.headers.Header;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.links.Link;
+import io.swagger.v3.oas.models.media.*;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.RequestBody;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.servers.ServerVariable;
+import io.swagger.v3.oas.models.servers.ServerVariables;
+import io.swagger.v3.oas.models.tags.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -155,6 +154,7 @@ public class SwaggerConverter {
 
     private List<Server> getServers(){
         List<Server> servers = Lists.newArrayList();
+        servers.add(getServer());
         return servers;
     }
 
@@ -255,7 +255,7 @@ public class SwaggerConverter {
 
 
         //requires
-        operation.responses(getApiResponse());
+        operation.responses(getApiResponses());
 
         operation.tags(Lists.newArrayList("operation", "tagds"));
         operation.summary("operation summary");
@@ -339,19 +339,32 @@ public class SwaggerConverter {
      *https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#responsesObject
      * @return
      */
-//    private Responses getResponses(){
-//        Responses responses = new Responses();
-//        return responses;
-//    }
+    private ApiResponses getApiResponses() {
+        ApiResponses apiResponses = new ApiResponses();
+
+        apiResponses.addApiResponse("200", getSuccessApiResponse());
+
+        return apiResponses;
+
+    }
 
     /**
      * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#responseObject
      *
      * @return
      */
-    private Response getResponse() {
-        Response response = new Response();
-        return response;
+
+
+    private ApiResponse getSuccessApiResponse() {
+        ApiResponse apiResponse = new ApiResponse();
+
+        apiResponse.$ref("#/ApiResponse/ref");
+//        apiResponse.addExtension();
+//        apiResponse.addHeaderObject();
+        apiResponse.content(getContent());
+        apiResponse.description("ApiResponse  description");
+        apiResponse.link("ApiResponse link name", getLink());
+        return apiResponse;
     }
 
     /**
@@ -469,26 +482,9 @@ public class SwaggerConverter {
      * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#securityRequirementObject
      */
 
-    private ApiResponses getApiResponse() {
-        ApiResponses apiResponses = new ApiResponses();
 
-        apiResponses.addApiResponse("200", getSuccessApiResponse());
 
-        return apiResponses;
 
-    }
-
-    private ApiResponse getSuccessApiResponse() {
-        ApiResponse apiResponse = new ApiResponse();
-
-        apiResponse.$ref("#/ApiResponse/ref");
-//        apiResponse.addExtension();
-//        apiResponse.addHeaderObject();
-        apiResponse.content(getContent());
-        apiResponse.description("ApiResponse  description");
-        apiResponse.link("ApiResponse link name", getLink());
-        return apiResponse;
-    }
 
 
     private Content getContent() {

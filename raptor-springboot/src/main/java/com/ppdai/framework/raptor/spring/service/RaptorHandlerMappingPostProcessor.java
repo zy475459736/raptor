@@ -18,7 +18,7 @@ import java.util.Set;
  *
  * @author yinzuolong
  */
-public class RaptorHandlerMappingProcessor implements BeanPostProcessor {
+public class RaptorHandlerMappingPostProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         return bean;

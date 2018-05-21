@@ -6,11 +6,9 @@ message AllTypesPojo {
     enum NestedEnum {
         A = 0;
     }
-
     message NestedMessage {
         int32 a = 1;
     }
-
     int32 int32 = 1;
     uint32 uint32 = 2;
     sint32 sint32 = 3;

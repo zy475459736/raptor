@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Configuration
 @Slf4j
-public class RaptorHandlerAdapterProcessor implements BeanPostProcessor {
+public class RaptorHandlerAdapterPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -36,11 +36,11 @@ public class RaptorHandlerAdapterProcessor implements BeanPostProcessor {
             List<HttpMessageConverter<?>> converters = Collections.singletonList(raptorMessageConverter);
 
             ArrayList<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>(adapter.getArgumentResolvers());
-            argumentResolvers.add(0, new RaptorControllerMethodProcessor(converters));
+            argumentResolvers.add(0, new RaptorHandlerMethodProcessor(converters));
             adapter.setArgumentResolvers(argumentResolvers);
 
             ArrayList<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<>(adapter.getReturnValueHandlers());
-            returnValueHandlers.add(0, new RaptorControllerMethodProcessor(converters));
+            returnValueHandlers.add(0, new RaptorHandlerMethodProcessor(converters));
             adapter.setReturnValueHandlers(returnValueHandlers);
         }
         return bean;

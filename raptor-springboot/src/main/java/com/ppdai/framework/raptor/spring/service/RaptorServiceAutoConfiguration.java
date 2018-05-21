@@ -1,6 +1,5 @@
 package com.ppdai.framework.raptor.spring.service;
 
-import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.filter.provider.ProviderAccessLogFilter;
 import com.ppdai.framework.raptor.filter.provider.ProviderFilter;
 import com.ppdai.framework.raptor.filter.provider.ProviderMetricsFilter;
@@ -10,7 +9,6 @@ import com.ppdai.framework.raptor.service.ServletEndpoint;
 import com.ppdai.framework.raptor.spring.endpoint.RaptorProvidersActuatorEndpoint;
 import com.ppdai.framework.raptor.spring.properties.ServletEndpointProperties;
 import com.ppdai.framework.raptor.util.NetUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
@@ -18,21 +16,17 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Import({RaptorServiceRegistryProcessor.class,
-        RaptorHandlerMappingProcessor.class,
-        RaptorHandlerAdapterProcessor.class,
-        RaptorControllerMethodProcessor.class})
+        RaptorHandlerMappingPostProcessor.class,
+        RaptorHandlerAdapterPostProcessor.class,
+        RaptorHandlerMethodProcessor.class})
 @Configuration
 @EnableConfigurationProperties({ServletEndpointProperties.class})
 public class RaptorServiceAutoConfiguration {

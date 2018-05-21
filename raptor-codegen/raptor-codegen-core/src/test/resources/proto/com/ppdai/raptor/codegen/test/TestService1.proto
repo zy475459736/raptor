@@ -3,16 +3,13 @@ syntax = "proto3";
 
 package com.ppdai.raptor.codegen.test;
 
-
 import "raptor.proto";
 
 option (appId) = "appId";
 option (appName) = "app name";
 option (version) = "version.0.1";
 
-
 service TestService{
-
     /* asdfghhjk */
     rpc getRandomString (GetRandomStringQuery) returns (RandomStringResponse) {
         option (method) = "get";

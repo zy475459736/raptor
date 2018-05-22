@@ -31,17 +31,21 @@ import java.util.List;
  * Schema 参考 https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#schema
  * <p>
  *
+ * 多线程不安全,不能声明为bean
+ *
  * @author zhangchengxi
  * Date 2018/4/20
  */
 public class SwaggerConverter {
     public static final String DEFAULT_VERSION = "0.0.1";
 
-    // TODO: 2018/4/20 动态修改schema的时候注意多线程问题
     private final com.squareup.wire.schema.Schema schmea;
+
+    private ThreadLocal<RefHelper> refHelper;
 
     public SwaggerConverter(com.squareup.wire.schema.Schema schema) {
         this.schmea = schema;
+        refHelper = new ThreadLocal<>();
     }
 
     public List<OpenAPI> convert() {
@@ -59,22 +63,23 @@ public class SwaggerConverter {
     }
 
     /**
-     * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#openapi-object
+     * https://github.com/OAI/OpenAPI-SpecOpenApiification/blob/master/versions/3.0.1.md#openapi-object
      *
      * @param service
      * @param protoFile
      * @return
      */
     private OpenAPI getOpenApi(Service service, ProtoFile protoFile) {
+        refHelper.set(new RefHelper(schmea, protoFile, service));
+
         OpenAPI openApi = new OpenAPI();
 
         //required
         openApi.info(getInfo(protoFile, service));
-        openApi.paths(getPath(protoFile,service));
+        openApi.paths(getPath(protoFile, service));
 
         //optional
         openApi.servers(getServers());
-        openApi.paths(getPath(protoFile, service));
         openApi.components(getComponents());
 //        openApi.security()
         openApi.tags(getTags());
@@ -120,7 +125,7 @@ public class SwaggerConverter {
     private Contact getContact() {
         Contact contact = new Contact();
         // TODO: 2018/5/18 现在proto文件中还没有定义contact
-        return contact;
+        return null;
     }
 
 
@@ -133,7 +138,7 @@ public class SwaggerConverter {
     private License getLicense() {
         License license = new License();
         // TODO: 2018/5/18 现在还没有定义license
-        return license;
+        return null;
     }
 
     /**
@@ -152,7 +157,7 @@ public class SwaggerConverter {
         return server;
     }
 
-    private List<Server> getServers(){
+    private List<Server> getServers() {
         List<Server> servers = Lists.newArrayList();
         servers.add(getServer());
         return servers;
@@ -169,7 +174,7 @@ public class SwaggerConverter {
         return serverVariable;
     }
 
-    private ServerVariables getServerVariables(){
+    private ServerVariables getServerVariables() {
         ServerVariables serverVariables = new ServerVariables();
         return serverVariables;
     }
@@ -177,16 +182,17 @@ public class SwaggerConverter {
     /**
      * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#components-object
      * 可重用组件
+     *
      * @return
      */
     private Components getComponents() {
         Components components = new Components();
+        components.schemas(refHelper.get().buildSchemas());
         return components;
     }
 
     /**
      * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#paths-object
-     *
      *
      * @param protoFile
      * @param service
@@ -194,10 +200,10 @@ public class SwaggerConverter {
      */
     private Paths getPath(ProtoFile protoFile, Service service) {
         Paths paths = new Paths();
-        String baseUrl = protoFile.packageName().replace(".","/");
+        String baseUrl = "/"+protoFile.packageName().replace(".", "/");
 
         for (Rpc rpc : service.rpcs()) {
-            String name = baseUrl+rpc.name();
+            String name = baseUrl + rpc.name();
             paths.addPathItem(name, getPathItem(rpc));
         }
 
@@ -218,26 +224,9 @@ public class SwaggerConverter {
         PathItem pathItem = new PathItem();
         // 原版raptor 只支持post
 
-        // TODO: 2018/4/20 调试,看看用那个值
-        pathItem.$ref("this is $ref");
-//        pathItem.summary();
         pathItem.description(rpc.documentation());
-        //无
-//        pathItem.servers(getServices());
-        // TODO: 2018/5/18
-        pathItem.parameters(getParameters(rpc));
 
-        pathItem.get(getOperation(rpc));
-
-        // http method
-//        pathItem.get()
-//        pathItem.put()
-//        pathItem.post()
-//        pathItem.delete()
-//        pathItem.options()
-//        pathItem.head()
-//        pathItem.patch()
-//        pathItem.trace()
+        pathItem.post(getOperation(rpc));
 
 
         return pathItem;
@@ -253,9 +242,10 @@ public class SwaggerConverter {
     private Operation getOperation(Rpc rpc) {
         Operation operation = new Operation();
 
+        operation.requestBody(getRequestBody(rpc));
 
         //requires
-        operation.responses(getApiResponses());
+        operation.responses(getApiResponses(rpc));
 
         operation.tags(Lists.newArrayList("operation", "tagds"));
         operation.summary("operation summary");
@@ -288,8 +278,8 @@ public class SwaggerConverter {
     /**
      * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#parameter-object
      *
-     * @return
      * @param rpc
+     * @return
      */
     private List<Parameter> getParameters(Rpc rpc) {
         ArrayList<Parameter> parameters = Lists.newArrayList();
@@ -305,10 +295,16 @@ public class SwaggerConverter {
     /**
      * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#requestBodyObject
      *
+     * @param rpc
      * @return
      */
-    private RequestBody getRequestBody() {
+    private RequestBody getRequestBody(Rpc rpc) {
         RequestBody requestBody = new RequestBody();
+        ProtoType protoType = rpc.requestType();
+        Type type = schmea.getType(protoType);
+        requestBody.description(type.documentation());
+        requestBody.required(true);
+        requestBody.content(getContent(rpc.requestType()));
         return requestBody;
     }
 
@@ -316,9 +312,11 @@ public class SwaggerConverter {
      * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#media-type-object
      *
      * @return
+     * @param protoType
      */
-    private MediaType getMediaType() {
+    private MediaType getMediaType(ProtoType protoType) {
         MediaType mediaType = new MediaType();
+        mediaType.schema(getSchema(protoType));
 //        mediaType.encoding();
 //        mediaType.
         return mediaType;
@@ -336,13 +334,14 @@ public class SwaggerConverter {
     }
 
     /**
-     *https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#responsesObject
+     * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#responsesObject
+     *
      * @return
      */
-    private ApiResponses getApiResponses() {
+    private ApiResponses getApiResponses(Rpc rpc) {
         ApiResponses apiResponses = new ApiResponses();
 
-        apiResponses.addApiResponse("200", getSuccessApiResponse());
+        apiResponses.addApiResponse("200", getSuccessApiResponse(rpc));
 
         return apiResponses;
 
@@ -355,13 +354,10 @@ public class SwaggerConverter {
      */
 
 
-    private ApiResponse getSuccessApiResponse() {
+    private ApiResponse getSuccessApiResponse(Rpc rpc) {
         ApiResponse apiResponse = new ApiResponse();
 
-        apiResponse.$ref("#/ApiResponse/ref");
-//        apiResponse.addExtension();
-//        apiResponse.addHeaderObject();
-        apiResponse.content(getContent());
+        apiResponse.content(getContent(rpc.responseType()));
         apiResponse.description("ApiResponse  description");
         apiResponse.link("ApiResponse link name", getLink());
         return apiResponse;
@@ -398,7 +394,7 @@ public class SwaggerConverter {
 //        link.$ref();
 //        link.addExtension();
 
-        return link;
+        return null;
     }
 
     /**
@@ -423,7 +419,7 @@ public class SwaggerConverter {
 
     private List<Tag> getTags() {
         List<Tag> tagList = Lists.newArrayList();
-        return tagList;
+        return null;
     }
 
     /**
@@ -440,8 +436,9 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private Schema getSchema() {
+    private Schema getSchema(ProtoType protoType) {
         Schema schema = new Schema();
+        schema.set$ref(refHelper.get().getRefer(protoType));
         return schema;
     }
 
@@ -483,13 +480,9 @@ public class SwaggerConverter {
      */
 
 
-
-
-
-
-    private Content getContent() {
+    private Content getContent(ProtoType protoType) {
         Content content = new Content();
-        content.addMediaType("content mediatype name", getMediaType());
+        content.addMediaType("application/json", getMediaType(protoType));
         return content;
     }
 

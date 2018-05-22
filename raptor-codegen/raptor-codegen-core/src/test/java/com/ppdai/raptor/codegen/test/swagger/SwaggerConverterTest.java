@@ -21,10 +21,14 @@ public class SwaggerConverterTest extends AbstractCodegenTest {
     public void testGenerateApis() throws JsonProcessingException {
         SwaggerConverter swaggerConverter = new SwaggerConverter(schema);
         List<OpenAPI> convert = swaggerConverter.convert();
-        for (OpenAPI openAPI : convert) {
-            Json.prettyPrint(openAPI);
-        }
+//        for (OpenAPI openAPI : convert) {
+//            Json.prettyPrint(openAPI);
+//        }
+
+
+        Json.prettyPrint(convert.get(0));
     }
+
 
 
 }

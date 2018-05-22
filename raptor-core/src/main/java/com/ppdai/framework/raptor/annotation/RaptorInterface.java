@@ -19,5 +19,4 @@ public @interface RaptorInterface {
 
     String crc32() default "";
 
-    String summary() default "";
 }

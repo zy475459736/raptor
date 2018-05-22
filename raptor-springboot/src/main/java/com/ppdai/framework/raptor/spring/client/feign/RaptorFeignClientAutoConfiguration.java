@@ -1,23 +1,25 @@
 package com.ppdai.framework.raptor.spring.client.feign;
 
 
-import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
+import com.ppdai.framework.raptor.client.ApacheHttpClientManager;
 import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageDecoder;
 import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageEncoder;
 import com.ppdai.framework.raptor.spring.client.feign.support.SpringMvcContract;
-import feign.Client;
-import feign.Contract;
-import feign.RequestInterceptor;
-import feign.Retryer;
+import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
+import com.ppdai.framework.raptor.spring.properties.ApacheHttpClientProperties;
+import feign.*;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
 import feign.codec.ErrorDecoder;
 import feign.httpclient.ApacheHttpClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,7 +29,6 @@ import java.util.List;
 @Configuration
 public class RaptorFeignClientAutoConfiguration {
 
-    //TODO 加入raptor自己定义的转换器
     @Autowired
     private ObjectFactory<HttpMessageConverters> messageConverters;
 
@@ -42,7 +43,8 @@ public class RaptorFeignClientAutoConfiguration {
             Contract contract,
             Client client,
             Retryer retryer,
-            ObjectProvider<List<RequestInterceptor>> requestInterceptors) {
+            ObjectProvider<List<RequestInterceptor>> requestInterceptors,
+            Request.Options options) {
         RaptorFeignClientSpringFactory factory = new RaptorFeignClientSpringFactory();
         factory.setEncoder(encoder);
         factory.setDecoder(decoder);
@@ -50,8 +52,8 @@ public class RaptorFeignClientAutoConfiguration {
         factory.setContract(contract);
         factory.setClient(client);
         factory.setRetryer(retryer);
-
         factory.setRequestInterceptors(requestInterceptors.getIfAvailable());
+        factory.setOptions(options);
         return factory;
     }
 
@@ -79,19 +81,41 @@ public class RaptorFeignClientAutoConfiguration {
         return Retryer.NEVER_RETRY;
     }
 
-    //TODO 共用Apache的client
-    @Bean
-    @ConditionalOnMissingBean
-    public Client createFeignClient() {
-        return new ApacheHttpClient();
-    }
-
     //TODO 设置错误解码器
     @Bean
     @ConditionalOnMissingBean
-    ErrorDecoder createFeignErrorDecoder() {
+    public ErrorDecoder createFeignErrorDecoder() {
         return new ErrorDecoder.Default();
     }
 
+    @Configuration
+    @EnableConfigurationProperties({ApacheHttpClientProperties.class})
+    @ConditionalOnProperty(name = "raptor.feign.client", havingValue = "apache", matchIfMissing = true)
+    public static class ApacheClientConfig {
 
+        @Autowired
+        private ApacheHttpClientProperties apacheHttpClientProperties;
+
+        @Bean
+        @ConditionalOnMissingBean
+        @ConditionalOnProperty(name = "raptor.feign.client", havingValue = "apache", matchIfMissing = true)
+        public Client createApacheHttpClient(ApacheHttpClientManager feignApacheClientManager) {
+            return new ApacheHttpClient(feignApacheClientManager.getHttpClient());
+        }
+
+        @Bean
+        public ApacheHttpClientManager createFeignApacheClientBuilder() {
+            ApacheHttpClientManager feignApacheClientManager = new ApacheHttpClientManager();
+            BeanUtils.copyProperties(apacheHttpClientProperties, feignApacheClientManager);
+            feignApacheClientManager.init();
+            return feignApacheClientManager;
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        public Request.Options createOptions() {
+            return new Request.Options(apacheHttpClientProperties.getConnectTimeout(), this.apacheHttpClientProperties.getSocketTimeout());
+        }
+
+    }
 }

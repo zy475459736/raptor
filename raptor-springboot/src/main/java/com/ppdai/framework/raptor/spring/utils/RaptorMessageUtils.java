@@ -1,7 +1,7 @@
 package com.ppdai.framework.raptor.spring.utils;
 
+import com.ppdai.framework.raptor.annotation.RaptorField;
 import com.ppdai.framework.raptor.annotation.RaptorMessage;
-import com.squareup.wire.WireField;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
@@ -51,7 +51,7 @@ public class RaptorMessageUtils {
             Field[] fields = value.getClass().getDeclaredFields();
             for (Field field : fields) {
                 String fieldName = field.getName();
-                WireField wireField = AnnotationUtils.findAnnotation(field, WireField.class);
+                RaptorField wireField = AnnotationUtils.findAnnotation(field, RaptorField.class);
                 if (wireField == null) {
                     continue;
                 }

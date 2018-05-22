@@ -25,7 +25,7 @@ public class RaptorClientRegistry {
         return clientCache.get(getCacheKey(interfaceClass.getName(), serviceUrl));
     }
 
-    public Map<String, Object> getAllRegistried() {
+    public Map<String, Object> getAllRegistered() {
         return Collections.unmodifiableMap(clientCache);
     }
 

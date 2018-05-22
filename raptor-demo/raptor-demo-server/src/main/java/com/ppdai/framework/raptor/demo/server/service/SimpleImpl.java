@@ -1,7 +1,5 @@
 package com.ppdai.framework.raptor.demo.server.service;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ppdai.framework.raptor.proto.HelloReply;
 import com.ppdai.framework.raptor.proto.HelloRequest;
 import com.ppdai.framework.raptor.proto.Simple;
@@ -14,8 +12,6 @@ public class SimpleImpl implements Simple {
 
     @Override
     public HelloReply sayHello(HelloRequest request) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         String hello = "Hello " + request.getName();
         return new HelloReply(hello, 123, request, new HashMap<>());
     }

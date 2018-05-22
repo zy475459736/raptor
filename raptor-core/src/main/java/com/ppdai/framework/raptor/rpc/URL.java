@@ -2,7 +2,6 @@ package com.ppdai.framework.raptor.rpc;
 
 import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.common.URLParamType;
-import com.ppdai.framework.raptor.exception.RaptorServiceException;
 import com.ppdai.framework.raptor.util.StringTools;
 import lombok.Builder;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +45,7 @@ public class URL {
 
     public static URL valueOf(String url) {
         if (StringUtils.isBlank(url)) {
-            throw new RaptorServiceException("serviceUrl is null");
+            throw new RuntimeException("serviceUrl is null");
         }
         String protocol = null;
         String host = null;

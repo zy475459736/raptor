@@ -9,9 +9,19 @@ option (appId) = "appId";
 option (appName) = "demo";
 option (version) = "version.0.1";
 
+//service begin 1
+//service begin 2
 service Simple {
+    //rpc begin doc1
+    //rpc begin  doc2
     rpc sayHello (GooodByeRequst) returns (Cat) {
     }
+
+    //rpc begin doc1
+    //rpc begin  doc2
+    rpc sayHello2 (GooodByeRequst) returns (Cat) {
+    }
+
 }
 
 service MoreService {
@@ -111,10 +121,13 @@ message HelloReply {
     map<string, string> result = 4;
 }
 
+// Cat doc
 message Cat {
     string color = 1;
 }
 
+
+// GooodByeRequst doc
 message GooodByeRequst{
     repeated int32 a_list = 1;
     SimEnum b_enum = 2;

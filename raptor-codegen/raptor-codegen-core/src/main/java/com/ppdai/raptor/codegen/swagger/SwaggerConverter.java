@@ -105,7 +105,7 @@ public class SwaggerConverter {
 
 
         //required
-        info.title(protoFile.name());
+        info.title(service.name());
         info.version("0.0.1");
 
         //optional
@@ -204,13 +204,11 @@ public class SwaggerConverter {
 
         for (Rpc rpc : service.rpcs()) {
             String name = baseUrl + rpc.name();
+            // TODO: 2018/5/23 处理path 相同,方法不同的问题,
             paths.addPathItem(name, getPathItem(rpc));
         }
-
 //        paths.addExtension();
-
         return paths;
-
     }
 
 
@@ -247,7 +245,6 @@ public class SwaggerConverter {
         //requires
         operation.responses(getApiResponses(rpc));
 
-        operation.tags(Lists.newArrayList("operation", "tagds"));
         operation.summary("operation summary");
         operation.description(rpc.documentation());
         operation.operationId("operation operationId");
@@ -358,7 +355,8 @@ public class SwaggerConverter {
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.content(getContent(rpc.responseType()));
-        apiResponse.description("ApiResponse  description");
+        Type type = this.schmea.getType(rpc.responseType());
+        apiResponse.description(type.documentation());
         apiResponse.link("ApiResponse link name", getLink());
         return apiResponse;
     }

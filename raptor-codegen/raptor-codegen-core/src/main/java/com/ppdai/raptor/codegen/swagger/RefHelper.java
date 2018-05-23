@@ -71,12 +71,12 @@ public class RefHelper {
     }
 
     private String getDescriptionFromEnumType(EnumType type) {
-        String format = "* %d - %s \n";
+        String format = "* %d - %s %s\n";
         StringBuffer sb = new StringBuffer();
         sb.append(type.documentation());
         sb.append("\n");
         for (EnumConstant enumConstant : type.constants()) {
-            sb.append(String.format(format, enumConstant.tag(), enumConstant.name()));
+            sb.append(String.format(format, enumConstant.tag(), enumConstant.name(),enumConstant.documentation()));
         }
         return sb.toString();
     }
@@ -94,7 +94,7 @@ public class RefHelper {
             if (field.isRepeated()) {
                 property = new ArraySchema().items(property);
             }
-
+            property.description(field.documentation());
             properties.put(fieldName, property);
         }
         return properties;

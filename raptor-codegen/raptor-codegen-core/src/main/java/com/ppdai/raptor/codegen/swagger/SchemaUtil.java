@@ -2,6 +2,7 @@ package com.ppdai.raptor.codegen.swagger;
 
 import com.squareup.wire.schema.ProtoType;
 import io.swagger.v3.oas.models.media.*;
+import org.springframework.beans.BeanUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,7 +56,9 @@ public class SchemaUtil {
         if(Objects.isNull(schema)){
             schema = new Schema().$ref(refHelper.getRefer(protoType));
         }
-        return schema;
+        Schema result = new Schema();
+        BeanUtils.copyProperties(schema, result);
+        return result;
     }
 
 

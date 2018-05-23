@@ -184,6 +184,7 @@ public class RaptorSwaggerConverter extends SwaggerConverter {
                 parameter.name(field.name());
                 parameter.in("query");
                 parameter.schema(refHelper.get().getSchemaByType(field.type()));
+                parameter.description(field.documentation());
                 parameters.add(parameter);
             }
 

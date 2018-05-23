@@ -10,14 +10,16 @@ option (appName) = "app name";
 option (version) = "version.0.1";
 
 service TestService{
-    /* asdfghhjk */
+    /* asdfghhjk
+    @Summary This is summary
+     */
     rpc getRandomString (GetRandomStringQuery) returns (RandomStringResponse) {
         option (method) = "get";
         option (path) = "/test";
     }
     rpc SlowResponder (GetRandomStringQuery) returns (RandomStringResponse) {
         option (method) = "get";
-        option (path) = "/test/{id}/{name}";
+        option (path) = "/test/id/name";
         option (pathParam) = "id=int";
         option (pathParam) = "name=string";
         option (requestParam) = "gender=bool";
@@ -27,7 +29,7 @@ service TestService{
         option (headerParam) = "x-xx-xxx";
     }
     rpc SetHealthCheckStatus (SetHealthCheckStatusCommand) returns (SetHealthCheckStatusResponse) {
-        option (path) = "/test/{name}/{gender}";
+        option (path) = "/test/name/gender";
     }
     rpc CallsAnotherService (CallAnotherServiceCommand) returns (CallAnotherServiceResponse) {}
 }

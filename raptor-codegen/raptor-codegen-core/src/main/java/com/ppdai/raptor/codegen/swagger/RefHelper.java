@@ -100,7 +100,7 @@ public class RefHelper {
         return properties;
     }
 
-    private Schema getSchemaByType(ProtoType protoType) {
+    public  Schema getSchemaByType(ProtoType protoType) {
         if (protoType.isScalar()) {
             return SchemaUtil.getSchema(protoType, this);
         } else if (protoType.isMap()) {

@@ -4,6 +4,7 @@ package com.ppdai.raptor.codegen.swagger;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.squareup.wire.schema.*;
+import io.swagger.v3.core.util.PathUtils;
 import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.examples.Example;
@@ -39,9 +40,9 @@ import java.util.List;
 public class SwaggerConverter {
     public static final String DEFAULT_VERSION = "0.0.1";
 
-    private final com.squareup.wire.schema.Schema schmea;
+    protected final com.squareup.wire.schema.Schema schmea;
 
-    private ThreadLocal<RefHelper> refHelper;
+    protected ThreadLocal<RefHelper> refHelper;
 
     public SwaggerConverter(com.squareup.wire.schema.Schema schema) {
         this.schmea = schema;
@@ -69,7 +70,7 @@ public class SwaggerConverter {
      * @param protoFile
      * @return
      */
-    private OpenAPI getOpenApi(Service service, ProtoFile protoFile) {
+    protected OpenAPI getOpenApi(Service service, ProtoFile protoFile) {
         refHelper.set(new RefHelper(schmea, protoFile, service));
 
         OpenAPI openApi = new OpenAPI();
@@ -95,14 +96,8 @@ public class SwaggerConverter {
      * @param protoFile
      * @return
      */
-    private Info getInfo(ProtoFile protoFile, Service service) {
+    protected Info getInfo(ProtoFile protoFile, Service service) {
         Info info = new Info();
-
-        // TODO: 2018/5/18 使用swagger converter plus来处理raptor自定义的扩展
-        //这是类处理原始版本的proto文件,不使用raptor自定义的一些属性
-//        ProtoFileMetaInfo protoFileMetaInfo = ProtoFileMetaInfo.readFrom(protoFile);
-//        InterfaceMetaInfo interfaceMetaInfo = InterfaceMetaInfo.readFrom(protoFile, service);
-
 
         //required
         info.title(service.name());
@@ -110,7 +105,6 @@ public class SwaggerConverter {
 
         //optional
         info.description(service.documentation());
-//        info.termsOfService();
         info.contact(getContact());
         info.license(getLicense());
 
@@ -122,7 +116,7 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private Contact getContact() {
+    protected Contact getContact() {
         Contact contact = new Contact();
         // TODO: 2018/5/18 现在proto文件中还没有定义contact
         return null;
@@ -135,7 +129,7 @@ public class SwaggerConverter {
      * @param
      * @return
      */
-    private License getLicense() {
+    protected License getLicense() {
         License license = new License();
         // TODO: 2018/5/18 现在还没有定义license
         return null;
@@ -146,7 +140,7 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private Server getServer() {
+    protected Server getServer() {
         Server server = new Server();
         // TODO: 2018/5/18 现在还没有定义server
 
@@ -157,7 +151,7 @@ public class SwaggerConverter {
         return server;
     }
 
-    private List<Server> getServers() {
+    protected List<Server> getServers() {
         List<Server> servers = Lists.newArrayList();
         servers.add(getServer());
         return servers;
@@ -168,13 +162,13 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private ServerVariable getServerVariable() {
+    protected ServerVariable getServerVariable() {
         ServerVariable serverVariable = new ServerVariable();
         // TODO: 2018/5/18
         return serverVariable;
     }
 
-    private ServerVariables getServerVariables() {
+    protected ServerVariables getServerVariables() {
         ServerVariables serverVariables = new ServerVariables();
         return serverVariables;
     }
@@ -185,7 +179,7 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private Components getComponents() {
+    protected Components getComponents() {
         Components components = new Components();
         components.schemas(refHelper.get().buildSchemas());
         return components;
@@ -198,16 +192,15 @@ public class SwaggerConverter {
      * @param service
      * @return
      */
-    private Paths getPath(ProtoFile protoFile, Service service) {
+    protected Paths getPath(ProtoFile protoFile, Service service) {
         Paths paths = new Paths();
-        String baseUrl = "/"+protoFile.packageName().replace(".", "/");
+        String basePath = protoFile.packageName();
 
         for (Rpc rpc : service.rpcs()) {
-            String name = baseUrl + rpc.name();
+            String path = PathUtils.collectPath(basePath , rpc.name());
             // TODO: 2018/5/23 处理path 相同,方法不同的问题,
-            paths.addPathItem(name, getPathItem(rpc));
+            paths.addPathItem(path, getPathItem(rpc));
         }
-//        paths.addExtension();
         return paths;
     }
 
@@ -218,7 +211,7 @@ public class SwaggerConverter {
      * @param rpc
      * @return
      */
-    private PathItem getPathItem(Rpc rpc) {
+    protected PathItem getPathItem(Rpc rpc) {
         PathItem pathItem = new PathItem();
         // 原版raptor 只支持post
 
@@ -237,7 +230,7 @@ public class SwaggerConverter {
      * @param rpc
      * @return
      */
-    private Operation getOperation(Rpc rpc) {
+    protected Operation getOperation(Rpc rpc) {
         Operation operation = new Operation();
 
         operation.requestBody(getRequestBody(rpc));
@@ -266,7 +259,7 @@ public class SwaggerConverter {
      * @return
      */
     @Deprecated
-    private ExternalDocumentation getExternalDocumentation() {
+    protected ExternalDocumentation getExternalDocumentation() {
         ExternalDocumentation externalDocumentation = new ExternalDocumentation();
         return externalDocumentation;
     }
@@ -278,7 +271,7 @@ public class SwaggerConverter {
      * @param rpc
      * @return
      */
-    private List<Parameter> getParameters(Rpc rpc) {
+    protected List<Parameter> getParameters(Rpc rpc) {
         ArrayList<Parameter> parameters = Lists.newArrayList();
 
         ProtoType protoType = rpc.requestType();
@@ -295,7 +288,7 @@ public class SwaggerConverter {
      * @param rpc
      * @return
      */
-    private RequestBody getRequestBody(Rpc rpc) {
+    protected RequestBody getRequestBody(Rpc rpc) {
         RequestBody requestBody = new RequestBody();
         ProtoType protoType = rpc.requestType();
         Type type = schmea.getType(protoType);
@@ -311,7 +304,7 @@ public class SwaggerConverter {
      * @return
      * @param protoType
      */
-    private MediaType getMediaType(ProtoType protoType) {
+    protected MediaType getMediaType(ProtoType protoType) {
         MediaType mediaType = new MediaType();
         mediaType.schema(getSchema(protoType));
 //        mediaType.encoding();
@@ -325,7 +318,7 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private Encoding getEncoding() {
+    protected Encoding getEncoding() {
         Encoding encoding = new Encoding();
         return encoding;
     }
@@ -335,7 +328,7 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private ApiResponses getApiResponses(Rpc rpc) {
+    protected ApiResponses getApiResponses(Rpc rpc) {
         ApiResponses apiResponses = new ApiResponses();
 
         apiResponses.addApiResponse("200", getSuccessApiResponse(rpc));
@@ -351,7 +344,7 @@ public class SwaggerConverter {
      */
 
 
-    private ApiResponse getSuccessApiResponse(Rpc rpc) {
+    protected ApiResponse getSuccessApiResponse(Rpc rpc) {
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.content(getContent(rpc.responseType()));
@@ -366,7 +359,7 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private Callback getCallback() {
+    protected Callback getCallback() {
         Callback callback = new Callback();
         return callback;
     }
@@ -377,7 +370,7 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private Example getExample() {
+    protected Example getExample() {
         Example example = new Example();
         return example;
     }
@@ -387,7 +380,7 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private Link getLink() {
+    protected Link getLink() {
         Link link = new Link();
 //        link.$ref();
 //        link.addExtension();
@@ -400,7 +393,7 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private Header getHeader() {
+    protected Header getHeader() {
         Header header = new Header();
         return header;
     }
@@ -410,12 +403,12 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private Tag getTag() {
+    protected Tag getTag() {
         Tag tag = new Tag();
         return tag;
     }
 
-    private List<Tag> getTags() {
+    protected List<Tag> getTags() {
         List<Tag> tagList = Lists.newArrayList();
         return null;
     }
@@ -424,7 +417,7 @@ public class SwaggerConverter {
      *  https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#referenceObject
      * @return
      */
-//    private Reference getReference(){
+//    protected Reference getReference(){
 //        Reference reference = new Reference();
 //        return reference;
 //    }
@@ -434,7 +427,7 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private Schema getSchema(ProtoType protoType) {
+    protected Schema getSchema(ProtoType protoType) {
         Schema schema = new Schema();
         schema.set$ref(refHelper.get().getRefer(protoType));
         return schema;
@@ -446,7 +439,7 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private Discriminator getDiscriminator() {
+    protected Discriminator getDiscriminator() {
         Discriminator discriminator = new Discriminator();
         return discriminator;
     }
@@ -456,7 +449,7 @@ public class SwaggerConverter {
      *
      * @return
      */
-    private XML getXml() {
+    protected XML getXml() {
         XML xml = new XML();
         return xml;
     }
@@ -464,7 +457,7 @@ public class SwaggerConverter {
     /**
      * @return
      */
-    private List<Server> getServices() {
+    protected List<Server> getServices() {
         List<Server> servers = Lists.newArrayList();
         return servers;
     }
@@ -478,7 +471,7 @@ public class SwaggerConverter {
      */
 
 
-    private Content getContent(ProtoType protoType) {
+    protected Content getContent(ProtoType protoType) {
         Content content = new Content();
         content.addMediaType("application/json", getMediaType(protoType));
         return content;

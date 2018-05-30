@@ -66,13 +66,13 @@ public class RaptorSwaggerConverter extends SwaggerConverter {
     @Override
     protected Paths getPath(ProtoFile protoFile, Service service) {
         Paths paths = new Paths();
-        String baseUrl = "/" + protoFile.packageName();
+        String basePath = protoFile.packageName();
 
         InterfaceMetaInfo interfaceMetaInfo = InterfaceMetaInfo.readFrom(protoFile, service);
         String servicePath = interfaceMetaInfo.getServicePath();
 
         for (Rpc rpc : service.rpcs()) {
-            String defaultName = baseUrl + rpc.name();
+            String defaultName = PathUtils.collectPath(basePath , rpc.name());
 
             MethodMetaInfo methodMetaInfo = MethodMetaInfo.readFrom(rpc);
 
@@ -96,9 +96,6 @@ public class RaptorSwaggerConverter extends SwaggerConverter {
         PathItem pathItem = new PathItem();
         // 原版raptor 只支持post
 
-        pathItem.description(rpc.documentation());
-
-        // TODO: 2018/5/23 根据option 选择方法
         MethodMetaInfo methodMetaInfo = MethodMetaInfo.readFrom(rpc);
         Method method = methodMetaInfo.getMethod();
 

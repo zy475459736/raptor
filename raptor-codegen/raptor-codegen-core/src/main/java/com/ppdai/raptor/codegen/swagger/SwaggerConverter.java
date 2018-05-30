@@ -214,12 +214,7 @@ public class SwaggerConverter {
     protected PathItem getPathItem(Rpc rpc) {
         PathItem pathItem = new PathItem();
         // 原版raptor 只支持post
-
-        pathItem.description(rpc.documentation());
-
         pathItem.post(getOperation(rpc));
-
-
         return pathItem;
 
     }

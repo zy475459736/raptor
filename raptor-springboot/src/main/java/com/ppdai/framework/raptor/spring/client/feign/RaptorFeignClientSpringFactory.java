@@ -1,91 +1,203 @@
 package com.ppdai.framework.raptor.spring.client.feign;
 
-import com.ppdai.framework.raptor.common.URLParamType;
-import com.ppdai.framework.raptor.rpc.URL;
+import com.ppdai.framework.raptor.annotation.RaptorInterface;
 import com.ppdai.framework.raptor.spring.client.RaptorClientFactory;
-import feign.*;
-import feign.codec.Decoder;
-import feign.codec.Encoder;
+import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageDecoder;
+import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageEncoder;
+import com.ppdai.framework.raptor.spring.client.feign.support.SpringMvcContract;
+import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientProperties;
+import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
+import feign.Feign;
+import feign.Request;
+import feign.RequestInterceptor;
+import feign.Retryer;
 import feign.codec.ErrorDecoder;
 import feign.slf4j.Slf4jLogger;
-import lombok.Getter;
-import lombok.Setter;
+import org.apache.http.client.HttpClient;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author yinzuolong
  */
-@Setter
-@Getter
-public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFactory {
+public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFactory implements ApplicationContextAware {
 
     private static final String LIBRARY = "spring";
 
-    private Encoder encoder;
-    private Decoder decoder;
-    private ErrorDecoder errorDecoder;
-    private Contract contract;
-    private Client client;
-    private Retryer retryer;
-    private List<RequestInterceptor> requestInterceptors;
-    private Request.Options options;
+    private ApplicationContext applicationContext;
 
     @Override
-    public <T> T create(Class<T> type, URL url) {
-        Feign.Builder builder = feignBuilder();
-        builder.logger(new Slf4jLogger(type));
-        builder.options(createOptions(url));
-        return builder.target(type, url.getUri());
-    }
-
-    private Request.Options createOptions(URL url) {
-        Request.Options options = this.options;
-        if (options == null) {
-            options = new Request.Options();
-        }
-        int connectTimeout = options.connectTimeoutMillis();
-        int readTimeoutMillis = options.readTimeoutMillis();
-        String connectTimeoutParam = url.getParameter(URLParamType.connectTimeout.getName());
-        if (!StringUtils.isEmpty(connectTimeoutParam)) {
-            connectTimeout = Integer.parseInt(connectTimeoutParam);
-        }
-        String socketTimeoutParam = url.getParameter(URLParamType.socketTimeout.getName());
-        if (!StringUtils.isEmpty(socketTimeoutParam)) {
-            readTimeoutMillis = Integer.parseInt(socketTimeoutParam);
-        }
-        return new Request.Options(connectTimeout, readTimeoutMillis);
-    }
-
-    @Override
-    public boolean support(Class<?> type, URL url) {
+    public boolean support(Class<?> type) {
         return LIBRARY.equalsIgnoreCase(getLibrary(type));
     }
 
-    protected Feign.Builder feignBuilder() {
-        Feign.Builder builder = Feign.builder();
-        if (this.encoder != null) {
-            builder.encoder(encoder);
+    @Override
+    public <T> T create(Class<T> type) {
+        RaptorMessageConverter raptorMessageConverter = getOrInstantiate(RaptorMessageConverter.class);
+
+        Feign.Builder builder = Feign.builder()
+                .encoder(new RaptorMessageEncoder(raptorMessageConverter))
+                .decoder(new RaptorMessageDecoder(raptorMessageConverter))
+                .contract(new SpringMvcContract())
+                .retryer(Retryer.NEVER_RETRY)
+                .logger(new Slf4jLogger(type));
+
+        HttpClient httpClient = getOptional(HttpClient.class);
+        if (httpClient != null) {
+            builder.client(new RaptorFeignHttpClient(httpClient));
+        } else {
+            builder.client(new RaptorFeignHttpClient());
         }
-        if (this.decoder != null) {
-            builder.decoder(decoder);
+
+        configureUsingApplicationContext(builder);
+        configureUsingProperties(type, builder);
+
+        return builder.target(type, getUrl(type));
+    }
+
+    protected String getUrl(Class<?> type) {
+        //根据配置的接口找url
+        String url = getUrlFromConfig(type.getName());
+
+        if (!StringUtils.hasText(url)) {
+            RaptorInterface raptorInterface = AnnotationUtils.findAnnotation(type, RaptorInterface.class);
+            //根据配置的appName找url
+            url = getUrlFromConfig(raptorInterface.appName());
+            if (!StringUtils.hasText(url)) {
+                //根据配置的appId找url
+                url = getUrlFromConfig(raptorInterface.appId());
+            }
         }
-        if (this.contract != null) {
-            builder.contract(contract);
+        if (!StringUtils.hasText(url)) {
+            throw new RuntimeException("Can't find url for interface " + type.getName());
         }
-        if (this.client != null) {
-            builder.client(client);
+        return url;
+    }
+
+    protected String getUrlFromConfig(String name) {
+        if (!StringUtils.hasText(name)) {
+            return null;
         }
-        if (this.errorDecoder != null) {
-            builder.errorDecoder(errorDecoder);
+        RaptorFeignClientProperties.RaptorClientConfiguration config = getClientConfig(name);
+        if (config == null) {
+            return null;
         }
-        if (this.requestInterceptors != null) {
-            builder.requestInterceptors(requestInterceptors);
+        return config.getUrl();
+    }
+
+    protected void configureUsingApplicationContext(Feign.Builder builder) {
+
+        RaptorHttpClientProperties httpClientProperties = getOptional(RaptorHttpClientProperties.class);
+        if (httpClientProperties != null) {
+            builder.options(new Request.Options(httpClientProperties.getConnectionTimeout(), httpClientProperties.getSocketTimeout()));
         }
-        if (this.retryer != null) {
+
+        Map<String, RequestInterceptor> requestInterceptors = applicationContext.getBeansOfType(RequestInterceptor.class);
+        if (requestInterceptors != null && requestInterceptors.size() > 0) {
+            builder.requestInterceptors(requestInterceptors.values());
+        }
+    }
+
+    protected void configureUsingProperties(Class<?> type, Feign.Builder builder) {
+        //默认配置
+        configureUsingProperties(getClientConfig(null), builder);
+
+        //RaptorInterface注解：appId配置、appName配置
+        RaptorInterface raptorInterface = AnnotationUtils.findAnnotation(type, RaptorInterface.class);
+        if (raptorInterface != null) {
+            if (StringUtils.hasText(raptorInterface.appId())) {
+                configureUsingProperties(getClientConfig(raptorInterface.appId()), builder);
+            }
+            if (StringUtils.hasText(raptorInterface.appName())) {
+                configureUsingProperties(getClientConfig(raptorInterface.appName()), builder);
+            }
+        }
+
+        //接口全名配置
+        configureUsingProperties(getClientConfig(type.getName()), builder);
+    }
+
+    private RaptorFeignClientProperties.RaptorClientConfiguration getClientConfig(String name) {
+        RaptorFeignClientProperties properties = get(RaptorFeignClientProperties.class);
+        if (!StringUtils.hasText(name)) {
+            name = properties.getDefaultConfig();
+        }
+        return properties.getConfig().get(name);
+    }
+
+    protected void configureUsingProperties(RaptorFeignClientProperties.RaptorClientConfiguration config, Feign.Builder builder) {
+        if (config == null) {
+            return;
+        }
+
+        if (config.getLoggerLevel() != null) {
+            builder.logLevel(config.getLoggerLevel());
+        }
+
+        if (config.getConnectTimeout() != null && config.getReadTimeout() != null) {
+            builder.options(new Request.Options(config.getConnectTimeout(), config.getReadTimeout()));
+        }
+
+        if (config.getRetryer() != null) {
+            Retryer retryer = getOrInstantiate(config.getRetryer());
             builder.retryer(retryer);
         }
-        return builder;
+
+        if (config.getErrorDecoder() != null) {
+            ErrorDecoder errorDecoder = getOrInstantiate(config.getErrorDecoder());
+            builder.errorDecoder(errorDecoder);
+        }
+
+        if (config.getRequestInterceptors() != null && !config.getRequestInterceptors().isEmpty()) {
+            // this will add request interceptor to builder, not replace existing
+            for (Class<RequestInterceptor> bean : config.getRequestInterceptors()) {
+                RequestInterceptor interceptor = getOrInstantiate(bean);
+                builder.requestInterceptor(interceptor);
+            }
+        }
+
+        if (config.getEncoder() != null) {
+            builder.encoder(getOrInstantiate(config.getEncoder()));
+        }
+
+        if (config.getDecoder() != null) {
+            builder.decoder(getOrInstantiate(config.getDecoder()));
+        }
+
+        if (config.getContract() != null) {
+            builder.contract(getOrInstantiate(config.getContract()));
+        }
+    }
+
+    private <T> T getOrInstantiate(Class<T> tClass) {
+        try {
+            return applicationContext.getBean(tClass);
+        } catch (NoSuchBeanDefinitionException e) {
+            return BeanUtils.instantiateClass(tClass);
+        }
+    }
+
+    protected <T> T get(Class<T> type) {
+        T instance = applicationContext.getBean(type);
+        if (instance == null) {
+            throw new IllegalStateException("No bean found of type " + type);
+        }
+        return instance;
+    }
+
+    protected <T> T getOptional(Class<T> type) {
+        return applicationContext.getBean(type);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

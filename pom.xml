@@ -14,7 +14,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <feign.version>9.5.0</feign.version>
-        <wire.version>9.5.0</wire.version>
+        <wire.version>2.3.0-RC1</wire.version>
         <slf4j.version>1.7.24</slf4j.version>
         <logback.version>1.1.11</logback.version>
         <guava.version>19.0</guava.version>

@@ -1,6 +1,5 @@
 package com.ppdai.framework.raptor.spring.client;
 
-import com.ppdai.framework.raptor.rpc.URL;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
@@ -14,22 +13,21 @@ public class RaptorClientRegistry {
 
     private Map<String, Object> clientCache = new ConcurrentHashMap<>();
 
-    public void registerClientProxy(Class<?> interfaceClass, Object proxy, URL serviceUrl) {
+    public void registerClientProxy(Class<?> interfaceClass, Object proxy) {
         Assert.notNull(proxy, "proxy object can't be null.");
-        Assert.notNull(serviceUrl, "serviceUrl  can't be null for interface: " + interfaceClass);
-        String cacheKey = getCacheKey(interfaceClass.getName(), serviceUrl);
+        String cacheKey = getCacheKey(interfaceClass.getName());
         clientCache.put(cacheKey, proxy);
     }
 
-    public Object get(Class<?> interfaceClass, URL serviceUrl) {
-        return clientCache.get(getCacheKey(interfaceClass.getName(), serviceUrl));
+    public Object get(Class<?> interfaceClass) {
+        return clientCache.get(getCacheKey(interfaceClass.getName()));
     }
 
     public Map<String, Object> getAllRegistered() {
         return Collections.unmodifiableMap(clientCache);
     }
 
-    private String getCacheKey(String interfaceName, URL serviceUrl) {
-        return interfaceName + "@" + serviceUrl.toFullStr();
+    private String getCacheKey(String interfaceName) {
+        return interfaceName;
     }
 }

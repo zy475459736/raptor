@@ -9,9 +9,9 @@ import org.springframework.core.annotation.AnnotationUtils;
  */
 public interface RaptorClientFactory {
 
-    <T> T create(Class<T> type, URL url);
+    <T> T create(Class<T> type);
 
-    boolean support(Class<?> type, URL url);
+    boolean support(Class<?> type);
 
     abstract class BaseFactory implements RaptorClientFactory {
 

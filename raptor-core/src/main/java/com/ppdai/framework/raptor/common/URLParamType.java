@@ -13,8 +13,8 @@ public enum URLParamType {
     accessLog("accessLog", true),
     requestId("requestId", "0"),
     basePath("basePath", "raptor"),
-    connectTimeout("connectTimeout", 2000),
-    socketTimeout("socketTimeout", 10000),
+    connectTimeout("connectTimeout", -1),
+    socketTimeout("socketTimeout", -1),
     connectionRequestTimeout("connectionRequestTimeout", -1),
     //
     ;

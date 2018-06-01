@@ -5,6 +5,7 @@ import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
 import com.ppdai.framework.raptor.spring.utils.RaptorMessageUtils;
 import feign.RequestTemplate;
 import feign.codec.EncodeException;
+import feign.codec.Encoder;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -18,12 +19,11 @@ import java.util.Map;
 /**
  * @author yinzuolong
  */
-public class RaptorMessageEncoder extends SpringEncoder {
+public class RaptorMessageEncoder implements Encoder {
 
     private RaptorMessageConverter raptorMessageConverter;
 
-    public RaptorMessageEncoder(ObjectFactory<HttpMessageConverters> messageConverters, RaptorMessageConverter raptorMessageConverter) {
-        super(messageConverters);
+    public RaptorMessageEncoder(RaptorMessageConverter raptorMessageConverter) {
         this.raptorMessageConverter = raptorMessageConverter;
     }
 
@@ -52,7 +52,7 @@ public class RaptorMessageEncoder extends SpringEncoder {
                 request.body(outputMessage.getOutputStream().toByteArray(), null);
             }
         } else {
-            super.encode(requestBody, bodyType, request);
+            throw new RuntimeException("Can't encode requestBody, bodyType must be RaptorMessage.");
         }
     }
 }

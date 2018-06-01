@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.client;
+package com.ppdai.framework.raptor.spring.client.feign;
 
 import feign.Client;
 import feign.Request;
@@ -28,16 +28,16 @@ import static feign.Util.UTF_8;
 /**
  * @author yinzuolong
  */
-public class RaptorClient implements Client {
+public class RaptorFeignHttpClient implements Client {
     private static final String ACCEPT_HEADER_NAME = "Accept";
 
     private final HttpClient client;
 
-    public RaptorClient() {
+    public RaptorFeignHttpClient() {
         this(HttpClientBuilder.create().build());
     }
 
-    public RaptorClient(HttpClient client) {
+    public RaptorFeignHttpClient(HttpClient client) {
         this.client = client;
     }
 
@@ -53,7 +53,7 @@ public class RaptorClient implements Client {
         return toFeignResponse(httpResponse).toBuilder().request(request).build();
     }
 
-    HttpUriRequest toHttpUriRequest(Request request, Request.Options options) throws
+    private HttpUriRequest toHttpUriRequest(Request request, Request.Options options) throws
             UnsupportedEncodingException, MalformedURLException, URISyntaxException {
         RequestBuilder requestBuilder = RequestBuilder.create(request.method());
 
@@ -128,7 +128,7 @@ public class RaptorClient implements Client {
         return contentType;
     }
 
-    Response toFeignResponse(HttpResponse httpResponse) throws IOException {
+    private Response toFeignResponse(HttpResponse httpResponse) throws IOException {
         StatusLine statusLine = httpResponse.getStatusLine();
         int statusCode = statusLine.getStatusCode();
 
@@ -139,11 +139,8 @@ public class RaptorClient implements Client {
             String name = header.getName();
             String value = header.getValue();
 
+            headers.putIfAbsent(name, new ArrayList<>());
             Collection<String> headerValues = headers.get(name);
-            if (headerValues == null) {
-                headerValues = new ArrayList<String>();
-                headers.put(name, headerValues);
-            }
             headerValues.add(value);
         }
 
@@ -155,7 +152,7 @@ public class RaptorClient implements Client {
                 .build();
     }
 
-    Response.Body toFeignBody(HttpResponse httpResponse) throws IOException {
+    private Response.Body toFeignBody(HttpResponse httpResponse) throws IOException {
         final HttpEntity entity = httpResponse.getEntity();
         if (entity == null) {
             return null;

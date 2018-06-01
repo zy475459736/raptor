@@ -13,10 +13,10 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
+ * 将RaptorHandlerMethodProcessor设置到RequestMappingHandlerAdapter中，优先处理参数和返回值
+ *
  * @author yinzuolong
  */
 @Slf4j
@@ -34,26 +34,29 @@ public class RaptorHandlerAdapterPostProcessor implements BeanPostProcessor {
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (RequestMappingHandlerAdapter.class.isAssignableFrom(ClassUtils.getUserClass(bean))) {
             RequestMappingHandlerAdapter adapter = (RequestMappingHandlerAdapter) bean;
-
-            HttpMessageConverter<?> raptorMessageConverter = null;
+            //找raptorMessageConverter
+            RaptorMessageConverter raptorMessageConverter = null;
             for (HttpMessageConverter<?> convert : adapter.getMessageConverters()) {
                 if (convert instanceof RaptorMessageConverter) {
-                    raptorMessageConverter = convert;
+                    raptorMessageConverter = (RaptorMessageConverter) convert;
                     break;
                 }
             }
-
-            raptorMessageConverter = raptorMessageConverter == null ? new RaptorMessageConverter() : raptorMessageConverter;
-            List<HttpMessageConverter<?>> converters = Collections.singletonList(raptorMessageConverter);
+            raptorMessageConverter = raptorMessageConverter == null ? createRaptorMessageConverter() : raptorMessageConverter;
+            RaptorHandlerMethodProcessor raptorHandlerMethodProcessor = new RaptorHandlerMethodProcessor(raptorMessageConverter);
 
             ArrayList<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>(adapter.getArgumentResolvers());
-            argumentResolvers.add(0, new RaptorHandlerMethodProcessor(converters));
+            argumentResolvers.add(0, raptorHandlerMethodProcessor);
             adapter.setArgumentResolvers(argumentResolvers);
 
             ArrayList<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<>(adapter.getReturnValueHandlers());
-            returnValueHandlers.add(0, new RaptorHandlerMethodProcessor(converters));
+            returnValueHandlers.add(0, raptorHandlerMethodProcessor);
             adapter.setReturnValueHandlers(returnValueHandlers);
         }
         return bean;
+    }
+
+    private RaptorMessageConverter createRaptorMessageConverter() {
+        return objectMapper == null ? new RaptorMessageConverter() : new RaptorMessageConverter(objectMapper);
     }
 }

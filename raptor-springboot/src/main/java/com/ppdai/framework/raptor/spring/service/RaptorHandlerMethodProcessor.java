@@ -1,6 +1,7 @@
 package com.ppdai.framework.raptor.spring.service;
 
 import com.ppdai.framework.raptor.annotation.RaptorMessage;
+import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -17,6 +18,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.mvc.method.annotation.AbstractMessageConverterMethodProcessor;
 
 import javax.servlet.ServletRequest;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +28,8 @@ import java.util.Map;
  */
 public class RaptorHandlerMethodProcessor extends AbstractMessageConverterMethodProcessor {
 
-    public RaptorHandlerMethodProcessor(List<HttpMessageConverter<?>> converters) {
-        super(converters);
+    public RaptorHandlerMethodProcessor(RaptorMessageConverter converter) {
+        super(Collections.singletonList(converter));
     }
 
     @Override

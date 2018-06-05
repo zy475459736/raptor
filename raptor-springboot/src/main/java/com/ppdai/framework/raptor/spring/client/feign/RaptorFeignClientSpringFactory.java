@@ -2,6 +2,7 @@ package com.ppdai.framework.raptor.spring.client.feign;
 
 import com.ppdai.framework.raptor.annotation.RaptorInterface;
 import com.ppdai.framework.raptor.spring.client.RaptorClientFactory;
+import com.ppdai.framework.raptor.spring.client.feign.support.RaptorFeignClient;
 import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageDecoder;
 import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageEncoder;
 import com.ppdai.framework.raptor.spring.client.feign.support.SpringMvcContract;
@@ -43,6 +44,7 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
         RaptorMessageConverter raptorMessageConverter = getOrInstantiate(RaptorMessageConverter.class);
 
         Feign.Builder builder = Feign.builder()
+
                 .encoder(new RaptorMessageEncoder(raptorMessageConverter))
                 .decoder(new RaptorMessageDecoder(raptorMessageConverter))
                 .contract(new SpringMvcContract())
@@ -51,9 +53,9 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
 
         HttpClient httpClient = getOptional(HttpClient.class);
         if (httpClient != null) {
-            builder.client(new RaptorFeignHttpClient(httpClient));
+            builder.client(new RaptorFeignClient(httpClient));
         } else {
-            builder.client(new RaptorFeignHttpClient());
+            builder.client(new RaptorFeignClient());
         }
 
         configureUsingApplicationContext(builder);

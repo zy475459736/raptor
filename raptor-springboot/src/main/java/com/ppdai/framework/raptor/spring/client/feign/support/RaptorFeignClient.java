@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.client.feign;
+package com.ppdai.framework.raptor.spring.client.feign.support;
 
 import feign.Client;
 import feign.Request;
@@ -28,16 +28,16 @@ import static feign.Util.UTF_8;
 /**
  * @author yinzuolong
  */
-public class RaptorFeignHttpClient implements Client {
+public class RaptorFeignClient implements Client {
     private static final String ACCEPT_HEADER_NAME = "Accept";
 
     private final HttpClient client;
 
-    public RaptorFeignHttpClient() {
+    public RaptorFeignClient() {
         this(HttpClientBuilder.create().build());
     }
 
-    public RaptorFeignHttpClient(HttpClient client) {
+    public RaptorFeignClient(HttpClient client) {
         this.client = client;
     }
 

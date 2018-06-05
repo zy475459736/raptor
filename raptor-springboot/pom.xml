@@ -43,17 +43,25 @@
             <artifactId>feign-slf4j</artifactId>
             <version>9.5.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.dianping.cat</groupId>
+            <artifactId>cat-client</artifactId>
+            <version>1.4.1</version>
+            <!--<scope>test</scope>-->
+            <!--<optional>true</optional>-->
+        </dependency>
         <!--<dependency>-->
-            <!--<groupId>io.github.openfeign</groupId>-->
-            <!--<artifactId>feign-httpclient</artifactId>-->
-            <!--<version>9.5.0</version>-->
+        <!--<groupId>io.github.openfeign</groupId>-->
+        <!--<artifactId>feign-httpclient</artifactId>-->
+        <!--<version>9.5.0</version>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>io.github.openfeign</groupId>-->
-            <!--<artifactId>feign-okhttp</artifactId>-->
-            <!--<optional>true</optional>-->
-            <!--<version>9.5.0</version>-->
+        <!--<groupId>io.github.openfeign</groupId>-->
+        <!--<artifactId>feign-okhttp</artifactId>-->
+        <!--<optional>true</optional>-->
+        <!--<version>9.5.0</version>-->
         <!--</dependency>-->
 
         <dependency>

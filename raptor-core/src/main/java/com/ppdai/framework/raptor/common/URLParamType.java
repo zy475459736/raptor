@@ -11,7 +11,6 @@ public enum URLParamType {
     httpStatusCode("statusLine.code", 0),
     httpReasonPhrase("statusLine.reasonPhrase", ""),
     accessLog("accessLog", true),
-    requestId("requestId", "0"),
     basePath("basePath", "raptor"),
     connectTimeout("connectTimeout", -1),
     socketTimeout("socketTimeout", -1),

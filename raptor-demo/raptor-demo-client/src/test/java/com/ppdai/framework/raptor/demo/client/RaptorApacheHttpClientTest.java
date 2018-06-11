@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SpringBootClient.class)
-public class RaptorFeignClientTest {
+public class RaptorApacheHttpClientTest {
 
     @RaptorClient
     private Simple simple;

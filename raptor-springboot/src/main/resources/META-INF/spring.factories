@@ -2,6 +2,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.ppdai.framework.raptor.spring.RaptorAutoConfiguration,\
 com.ppdai.framework.raptor.spring.client.RaptorClientAutoConfiguration,\
-com.ppdai.framework.raptor.spring.service.RaptorServiceAutoConfiguration,\
-com.ppdai.framework.raptor.spring.service.MetricsInterceptorConfiguration,\
-com.ppdai.framework.raptor.spring.service.CatInterceptorConfiguration
+com.ppdai.framework.raptor.spring.service.RaptorServiceAutoConfiguration

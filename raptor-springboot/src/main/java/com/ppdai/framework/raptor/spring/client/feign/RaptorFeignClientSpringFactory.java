@@ -2,27 +2,25 @@ package com.ppdai.framework.raptor.spring.client.feign;
 
 import com.ppdai.framework.raptor.annotation.RaptorInterface;
 import com.ppdai.framework.raptor.spring.client.RaptorClientFactory;
-import com.ppdai.framework.raptor.spring.client.feign.support.RaptorFeignClient;
-import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageDecoder;
-import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageEncoder;
-import com.ppdai.framework.raptor.spring.client.feign.support.SpringMvcContract;
+import com.ppdai.framework.raptor.spring.client.feign.support.*;
 import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientProperties;
 import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
-import feign.Feign;
-import feign.Request;
-import feign.RequestInterceptor;
-import feign.Retryer;
+import feign.*;
 import feign.codec.ErrorDecoder;
 import feign.slf4j.Slf4jLogger;
-import org.apache.http.client.HttpClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,19 +42,26 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
         RaptorMessageConverter raptorMessageConverter = getOrInstantiate(RaptorMessageConverter.class);
 
         Feign.Builder builder = Feign.builder()
-
                 .encoder(new RaptorMessageEncoder(raptorMessageConverter))
                 .decoder(new RaptorMessageDecoder(raptorMessageConverter))
                 .contract(new SpringMvcContract())
                 .retryer(Retryer.NEVER_RETRY)
                 .logger(new Slf4jLogger(type));
 
-        HttpClient httpClient = getOptional(HttpClient.class);
-        if (httpClient != null) {
-            builder.client(new RaptorFeignClient(httpClient));
-        } else {
-            builder.client(new RaptorFeignClient());
-        }
+        builder.invocationHandlerFactory(new InvocationHandlerFactory() {
+            @Override
+            public InvocationHandler create(Target target, Map<Method, MethodHandler> dispatch) {
+                RaptorInvocationHandler invocationHandler = new RaptorInvocationHandler(target, dispatch);
+                invocationHandler.setInvocationInterceptors(getList(InvocationInterceptor.class));
+                return invocationHandler;
+            }
+        });
+
+        RaptorFeignClient raptorFeignClient = new RaptorFeignClient(get(Client.class));
+        List<ClientInterceptor> ClientInterceptors = getList(ClientInterceptor.class);
+        ClientInterceptors.sort(new AnnotationAwareOrderComparator());
+        raptorFeignClient.setClientInterceptors(ClientInterceptors);
+        builder.client(raptorFeignClient);
 
         configureUsingApplicationContext(builder);
         configureUsingProperties(type, builder);
@@ -184,6 +189,10 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
         } catch (NoSuchBeanDefinitionException e) {
             return BeanUtils.instantiateClass(tClass);
         }
+    }
+
+    protected <T> List<T> getList(Class<T> type) {
+        return new ArrayList<>(applicationContext.getBeansOfType(type).values());
     }
 
     protected <T> T get(Class<T> type) {

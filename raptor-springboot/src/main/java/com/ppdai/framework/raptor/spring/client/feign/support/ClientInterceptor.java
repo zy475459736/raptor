@@ -1,6 +1,7 @@
 package com.ppdai.framework.raptor.spring.client.feign.support;
 
 import feign.Request;
+import feign.RequestInterceptor;
 import feign.Response;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * @author yinzuolong
  */
-public interface ClientInterceptor {
+public interface ClientInterceptor extends RequestInterceptor {
 
     boolean preHandle(Request request, Request.Options options, List<String> preHandleResult);
 

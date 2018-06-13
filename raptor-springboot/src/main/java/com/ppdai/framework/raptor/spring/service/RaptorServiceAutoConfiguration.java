@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -27,6 +28,9 @@ public class RaptorServiceAutoConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         List<RaptorServiceInterceptor> handlerInterceptorList = handlerInterceptors.getIfAvailable();
+        if (CollectionUtils.isEmpty(handlerInterceptorList)) {
+            return;
+        }
         handlerInterceptorList.sort(new AnnotationAwareOrderComparator());
         for (RaptorServiceInterceptor raptorServiceInterceptor : handlerInterceptorList) {
             registry.addInterceptor(new HandlerInterceptorAdapter() {

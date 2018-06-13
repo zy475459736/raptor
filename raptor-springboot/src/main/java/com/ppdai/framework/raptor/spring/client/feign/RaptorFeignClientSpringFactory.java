@@ -46,27 +46,47 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
                 .decoder(new RaptorMessageDecoder(raptorMessageConverter))
                 .contract(new SpringMvcContract())
                 .retryer(Retryer.NEVER_RETRY)
-                .logger(new Slf4jLogger(type));
+                .logger(new Slf4jLogger(type))
+                .options(createOptions())
+                .requestInterceptors(getList(RequestInterceptor.class));
 
-        builder.invocationHandlerFactory(new InvocationHandlerFactory() {
+        //自定义InvocationHandlerFactory，用于自定义拦截器
+        builder.invocationHandlerFactory(createInvocationHandlerFactory());
+
+        //设置client
+        builder.client(createRaptorFeignClient());
+
+        //自定义配置
+        configureUsingProperties(type, builder);
+
+        return builder.target(type, getUrl(type));
+    }
+
+    protected Request.Options createOptions() {
+        RaptorHttpClientProperties httpClientProperties = getOptional(RaptorHttpClientProperties.class);
+        if (httpClientProperties != null) {
+            return new Request.Options(httpClientProperties.getConnectionTimeout(), httpClientProperties.getReadTimeout());
+        }
+        return new Request.Options();
+    }
+
+    protected InvocationHandlerFactory createInvocationHandlerFactory() {
+        return new InvocationHandlerFactory() {
             @Override
             public InvocationHandler create(Target target, Map<Method, MethodHandler> dispatch) {
                 RaptorInvocationHandler invocationHandler = new RaptorInvocationHandler(target, dispatch);
                 invocationHandler.setInvocationInterceptors(getList(InvocationInterceptor.class));
                 return invocationHandler;
             }
-        });
+        };
+    }
 
+    protected RaptorFeignClient createRaptorFeignClient() {
         RaptorFeignClient raptorFeignClient = new RaptorFeignClient(get(Client.class));
         List<ClientInterceptor> ClientInterceptors = getList(ClientInterceptor.class);
         ClientInterceptors.sort(new AnnotationAwareOrderComparator());
         raptorFeignClient.setClientInterceptors(ClientInterceptors);
-        builder.client(raptorFeignClient);
-
-        configureUsingApplicationContext(builder);
-        configureUsingProperties(type, builder);
-
-        return builder.target(type, getUrl(type));
+        return raptorFeignClient;
     }
 
     protected String getUrl(Class<?> type) {
@@ -97,19 +117,6 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
             return null;
         }
         return config.getUrl();
-    }
-
-    protected void configureUsingApplicationContext(Feign.Builder builder) {
-
-        RaptorHttpClientProperties httpClientProperties = getOptional(RaptorHttpClientProperties.class);
-        if (httpClientProperties != null) {
-            builder.options(new Request.Options(httpClientProperties.getConnectionTimeout(), httpClientProperties.getSocketTimeout()));
-        }
-
-        Map<String, RequestInterceptor> requestInterceptors = applicationContext.getBeansOfType(RequestInterceptor.class);
-        if (requestInterceptors != null && requestInterceptors.size() > 0) {
-            builder.requestInterceptors(requestInterceptors.values());
-        }
     }
 
     protected void configureUsingProperties(Class<?> type, Feign.Builder builder) {
@@ -192,7 +199,11 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
     }
 
     protected <T> List<T> getList(Class<T> type) {
-        return new ArrayList<>(applicationContext.getBeansOfType(type).values());
+        Map<String, T> map = applicationContext.getBeansOfType(type);
+        if (map != null) {
+            return new ArrayList<>(applicationContext.getBeansOfType(type).values());
+        }
+        return new ArrayList<>();
     }
 
     protected <T> T get(Class<T> type) {

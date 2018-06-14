@@ -1,6 +1,7 @@
 package com.ppdai.framework.raptor.spring.client.feign;
 
 import com.ppdai.framework.raptor.annotation.RaptorInterface;
+import com.ppdai.framework.raptor.spring.client.ClientInterceptor;
 import com.ppdai.framework.raptor.spring.client.RaptorClientFactory;
 import com.ppdai.framework.raptor.spring.client.feign.support.*;
 import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientProperties;
@@ -74,19 +75,17 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
         return new InvocationHandlerFactory() {
             @Override
             public InvocationHandler create(Target target, Map<Method, MethodHandler> dispatch) {
+                List<ClientInterceptor> clientInterceptors = getList(ClientInterceptor.class);
+                clientInterceptors.sort(new AnnotationAwareOrderComparator());
                 RaptorInvocationHandler invocationHandler = new RaptorInvocationHandler(target, dispatch);
-                invocationHandler.setInvocationInterceptors(getList(InvocationInterceptor.class));
+                invocationHandler.setInterceptors(clientInterceptors);
                 return invocationHandler;
             }
         };
     }
 
     protected RaptorFeignClient createRaptorFeignClient() {
-        RaptorFeignClient raptorFeignClient = new RaptorFeignClient(get(Client.class));
-        List<ClientInterceptor> ClientInterceptors = getList(ClientInterceptor.class);
-        ClientInterceptors.sort(new AnnotationAwareOrderComparator());
-        raptorFeignClient.setClientInterceptors(ClientInterceptors);
-        return raptorFeignClient;
+        return new RaptorFeignClient(get(Client.class));
     }
 
     protected String getUrl(Class<?> type) {

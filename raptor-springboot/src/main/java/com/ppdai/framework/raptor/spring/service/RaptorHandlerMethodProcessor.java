@@ -6,7 +6,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -18,9 +17,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.mvc.method.annotation.AbstractMessageConverterMethodProcessor;
 
 import javax.servlet.ServletRequest;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -88,6 +85,10 @@ public class RaptorHandlerMethodProcessor extends AbstractMessageConverterMethod
         ServletServerHttpRequest inputMessage = createInputMessage(webRequest);
         ServletServerHttpResponse outputMessage = createOutputMessage(webRequest);
 
+        //设置Response header,本应该放在拦截器中实现,但是handler处理完后,response已经关闭了,拦截器无法后置处理response
+        RaptorHandlerInterceptorAdapter.putResponseHeaders(outputMessage.getServletResponse());
+
         writeWithMessageConverters(returnValue, returnType, inputMessage, outputMessage);
     }
+
 }

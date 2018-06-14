@@ -1,17 +1,16 @@
 package com.ppdai.framework.raptor.spring.client.feign.support;
 
+import com.ppdai.framework.raptor.common.ParamNameConstants;
+import com.ppdai.framework.raptor.rpc.RaptorContext;
+import com.ppdai.framework.raptor.rpc.RaptorResponse;
 import feign.Client;
 import feign.Request;
 import feign.Response;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author yinzuolong
@@ -19,11 +18,11 @@ import java.util.List;
 @Slf4j
 public class RaptorFeignClient implements Client {
 
-    private final Client client;
+    public static final String NAME_REQUEST_TIME = "raptor-client-http-time";
+    public static final String NAME_HTTP_URL = "raptor-client-http-url";
+    public static final String NAME_HTTP_METHOD = "raptor-client-http-method";
 
-    @Getter
-    @Setter
-    private List<ClientInterceptor> clientInterceptors = new ArrayList<>();
+    private final Client client;
 
     public RaptorFeignClient(Client client) {
         this.client = client;
@@ -33,13 +32,11 @@ public class RaptorFeignClient implements Client {
     public Response execute(Request request, Request.Options options) throws IOException {
         Response response = null;
         Exception ex = null;
-        List<String> preHandleResult = new LinkedList<>();
+        long start = System.nanoTime();
         try {
-            if (!applyPreHandle(request, options, preHandleResult)) {
-                throw new RuntimeException(StringUtils.collectionToDelimitedString(preHandleResult, "\n"));
-            }
+            preHandle(request, options);
             response = client.execute(request, options);
-            applyPostHandle(request, response);
+            postHandle(request, response);
             return response;
         } catch (Exception e) {
             ex = e;
@@ -48,36 +45,39 @@ public class RaptorFeignClient implements Client {
             }
             throw new RuntimeException("Request execute error.", ex);
         } finally {
-            triggerAfterCompletion(request, response, ex);
+            long cost = System.nanoTime() - start;
+            afterCompletion(request, response, ex, cost);
         }
     }
 
-    protected boolean applyPreHandle(Request request, Request.Options options, List<String> preHandleResult) throws Exception {
-        if (clientInterceptors != null) {
-            for (ClientInterceptor interceptor : clientInterceptors) {
-                if (!interceptor.preHandle(request, options, preHandleResult)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    protected void preHandle(Request request, Request.Options options) throws Exception {
+        //设置url和method到Context中，方便其他地方取
+        RaptorContext.getContext().putAttribute(NAME_HTTP_URL, request.url());
+        RaptorContext.getContext().putAttribute(NAME_HTTP_METHOD, request.method());
     }
 
-    protected void applyPostHandle(Request request, Response response) throws Exception {
-        if (clientInterceptors != null) {
-            for (ClientInterceptor interceptor : clientInterceptors) {
-                interceptor.postHandle(request, response);
-            }
-        }
+    protected void postHandle(Request request, Response response) throws Exception {
+        RaptorResponse raptorResponse = RaptorContext.getContext().getResponse();
+        raptorResponse.setCode(response.status());
     }
 
-    protected void triggerAfterCompletion(Request request, Response response, Exception ex) {
-        if (clientInterceptors != null) {
-            for (ClientInterceptor interceptor : clientInterceptors) {
-                try {
-                    interceptor.afterCompletion(request, response, ex);
-                } catch (Exception e) {
-                    log.error("RaptorFeignClient afterCompletion throw exception", e);
+    protected void afterCompletion(Request request, Response response, Exception ex, long cost) {
+        setResponseHeader(response);
+        RaptorContext.getContext().putAttribute(NAME_REQUEST_TIME, cost);
+    }
+
+    protected void setResponseHeader(Response response) {
+        if (response != null) {
+            RaptorResponse raptorResponse = RaptorContext.getContext().getResponse();
+            Map<String, Collection<String>> headers = response.headers();
+            for (Map.Entry<String, Collection<String>> entry : headers.entrySet()) {
+                String value = entry.getValue().iterator().next();
+                //设置头到RaptorContext response中
+                raptorResponse.setAttachment(entry.getKey(), value);
+
+                //responseAttachment，传递Response头
+                if (entry.getKey().toLowerCase().startsWith(ParamNameConstants.TRACE_HEADER_PREFIX)) {
+                    RaptorContext.getContext().putResponseAttachment(entry.getKey(), value);
                 }
             }
         }

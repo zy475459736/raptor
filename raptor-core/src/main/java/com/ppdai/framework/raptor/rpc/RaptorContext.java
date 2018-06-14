@@ -14,12 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RaptorContext {
 
     private Map<Object, Object> attributes = new ConcurrentHashMap<>();
-
     private Map<String, String> requestAttachments = new ConcurrentHashMap<>();
     private Map<String, String> responseAttachments = new ConcurrentHashMap<>();
-
-    private Map<String, String> remoteRequestAttachments = new ConcurrentHashMap<>();
-    private Map<String, String> remoteResponseAttachments = new ConcurrentHashMap<>();
+    private RaptorRequest request;
+    private RaptorResponse response;
 
     private static final ThreadLocal<RaptorContext> CONTEXT = new ThreadLocal<RaptorContext>() {
         @Override
@@ -55,22 +53,5 @@ public class RaptorContext {
     public String getResponseAttachment(String key) {
         return responseAttachments.get(key);
     }
-
-    public void putRemoteRequestAttachment(String key, String value) {
-        remoteRequestAttachments.put(key, value);
-    }
-
-    public String getRemoteRequestAttachment(String key) {
-        return remoteRequestAttachments.get(key);
-    }
-
-    public void putRemoteResponseAttachment(String key, String value) {
-        remoteResponseAttachments.put(key, value);
-    }
-
-    public String getRemoteResponseAttachment(String key) {
-        return remoteResponseAttachments.get(key);
-    }
-
 
 }

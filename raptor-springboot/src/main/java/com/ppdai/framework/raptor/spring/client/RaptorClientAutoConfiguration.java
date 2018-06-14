@@ -2,7 +2,7 @@ package com.ppdai.framework.raptor.spring.client;
 
 import com.ppdai.framework.raptor.spring.client.feign.RaptorFeignClientProperties;
 import com.ppdai.framework.raptor.spring.client.feign.RaptorFeignClientSpringFactory;
-import com.ppdai.framework.raptor.spring.client.feign.support.HeaderTraceClientInterceptor;
+import com.ppdai.framework.raptor.spring.client.feign.support.HeaderTraceRequestInterceptor;
 import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientConfiguration;
 import com.ppdai.framework.raptor.spring.endpoint.RaptorRefersActuatorEndpoint;
 import feign.Client;
@@ -39,6 +39,7 @@ public class RaptorClientAutoConfiguration implements ApplicationContextAware {
     @Bean
     @ConditionalOnMissingBean
     public Client createRaptorFeignClient() {
+
         HttpClient httpClient = applicationContext.getBean(HttpClient.class);
         if (httpClient != null) {
             return new ApacheHttpClient(httpClient);
@@ -48,8 +49,8 @@ public class RaptorClientAutoConfiguration implements ApplicationContextAware {
     }
 
     @Bean
-    public HeaderTraceClientInterceptor createHeaderTraceClientInterceptor() {
-        return new HeaderTraceClientInterceptor();
+    public HeaderTraceRequestInterceptor createHeaderTraceClientInterceptor() {
+        return new HeaderTraceRequestInterceptor();
     }
 
     @Configuration
@@ -60,7 +61,6 @@ public class RaptorClientAutoConfiguration implements ApplicationContextAware {
         public RaptorRefersActuatorEndpoint createRaptorReferActuatorEndpoint(RaptorClientRegistry raptorClientRegistry) {
             return new RaptorRefersActuatorEndpoint(raptorClientRegistry.getAllRegistered());
         }
-
     }
 
     @Override

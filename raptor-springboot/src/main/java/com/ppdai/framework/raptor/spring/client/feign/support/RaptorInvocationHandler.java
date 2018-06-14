@@ -1,11 +1,15 @@
 package com.ppdai.framework.raptor.spring.client.feign.support;
 
+import com.ppdai.framework.raptor.rpc.RaptorContext;
+import com.ppdai.framework.raptor.rpc.RaptorRequest;
+import com.ppdai.framework.raptor.rpc.RaptorResponse;
+import com.ppdai.framework.raptor.spring.client.ClientInterceptor;
+import com.ppdai.framework.raptor.util.RequestIdGenerator;
 import feign.InvocationHandlerFactory;
 import feign.Target;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -24,7 +28,7 @@ public class RaptorInvocationHandler implements InvocationHandler {
 
     @Getter
     @Setter
-    private List<InvocationInterceptor> invocationInterceptors = new LinkedList<>();
+    private List<ClientInterceptor> interceptors = new LinkedList<>();
     private Target<?> target;
     private Map<Method, InvocationHandlerFactory.MethodHandler> dispatch;
 
@@ -47,48 +51,64 @@ public class RaptorInvocationHandler implements InvocationHandler {
         } else if ("toString".equals(method.getName())) {
             return toString();
         }
+        initRequestResponse(method, args);
         Object result = null;
         Exception ex = null;
         try {
-            List<String> preHandleResult = new LinkedList<>();
-            if (!applyPreHandle(method, args, preHandleResult)) {
-                throw new RuntimeException(StringUtils.collectionToDelimitedString(preHandleResult, "\n"));
-            }
+            applyPreHandle();
             result = dispatch.get(method).invoke(args);
-            applyPostHandle(method, args, result);
-            return result;
+            return applyPostHandle(result);
         } catch (Exception e) {
             ex = e;
             throw e;
         } finally {
-            triggerAfterCompletion(method, args, result, ex);
+            triggerAfterCompletion(result, ex);
         }
     }
 
-    protected boolean applyPreHandle(Method method, Object[] args, List<String> preHandleResult) throws Exception {
-        if (invocationInterceptors != null) {
-            for (InvocationInterceptor interceptor : invocationInterceptors) {
-                if (!interceptor.preHandle(method, args, preHandleResult)) {
-                    return false;
-                }
+    protected void initRequestResponse(Method method, Object[] args) throws Exception {
+        RaptorRequest request = new RaptorRequest();
+        request.setArguments(args);
+        request.setInterfaceName(method.getDeclaringClass().getName());
+        request.setMethodName(method.getName());
+        request.setRequestId(RequestIdGenerator.getRequestId());
+        RaptorContext.getContext().setRequest(request);
+
+        RaptorResponse response = new RaptorResponse(request.getRequestId());
+        RaptorContext.getContext().setResponse(response);
+    }
+
+    protected void applyPreHandle() throws Exception {
+        if (interceptors != null) {
+            RaptorRequest request = RaptorContext.getContext().getRequest();
+            RaptorResponse response = RaptorContext.getContext().getResponse();
+            for (ClientInterceptor interceptor : interceptors) {
+                interceptor.preHandle(request, response);
             }
         }
-        return true;
     }
 
-    protected void applyPostHandle(Method method, Object[] args, Object result) throws Exception {
-        if (invocationInterceptors != null) {
-            for (InvocationInterceptor interceptor : invocationInterceptors) {
-                interceptor.postHandle(method, args, result);
+    protected Object applyPostHandle(Object result) throws Exception {
+        RaptorRequest request = RaptorContext.getContext().getRequest();
+        RaptorResponse response = RaptorContext.getContext().getResponse();
+        response.setValue(result);
+        if (interceptors != null) {
+            for (ClientInterceptor interceptor : interceptors) {
+                interceptor.postHandle(request, response);
             }
         }
+        return response.getValue();
     }
 
-    protected void triggerAfterCompletion(Method method, Object[] args, Object result, Exception ex) {
-        if (invocationInterceptors != null) {
-            for (InvocationInterceptor interceptor : invocationInterceptors) {
+    protected void triggerAfterCompletion(Object result, Exception ex) {
+        RaptorRequest request = RaptorContext.getContext().getRequest();
+        RaptorResponse response = RaptorContext.getContext().getResponse();
+        response.setValue(result);
+        response.setException(ex);
+        if (interceptors != null) {
+            for (ClientInterceptor interceptor : interceptors) {
                 try {
-                    interceptor.afterCompletion(method, args, result, ex);
+                    interceptor.afterCompletion(request, response);
                 } catch (Exception e) {
                     log.error("RaptorInvocationHandler afterCompletion threw exception", e);
                 }

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @RaptorInterface(
-    appId = "appId",
-    appName = "demo",
+    appId = "654321",
+    appName = "demo1",
     version = "version.0.1",
     protoFile = "helloworld",
     library = "spring"

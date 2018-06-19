@@ -3,6 +3,7 @@ package com.ppdai.framework.raptor.spring.client.feign.support;
 import com.ppdai.framework.raptor.common.ParamNameConstants;
 import com.ppdai.framework.raptor.rpc.RaptorContext;
 import com.ppdai.framework.raptor.rpc.RaptorResponse;
+import com.ppdai.framework.raptor.rpc.URL;
 import feign.Client;
 import feign.Request;
 import feign.Response;
@@ -19,7 +20,7 @@ import java.util.Map;
 public class RaptorFeignClient implements Client {
 
     public static final String NAME_REQUEST_TIME = "raptor-client-http-time";
-    public static final String NAME_HTTP_URL = "raptor-client-http-url";
+    public static final String NAME_HTTP_URI = "raptor-client-http-uri";
     public static final String NAME_HTTP_METHOD = "raptor-client-http-method";
 
     private final Client client;
@@ -52,7 +53,7 @@ public class RaptorFeignClient implements Client {
 
     protected void preHandle(Request request, Request.Options options) throws Exception {
         //设置url和method到Context中，方便其他地方取
-        RaptorContext.getContext().putAttribute(NAME_HTTP_URL, request.url());
+        RaptorContext.getContext().putAttribute(NAME_HTTP_URI, URL.valueOf(request.url()).getUri());
         RaptorContext.getContext().putAttribute(NAME_HTTP_METHOD, request.method());
     }
 

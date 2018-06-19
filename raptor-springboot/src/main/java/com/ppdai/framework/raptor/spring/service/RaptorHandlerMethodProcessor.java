@@ -86,7 +86,7 @@ public class RaptorHandlerMethodProcessor extends AbstractMessageConverterMethod
         ServletServerHttpResponse outputMessage = createOutputMessage(webRequest);
 
         //设置Response header,本应该放在拦截器中实现,但是handler处理完后,response已经关闭了,拦截器无法后置处理response
-        RaptorHandlerInterceptorAdapter.putResponseHeaders(outputMessage.getServletResponse());
+        RaptorContextInitHandlerInterceptor.applyResponse(outputMessage.getServletResponse());
 
         writeWithMessageConverters(returnValue, returnType, inputMessage, outputMessage);
     }

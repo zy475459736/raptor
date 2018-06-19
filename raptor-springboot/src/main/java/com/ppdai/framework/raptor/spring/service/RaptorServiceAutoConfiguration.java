@@ -2,7 +2,6 @@ package com.ppdai.framework.raptor.spring.service;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -23,6 +22,9 @@ public class RaptorServiceAutoConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        //先增加RaptorContextInitHandlerInterceptor，其他拦截器之前先初始化RaptorContext
+        registry.addInterceptor(new RaptorContextInitHandlerInterceptor());
+
         List<RaptorServiceInterceptor> handlerInterceptorList = handlerInterceptors.getIfAvailable();
         if (CollectionUtils.isEmpty(handlerInterceptorList)) {
             return;

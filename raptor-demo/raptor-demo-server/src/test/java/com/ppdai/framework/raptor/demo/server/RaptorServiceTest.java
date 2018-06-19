@@ -1,6 +1,5 @@
 package com.ppdai.framework.raptor.demo.server;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -32,7 +31,7 @@ public class RaptorServiceTest {
         String reply = EntityUtils.toString(response.getEntity());
 
         System.out.println(reply);
-        Assert.assertTrue(StringUtils.contains(reply, "Hello ppdai"));
+        Assert.assertTrue(reply.contains("Hello ppdai"));
     }
 
 }

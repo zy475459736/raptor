@@ -1,7 +1,6 @@
 package com.ppdai.framework.raptor.spring.client;
 
 import com.ppdai.framework.raptor.annotation.RaptorInterface;
-import com.ppdai.framework.raptor.rpc.URL;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**

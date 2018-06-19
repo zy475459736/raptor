@@ -1,6 +1,6 @@
 package com.ppdai.framework.raptor.spring.client.feign.support;
 
-import com.ppdai.framework.raptor.common.ParamNameConstants;
+import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.rpc.RaptorContext;
 import com.ppdai.framework.raptor.rpc.RaptorRequest;
 import com.ppdai.framework.raptor.util.NetUtils;
@@ -19,10 +19,10 @@ public class HeaderTraceRequestInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate template) {
         //requestId
-        template.header(ParamNameConstants.REQUEST_ID, RaptorContext.getContext().getRequest().getRequestId());
+        template.header(RaptorConstants.HEADER_REQUEST_ID, RaptorContext.getContext().getRequest().getRequestId());
 
         //clientIp
-        template.header(ParamNameConstants.HOST_CLIENT, NetUtils.getLocalIp());
+        template.header(RaptorConstants.HEADER_HOST_CLIENT, NetUtils.getLocalIp());
 
         //request设置头
         RaptorRequest request = RaptorContext.getContext().getRequest();

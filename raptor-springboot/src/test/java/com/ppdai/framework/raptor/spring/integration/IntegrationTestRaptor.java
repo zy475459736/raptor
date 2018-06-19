@@ -4,41 +4,24 @@ import com.ppdai.framework.raptor.proto.HelloReply;
 import com.ppdai.framework.raptor.proto.HelloRequest;
 import com.ppdai.framework.raptor.proto.MoreService;
 import com.ppdai.framework.raptor.proto.Simple;
+import com.ppdai.framework.raptor.spring.RaptorSpringBootTest;
 import com.ppdai.framework.raptor.spring.TestApplication;
 import com.ppdai.framework.raptor.spring.annotation.RaptorClient;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.SocketUtils;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class IntegrationTest {
+public class IntegrationTestRaptor extends RaptorSpringBootTest {
 
     @RaptorClient
     private Simple simple;
 
     @RaptorClient
     private MoreService moreService;
-
-    @BeforeClass
-    public static void beforeClass() {
-        int port = SocketUtils.findAvailableTcpPort();
-        System.setProperty("server.port", String.valueOf(port));
-        System.setProperty("raptor.client.config[123456].url", "http://localhost:" + port);
-        System.setProperty("raptor.client.config[demo1].url", "http://localhost:" + port);
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        System.clearProperty("server.port");
-        System.clearProperty("raptor.client.config[123456].url");
-        System.clearProperty("raptor.client.config[demo1].url");
-    }
 
     @Test
     public void testSimple() {

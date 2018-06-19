@@ -1,7 +1,6 @@
 package com.ppdai.framework.raptor.rpc;
 
 import com.ppdai.framework.raptor.common.RaptorConstants;
-import com.ppdai.framework.raptor.common.URLParamType;
 import com.ppdai.framework.raptor.util.StringTools;
 import lombok.Builder;
 import org.apache.commons.lang3.StringUtils;
@@ -185,10 +184,6 @@ public class URL {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public String getVersion() {
-        return getParameter(URLParamType.version.getName());
     }
 
     public Map<String, String> getParameters() {

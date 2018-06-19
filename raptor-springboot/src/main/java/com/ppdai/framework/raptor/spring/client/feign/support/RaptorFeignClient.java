@@ -1,6 +1,6 @@
 package com.ppdai.framework.raptor.spring.client.feign.support;
 
-import com.ppdai.framework.raptor.common.ParamNameConstants;
+import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.rpc.RaptorContext;
 import com.ppdai.framework.raptor.rpc.RaptorResponse;
 import com.ppdai.framework.raptor.rpc.URL;
@@ -77,7 +77,7 @@ public class RaptorFeignClient implements Client {
                 raptorResponse.setAttachment(entry.getKey(), value);
 
                 //responseAttachment，传递Response头
-                if (entry.getKey().toLowerCase().startsWith(ParamNameConstants.TRACE_HEADER_PREFIX)) {
+                if (entry.getKey().toLowerCase().startsWith(RaptorConstants.HEADER_TRACE_PREFIX)) {
                     RaptorContext.getContext().putResponseAttachment(entry.getKey(), value);
                 }
             }

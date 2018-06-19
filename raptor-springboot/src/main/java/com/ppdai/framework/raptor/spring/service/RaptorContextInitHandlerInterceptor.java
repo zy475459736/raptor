@@ -1,6 +1,6 @@
 package com.ppdai.framework.raptor.spring.service;
 
-import com.ppdai.framework.raptor.common.ParamNameConstants;
+import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.rpc.RaptorContext;
 import com.ppdai.framework.raptor.rpc.RaptorRequest;
 import com.ppdai.framework.raptor.rpc.RaptorResponse;
@@ -47,12 +47,12 @@ public class RaptorContextInitHandlerInterceptor extends HandlerInterceptorAdapt
         //设置request头
         Map<String, String> headers = getRequestHeaders(request);
         RaptorRequest raptorRequest = RaptorContext.getContext().getRequest();
-        raptorRequest.setRequestId(headers.get(ParamNameConstants.REQUEST_ID));
+        raptorRequest.setRequestId(headers.get(RaptorConstants.HEADER_REQUEST_ID));
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             raptorRequest.setAttachment(entry.getKey(), entry.getValue());
 
             //传递request头
-            if (entry.getKey().toLowerCase().startsWith(ParamNameConstants.TRACE_HEADER_PREFIX)) {
+            if (entry.getKey().toLowerCase().startsWith(RaptorConstants.HEADER_TRACE_PREFIX)) {
                 RaptorContext.getContext().putRequestAttachment(entry.getKey(), entry.getValue());
             }
         }
@@ -89,13 +89,13 @@ public class RaptorContextInitHandlerInterceptor extends HandlerInterceptorAdapt
     }
 
     public static void applyResponse(HttpServletResponse response) {
-        response.addHeader(ParamNameConstants.HOST_SERVER, NetUtils.getLocalIp());
+        response.addHeader(RaptorConstants.HEADER_HOST_SERVER, NetUtils.getLocalIp());
 
         RaptorResponse raptorResponse = RaptorContext.getContext().getResponse();
         if (raptorResponse != null) {
             raptorResponse.setCode(response.getStatus());
             for (Map.Entry<String, String> entry : raptorResponse.getAttachments().entrySet()) {
-                if (entry.getKey().toLowerCase().startsWith(ParamNameConstants.TRACE_HEADER_PREFIX)) {
+                if (entry.getKey().toLowerCase().startsWith(RaptorConstants.HEADER_TRACE_PREFIX)) {
                     response.addHeader(entry.getKey(), entry.getValue());
                 }
             }

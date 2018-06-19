@@ -4,6 +4,7 @@ import com.ppdai.framework.raptor.proto.HelloReply;
 import com.ppdai.framework.raptor.proto.HelloRequest;
 import com.ppdai.framework.raptor.proto.MoreService;
 import com.ppdai.framework.raptor.proto.Simple;
+import com.ppdai.framework.raptor.spring.RaptorSpringBootTest;
 import com.ppdai.framework.raptor.spring.TestApplication;
 import com.ppdai.framework.raptor.spring.annotation.RaptorClient;
 import feign.Client;
@@ -26,10 +27,9 @@ import java.util.HashMap;
  * @author yinzuolong
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = TestApplication.class, properties = {"raptor.client.config[123456].url=http://localhost:8080",
-        "raptor.client.config[654321].url=http://localhost:8080"})
+@SpringBootTest(classes = TestApplication.class)
 @Import(RaptorClientTest.TestConfig.class)
-public class RaptorClientTest {
+public class RaptorClientTest extends RaptorSpringBootTest {
 
     @RaptorClient
     private Simple simple;

@@ -4,7 +4,6 @@ import com.ppdai.framework.raptor.proto.HelloReply;
 import com.ppdai.framework.raptor.proto.HelloRequest;
 import com.ppdai.framework.raptor.proto.MoreService;
 import com.ppdai.framework.raptor.proto.Simple;
-import com.ppdai.framework.raptor.spring.RaptorSpringBootTest;
 import com.ppdai.framework.raptor.spring.TestApplication;
 import com.ppdai.framework.raptor.spring.annotation.RaptorClient;
 import feign.Client;
@@ -29,7 +28,7 @@ import java.util.HashMap;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class)
 @Import(RaptorClientTest.TestConfig.class)
-public class RaptorClientTest extends RaptorSpringBootTest {
+public class RaptorClientTest {
 
     @RaptorClient
     private Simple simple;

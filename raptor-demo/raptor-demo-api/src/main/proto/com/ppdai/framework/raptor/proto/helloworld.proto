@@ -5,7 +5,7 @@ package com.ppdai.framework.raptor.proto;
 import "com/ppdai/framework/raptor/proto/Result.proto";
 import "raptor.proto";
 
-option (appId) = "appId";
+option (appId) = "123456";
 option (appName) = "demo";
 option (version) = "version.0.1";
 

@@ -12,24 +12,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>4.3.7.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okio</groupId>
-            <artifactId>okio</artifactId>
-            <version>1.13.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.wire</groupId>
-            <artifactId>wire-runtime</artifactId>
-            <version>2.3.0-RC1</version>
-        </dependency>
-        <dependency>
             <groupId>com.ppdai.framework</groupId>
-            <artifactId>raptor-core</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <artifactId>raptor-springboot</artifactId>
+            <version>0.2.x-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

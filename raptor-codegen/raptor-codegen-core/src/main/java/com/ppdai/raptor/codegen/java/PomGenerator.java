@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,8 +33,14 @@ public class PomGenerator {
 
 
     public Model readExamplePom() {
-        InputStream resourceAsStream = getClass().getResourceAsStream(EXAMPLE_POM_PATH);
-        Model read = null;
+        InputStream resourceAsStream;
+        if (StringUtils.isNotBlank(pomModel.getExamplePom())) {
+            resourceAsStream = new ByteArrayInputStream(pomModel.getExamplePom().getBytes());
+        } else {
+            resourceAsStream = getClass().getResourceAsStream(EXAMPLE_POM_PATH);
+        }
+
+        Model read;
         try {
             read = new MavenXpp3Reader().read(resourceAsStream);
         } catch (IOException | XmlPullParserException e) {

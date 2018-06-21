@@ -11,7 +11,7 @@ import org.codehaus.plexus.util.StringUtils;
 @Data
 @Builder
 public class PomModel {
-    private static final String DEFAULT_GOURP_ID = "com.ppdai.raptor.framework";
+    private static final String DEFAULT_GROUP_ID = "com.ppdai.raptor.framework";
     private static final String DEFAULT_ARTIFACT_ID = "raptor-demo";
     private static final String DEFAULT_VERSION = "0.0.1-SNAPSHOT";
 
@@ -19,9 +19,14 @@ public class PomModel {
     private String groupId;
     private String artifactId;
     private String version;
+    private String examplePom;
+
+    public String getExamplePom() {
+        return examplePom;
+    }
 
     public String getGroupId() {
-        return StringUtils.isNotBlank(groupId) ? groupId : DEFAULT_GOURP_ID;
+        return StringUtils.isNotBlank(groupId) ? groupId : DEFAULT_GROUP_ID;
     }
 
     public String getArtifactId() {

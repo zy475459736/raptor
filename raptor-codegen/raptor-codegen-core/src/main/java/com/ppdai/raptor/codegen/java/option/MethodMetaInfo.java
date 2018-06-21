@@ -103,7 +103,6 @@ public class MethodMetaInfo {
 
     public AnnotationSpec generateRaptorMethod() {
         AnnotationSpec.Builder builder = AnnotationSpec.builder(RaptorMethod.class);
-        OptionUtil.setAnnotationMember(builder, "summary", "$S", summary);
         return builder.build();
 
     }

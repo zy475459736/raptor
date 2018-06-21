@@ -6,14 +6,11 @@ import com.ppdai.framework.raptor.spring.utils.RaptorMessageUtils;
 import feign.RequestTemplate;
 import feign.codec.EncodeException;
 import feign.codec.Encoder;
-import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,8 +30,8 @@ public class RaptorMessageEncoder implements Encoder {
         if (AnnotationUtils.findAnnotation(requestType, RaptorMessage.class) != null) {
             if ("GET".equalsIgnoreCase(request.method())) {
                 try {
-                    Map<String, List<String>> map = RaptorMessageUtils.transferMessageToQuery(requestBody);
-                    for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                    Map<String, String> map = RaptorMessageUtils.transferMessageToMap(requestBody);
+                    for (Map.Entry<String, String> entry : map.entrySet()) {
                         request.query(entry.getKey(), entry.getValue());
                     }
                 } catch (Exception e) {

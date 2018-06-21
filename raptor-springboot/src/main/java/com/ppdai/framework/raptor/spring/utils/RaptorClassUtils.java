@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author yinzuolong
  */
-//TODO 使用spring反射工具类实现
 public class RaptorClassUtils {
 
     private final static Map<String, String> cache = new ConcurrentHashMap<>();
@@ -36,7 +35,7 @@ public class RaptorClassUtils {
                         cache.put(classMethodKey, interfaceName);
                         return interfaceName;
                     }
-                } catch (NoSuchMethodException e) {
+                } catch (NoSuchMethodException ignored) {
                 }
             }
         }

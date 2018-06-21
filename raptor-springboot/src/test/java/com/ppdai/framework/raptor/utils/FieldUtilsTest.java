@@ -1,6 +1,6 @@
 package com.ppdai.framework.raptor.utils;
 
-import com.ppdai.framework.raptor.spring.utils.FeignHelper;
+import com.ppdai.framework.raptor.spring.utils.FieldUtils;
 import feign.Feign;
 import feign.Request;
 import org.junit.Assert;
@@ -9,12 +9,12 @@ import org.junit.Test;
 /**
  * @author yinzuolong
  */
-public class FeignHelperTest {
+public class FieldUtilsTest {
 
     @Test
-    public void name() {
+    public void testGetPrivateField() {
         Feign.Builder builder = Feign.builder();
-        Request.Options options = (Request.Options) FeignHelper.getPrivateField(Feign.Builder.class, builder, "options");
+        Request.Options options = (Request.Options) FieldUtils.getPrivateField(Feign.Builder.class, builder, "options");
         Assert.assertNotNull(options);
         System.out.println(options.connectTimeoutMillis() + ":" + options.readTimeoutMillis());
     }

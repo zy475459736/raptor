@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 /**
  * @author yinzuolong
  */
-public class FeignHelper {
+public class FieldUtils {
 
     public static Object getPrivateField(Class<?> clazz, Object target, String fieldName) {
         Field field = ReflectionUtils.findField(clazz, fieldName);

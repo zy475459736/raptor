@@ -6,7 +6,7 @@ import com.ppdai.framework.raptor.spring.client.RaptorClientFactory;
 import com.ppdai.framework.raptor.spring.client.feign.support.*;
 import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientProperties;
 import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
-import com.ppdai.framework.raptor.spring.utils.FeignHelper;
+import com.ppdai.framework.raptor.spring.utils.FieldUtils;
 import feign.*;
 import feign.codec.ErrorDecoder;
 import feign.slf4j.Slf4jLogger;
@@ -155,7 +155,7 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
             builder.logLevel(config.getLoggerLevel());
         }
 
-        Request.Options options = (Request.Options) FeignHelper.getPrivateField(Feign.Builder.class, builder, "options");
+        Request.Options options = (Request.Options) FieldUtils.getPrivateField(Feign.Builder.class, builder, "options");
         options = options == null ? new Request.Options() : options;
         int connectTimeout = config.getConnectTimeout() == null ? options.connectTimeoutMillis() : config.getConnectTimeout();
         int readTimeout = config.getReadTimeout() == null ? options.readTimeoutMillis() : config.getReadTimeout();

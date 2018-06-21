@@ -18,7 +18,6 @@ import java.util.Map;
  */
 public class RaptorMessageUtils {
 
-
     public static Map<String, List<String>> transferMessageToQuery(Object message) throws Exception {
         RaptorMessage raptorMessage = AnnotationUtils.findAnnotation(message.getClass(), RaptorMessage.class);
         Assert.notNull(raptorMessage, "Object not annotated by @RaptorMessage.");

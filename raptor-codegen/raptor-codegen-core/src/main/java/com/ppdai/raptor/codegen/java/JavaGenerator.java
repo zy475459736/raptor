@@ -25,7 +25,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.ppdai.framework.raptor.annotation.RaptorField;
 import com.ppdai.framework.raptor.common.RaptorConstants;
-import com.ppdai.framework.raptor.common.URLParamType;
 import com.ppdai.raptor.codegen.java.option.InterfaceMetaInfo;
 import com.ppdai.raptor.codegen.java.option.MessageMetaInfo;
 import com.ppdai.raptor.codegen.java.option.Method;
@@ -886,7 +885,7 @@ public final class JavaGenerator {
     }
 
     private Object defaultRequestPath(Rpc rpc, ClassName className) {
-        ArrayList<String> params = Lists.newArrayList(URLParamType.basePath.getValue(), className.reflectionName(), rpc.name());
+        ArrayList<String> params = Lists.newArrayList(RaptorConstants.RAPTOR, className.reflectionName(), rpc.name());
         return RaptorConstants.PATH_SEPARATOR + StringUtils.join(params, RaptorConstants.PATH_SEPARATOR);
     }
 

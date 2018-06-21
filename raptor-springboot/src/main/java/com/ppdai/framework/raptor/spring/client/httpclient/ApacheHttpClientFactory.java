@@ -17,7 +17,7 @@ public class ApacheHttpClientFactory {
 
         RequestConfig defaultRequestConfig = RequestConfig.custom()
                 .setConnectTimeout(httpClientProperties.getConnectionTimeout())
-                .setSocketTimeout(httpClientProperties.getSocketTimeout())
+                .setSocketTimeout(httpClientProperties.getReadTimeout())
                 .setRedirectsEnabled(httpClientProperties.isFollowRedirects())
                 .build();
 

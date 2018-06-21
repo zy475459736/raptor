@@ -30,7 +30,7 @@ public class RaptorHttpClientProperties {
     private TimeUnit timeToLiveUnit = DEFAULT_TIME_TO_LIVE_UNIT;
     private boolean followRedirects = DEFAULT_FOLLOW_REDIRECTS;
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
-    private int socketTimeout = DEFAULT_CONNECTION_TIMEOUT;
+    private int readTimeout = DEFAULT_SOCKET_TIMEOUT;
     private int connectionTimerRepeat = DEFAULT_CONNECTION_TIMER_REPEAT;
     private int retryCount = DEFAULT_RETRY_COUNT;
     private boolean requestSentRetryEnabled = DEFAULT_RETRY_ENABLE;

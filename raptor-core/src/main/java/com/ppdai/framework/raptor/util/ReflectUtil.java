@@ -1,12 +1,11 @@
 package com.ppdai.framework.raptor.util;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -39,7 +38,12 @@ public class ReflectUtil {
         builder.append(methodName);
         if (parameterTypes != null) {
             builder.append("(");
-            builder.append(StringUtils.join(parameterTypes));
+            for (String parameterType : parameterTypes) {
+                builder.append(parameterType).append(PARAM_CLASS_SPLIT);
+            }
+            if (builder.subSequence(builder.length() - 1, builder.length()).equals(PARAM_CLASS_SPLIT)) {
+                builder.deleteCharAt(builder.length() - 1);
+            }
             builder.append(")");
         }
         return builder.toString();

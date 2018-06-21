@@ -5,7 +5,6 @@ import com.ppdai.framework.raptor.proto.HelloRequest;
 import com.ppdai.framework.raptor.proto.MoreService;
 import com.ppdai.framework.raptor.proto.Simple;
 import com.ppdai.framework.raptor.spring.annotation.RaptorClient;
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,9 +47,21 @@ public class SayHelloController {
         HelloRequest.Result result = new HelloRequest.Result("url1", HelloRequest.Result.Corpus.NEWS);
         helloRequest.setRepResult(Arrays.asList(result, result, result));
 
-        helloRequest.setMapInt32Int32(MapUtils.putAll(new HashMap<>(), new Object[]{1, 2, 3, 4}));
-        helloRequest.setMapStringMessage(MapUtils.putAll(new HashMap<>(), new Object[]{"c1", result, "c2", result}));
-        helloRequest.setMapStringEnum(MapUtils.putAll(new HashMap<>(), new Object[]{"c1", HelloRequest.Corpus.IMAGES, "c2", HelloRequest.Corpus.PRODUCTS}));
+        HashMap<Integer, Integer> intMap = new HashMap<>();
+        intMap.put(1, 2);
+        intMap.put(3, 4);
+        helloRequest.setMapInt32Int32(intMap);
+
+        HashMap<String, HelloRequest.Result> stringMessageMap = new HashMap<>();
+        stringMessageMap.put("c1", result);
+        stringMessageMap.put("c2", result);
+        helloRequest.setMapStringMessage(stringMessageMap);
+
+        HashMap<String, HelloRequest.Corpus> stringEnumMap = new HashMap<>();
+        stringEnumMap.put("c1", HelloRequest.Corpus.IMAGES);
+        stringEnumMap.put("c2", HelloRequest.Corpus.PRODUCTS);
+        helloRequest.setMapStringMessage(stringMessageMap);
+        helloRequest.setMapStringEnum(stringEnumMap);
         return helloRequest;
     }
 

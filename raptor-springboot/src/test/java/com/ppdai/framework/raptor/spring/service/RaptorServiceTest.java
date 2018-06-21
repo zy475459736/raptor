@@ -1,7 +1,6 @@
-package com.ppdai.framework.raptor.demo.server;
+package com.ppdai.framework.raptor.spring.service;
 
-import com.ppdai.framework.raptor.proto.HelloReply;
-import com.ppdai.framework.raptor.proto.HelloRequest;
+import com.ppdai.framework.raptor.spring.TestApplication;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -14,8 +13,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * @author yinzuolong
+ */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = SpringBootServer.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class RaptorServiceTest {
 
     @Autowired
@@ -34,13 +36,10 @@ public class RaptorServiceTest {
     }
 
     @Test
-    public void testServer() throws Exception {
-        String url = "http://localhost:" + serverProperties.getPort() + "/raptor/com.ppdai.framework.raptor.proto.Simple/sayHello";
-        HelloRequest request = new HelloRequest();
-        request.setName("ppdai");
-        HelloReply reply = restTemplate.postForObject(url, request, HelloReply.class);
-        System.out.println(reply.getRequest().getName());
-        Assert.assertTrue(reply.getMessage().contains("Hello ppdai"));
+    public void testService() {
+        String url = "http://localhost:" + serverProperties.getPort() + "/more?name=ppdai";
+        String response = restTemplate.getForObject(url, String.class);
+        System.out.println(response);
+        Assert.assertTrue(response.contains("ppdai"));
     }
-
 }

@@ -1,27 +1,27 @@
 package com.ppdai.framework.raptor.spring.client.feign;
 
 import com.ppdai.framework.raptor.annotation.RaptorInterface;
+import com.ppdai.framework.raptor.spring.client.ClientInterceptor;
 import com.ppdai.framework.raptor.spring.client.RaptorClientFactory;
-import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageDecoder;
-import com.ppdai.framework.raptor.spring.client.feign.support.RaptorMessageEncoder;
-import com.ppdai.framework.raptor.spring.client.feign.support.SpringMvcContract;
+import com.ppdai.framework.raptor.spring.client.feign.support.*;
 import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientProperties;
 import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
-import feign.Feign;
-import feign.Request;
-import feign.RequestInterceptor;
-import feign.Retryer;
+import feign.*;
 import feign.codec.ErrorDecoder;
 import feign.slf4j.Slf4jLogger;
-import org.apache.http.client.HttpClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,19 +47,45 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
                 .decoder(new RaptorMessageDecoder(raptorMessageConverter))
                 .contract(new SpringMvcContract())
                 .retryer(Retryer.NEVER_RETRY)
-                .logger(new Slf4jLogger(type));
+                .logger(new Slf4jLogger(type))
+                .options(createOptions())
+                .requestInterceptors(getList(RequestInterceptor.class));
 
-        HttpClient httpClient = getOptional(HttpClient.class);
-        if (httpClient != null) {
-            builder.client(new RaptorFeignHttpClient(httpClient));
-        } else {
-            builder.client(new RaptorFeignHttpClient());
-        }
+        //自定义InvocationHandlerFactory，用于自定义拦截器
+        builder.invocationHandlerFactory(createInvocationHandlerFactory());
 
-        configureUsingApplicationContext(builder);
+        //设置client
+        builder.client(createRaptorFeignClient());
+
+        //自定义配置
         configureUsingProperties(type, builder);
 
         return builder.target(type, getUrl(type));
+    }
+
+    protected Request.Options createOptions() {
+        RaptorHttpClientProperties httpClientProperties = getOptional(RaptorHttpClientProperties.class);
+        if (httpClientProperties != null) {
+            return new Request.Options(httpClientProperties.getConnectionTimeout(), httpClientProperties.getReadTimeout());
+        }
+        return new Request.Options();
+    }
+
+    protected InvocationHandlerFactory createInvocationHandlerFactory() {
+        return new InvocationHandlerFactory() {
+            @Override
+            public InvocationHandler create(Target target, Map<Method, MethodHandler> dispatch) {
+                List<ClientInterceptor> clientInterceptors = getList(ClientInterceptor.class);
+                clientInterceptors.sort(new AnnotationAwareOrderComparator());
+                RaptorInvocationHandler invocationHandler = new RaptorInvocationHandler(target, dispatch);
+                invocationHandler.setInterceptors(clientInterceptors);
+                return invocationHandler;
+            }
+        };
+    }
+
+    protected RaptorFeignClient createRaptorFeignClient() {
+        return new RaptorFeignClient(get(Client.class));
     }
 
     protected String getUrl(Class<?> type) {
@@ -90,19 +116,6 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
             return null;
         }
         return config.getUrl();
-    }
-
-    protected void configureUsingApplicationContext(Feign.Builder builder) {
-
-        RaptorHttpClientProperties httpClientProperties = getOptional(RaptorHttpClientProperties.class);
-        if (httpClientProperties != null) {
-            builder.options(new Request.Options(httpClientProperties.getConnectionTimeout(), httpClientProperties.getSocketTimeout()));
-        }
-
-        Map<String, RequestInterceptor> requestInterceptors = applicationContext.getBeansOfType(RequestInterceptor.class);
-        if (requestInterceptors != null && requestInterceptors.size() > 0) {
-            builder.requestInterceptors(requestInterceptors.values());
-        }
     }
 
     protected void configureUsingProperties(Class<?> type, Feign.Builder builder) {
@@ -182,6 +195,14 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
         } catch (NoSuchBeanDefinitionException e) {
             return BeanUtils.instantiateClass(tClass);
         }
+    }
+
+    protected <T> List<T> getList(Class<T> type) {
+        Map<String, T> map = applicationContext.getBeansOfType(type);
+        if (map != null) {
+            return new ArrayList<>(applicationContext.getBeansOfType(type).values());
+        }
+        return new ArrayList<>();
     }
 
     protected <T> T get(Class<T> type) {

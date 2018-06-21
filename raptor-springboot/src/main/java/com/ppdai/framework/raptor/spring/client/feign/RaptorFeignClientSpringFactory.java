@@ -6,6 +6,7 @@ import com.ppdai.framework.raptor.spring.client.RaptorClientFactory;
 import com.ppdai.framework.raptor.spring.client.feign.support.*;
 import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientProperties;
 import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
+import com.ppdai.framework.raptor.spring.utils.FeignHelper;
 import feign.*;
 import feign.codec.ErrorDecoder;
 import feign.slf4j.Slf4jLogger;
@@ -94,11 +95,11 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
 
         if (!StringUtils.hasText(url)) {
             RaptorInterface raptorInterface = AnnotationUtils.findAnnotation(type, RaptorInterface.class);
-            //根据配置的appName找url
-            url = getUrlFromConfig(raptorInterface.appName());
+            //根据配置的appId找url
+            url = getUrlFromConfig(raptorInterface.appId());
             if (!StringUtils.hasText(url)) {
-                //根据配置的appId找url
-                url = getUrlFromConfig(raptorInterface.appId());
+                //根据配置的appName找url
+                url = getUrlFromConfig(raptorInterface.appName());
             }
         }
         if (!StringUtils.hasText(url)) {
@@ -125,11 +126,11 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
         //RaptorInterface注解：appId配置、appName配置
         RaptorInterface raptorInterface = AnnotationUtils.findAnnotation(type, RaptorInterface.class);
         if (raptorInterface != null) {
-            if (StringUtils.hasText(raptorInterface.appId())) {
-                configureUsingProperties(getClientConfig(raptorInterface.appId()), builder);
-            }
             if (StringUtils.hasText(raptorInterface.appName())) {
                 configureUsingProperties(getClientConfig(raptorInterface.appName()), builder);
+            }
+            if (StringUtils.hasText(raptorInterface.appId())) {
+                configureUsingProperties(getClientConfig(raptorInterface.appId()), builder);
             }
         }
 
@@ -154,9 +155,11 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
             builder.logLevel(config.getLoggerLevel());
         }
 
-        if (config.getConnectTimeout() != null && config.getReadTimeout() != null) {
-            builder.options(new Request.Options(config.getConnectTimeout(), config.getReadTimeout()));
-        }
+        Request.Options options = (Request.Options) FeignHelper.getPrivateField(Feign.Builder.class, builder, "options");
+        options = options == null ? new Request.Options() : options;
+        int connectTimeout = config.getConnectTimeout() == null ? options.connectTimeoutMillis() : config.getConnectTimeout();
+        int readTimeout = config.getReadTimeout() == null ? options.readTimeoutMillis() : config.getReadTimeout();
+        builder.options(new Request.Options(connectTimeout, readTimeout));
 
         if (config.getRetryer() != null) {
             Retryer retryer = getOrInstantiate(config.getRetryer());

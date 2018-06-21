@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author yinzuolong
  */
+//TODO 使用spring反射工具类实现
 public class RaptorClassUtils {
 
     private final static Map<String, String> cache = new ConcurrentHashMap<>();
@@ -41,7 +42,6 @@ public class RaptorClassUtils {
         }
         return interfaceName;
     }
-
 
     public static List<Class<?>> findRaptorInterfaces(Class<?> clazz) {
         List<Class<?>> raptorInterfaces = new ArrayList<>();

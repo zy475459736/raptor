@@ -16,6 +16,7 @@ import java.util.Map;
 /**
  * @author yinzuolong
  */
+//TODO 使用spring反射工具类实现
 public class RaptorMessageUtils {
 
     public static Map<String, List<String>> transferMessageToQuery(Object message) throws Exception {

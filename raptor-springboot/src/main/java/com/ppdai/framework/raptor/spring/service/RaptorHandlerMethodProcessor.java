@@ -25,6 +25,8 @@ import java.util.Map;
  */
 public class RaptorHandlerMethodProcessor extends AbstractMessageConverterMethodProcessor {
 
+    private ByteArrayBase64PropertyEditor byteArrayBase64PropertyEditor = new ByteArrayBase64PropertyEditor();
+
     public RaptorHandlerMethodProcessor(RaptorMessageConverter converter) {
         super(Collections.singletonList(converter));
     }
@@ -58,6 +60,7 @@ public class RaptorHandlerMethodProcessor extends AbstractMessageConverterMethod
         String name = ModelFactory.getNameForParameter(parameter);
         Object arg = BeanUtils.instantiateClass(parameter.getParameterType());
         WebDataBinder binder = binderFactory.createBinder(webRequest, arg, name);
+        binder.registerCustomEditor(byte[].class, this.byteArrayBase64PropertyEditor);
 
         ServletRequest servletRequest = webRequest.getNativeRequest(ServletRequest.class);
         ((ServletRequestDataBinder) binder).bind(servletRequest);

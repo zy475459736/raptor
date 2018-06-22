@@ -35,13 +35,12 @@ public class RaptorClassUtils {
                         cache.put(classMethodKey, interfaceName);
                         return interfaceName;
                     }
-                } catch (NoSuchMethodException e) {
+                } catch (NoSuchMethodException ignored) {
                 }
             }
         }
         return interfaceName;
     }
-
 
     public static List<Class<?>> findRaptorInterfaces(Class<?> clazz) {
         List<Class<?>> raptorInterfaces = new ArrayList<>();

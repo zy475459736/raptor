@@ -428,12 +428,6 @@ public final class JavaGenerator {
         for (Field field : type.fieldsAndOneOfFields()) {
             TypeName fieldJavaType = fieldType(field);
 
-            if ((field.type().isScalar() || isEnum(field.type()))
-                    && !field.isRepeated()
-                    && !field.isPacked()) {
-                builder.addField(defaultField(nameAllocator, field, fieldJavaType));
-            }
-
             String fieldName = nameAllocator.get(field);
             FieldSpec.Builder fieldBuilder = FieldSpec.builder(fieldJavaType, fieldName, PRIVATE);
             fieldBuilder.addAnnotation(wireFieldAnnotation(field, type.oneOfs()));
@@ -459,6 +453,9 @@ public final class JavaGenerator {
             builder.addMethod(noArgumentConstructor());
         }
         builder.addMethod(messageFieldsAndUnknownFieldsConstructor(nameAllocator, type));
+
+        builder.addMethod(messageEquals(nameAllocator, type));
+        builder.addMethod(messageHashCode(nameAllocator, type));
 
         if (!emitCompact) {
             builder.addMethod(messageToString(nameAllocator, type));
@@ -588,16 +585,6 @@ public final class JavaGenerator {
         return field.isRepeated() ? listOf(messageType) : messageType;
     }
 
-    // Example:
-    //
-    // public static final Integer DEFAULT_OPT_INT32 = 123;
-    //
-    private FieldSpec defaultField(NameAllocator nameAllocator, Field field, TypeName fieldType) {
-        String defaultFieldName = "DEFAULT_" + nameAllocator.get(field).toUpperCase(Locale.US);
-        return FieldSpec.builder(fieldType, defaultFieldName, PUBLIC, STATIC, FINAL)
-                .initializer(defaultValue(field))
-                .build();
-    }
 
     // Example:
     //
@@ -731,19 +718,6 @@ public final class JavaGenerator {
         return result.build();
     }
 
-    private CodeBlock defaultValue(Field field) {
-        Object defaultValue = field.getDefault();
-
-        if (defaultValue == null && isEnum(field.type())) {
-            defaultValue = enumDefault(field.type()).name();
-        }
-
-        if (field.type().isScalar() || defaultValue != null) {
-            return fieldInitializer(field.type(), defaultValue);
-        }
-
-        throw new IllegalStateException("Field " + field + " cannot have default value");
-    }
 
     private CodeBlock fieldInitializer(ProtoType type, Object value) {
         TypeName javaType = typeName(type);
@@ -887,6 +861,98 @@ public final class JavaGenerator {
     private Object defaultRequestPath(Rpc rpc, ClassName className) {
         ArrayList<String> params = Lists.newArrayList(RaptorConstants.RAPTOR, className.reflectionName(), rpc.name());
         return RaptorConstants.PATH_SEPARATOR + StringUtils.join(params, RaptorConstants.PATH_SEPARATOR);
+    }
+
+
+    // Example:
+    //
+    // @Override
+    // public boolean equals(Object other) {
+    //   if (other == this) return true;
+    //   if (!(other instanceof SimpleMessage)) return false;
+    //   SimpleMessage o = (SimpleMessage) other;
+    //   return true
+    //       && equals(optional_int32, o.optional_int32);
+    //
+    private MethodSpec messageEquals(NameAllocator nameAllocator, MessageType type) {
+        NameAllocator localNameAllocator = nameAllocator.clone();
+        String otherName = localNameAllocator.newName("other");
+        String oName = localNameAllocator.newName("o");
+
+        TypeName javaType = typeName(type.type());
+        MethodSpec.Builder result = MethodSpec.methodBuilder("equals")
+                .addAnnotation(Override.class)
+                .addModifiers(PUBLIC)
+                .returns(boolean.class)
+                .addParameter(Object.class, otherName);
+
+        List<Field> fields = type.fieldsAndOneOfFields();
+        if (fields.isEmpty()) {
+            result.addStatement("return $N instanceof $T", otherName, javaType);
+            return result.build();
+        }
+
+        result.addStatement("if ($N == this) return true", otherName);
+        result.addStatement("if (!($N instanceof $T)) return false", otherName, javaType);
+
+        result.addStatement("$T $N = ($T) $N", javaType, oName, javaType, otherName);
+        result.addCode("$[return true", oName);
+        for (Field field : fields) {
+            String fieldName = localNameAllocator.get(field);
+            if (field.isRequired() || field.isRepeated() || field.type().isMap()) {
+                result.addCode("\n&& $1L.equals($2N.$1L)", fieldName, oName);
+            } else {
+                result.addCode("\n&& $1T.equals($2L, $3N.$2L)", Objects.class, fieldName, oName);
+            }
+        }
+        result.addCode(";\n$]");
+
+        return result.build();
+    }
+
+
+    // Example:
+    //
+    // @Override
+    // public int hashCode() {
+    //   int result = hashCode;
+    //   if (result == 0) {
+    //     result = result * 37 + (f != null ? f.hashCode() : 0);
+    //     hashCode = result;
+    //   }
+    //   return result;
+    // }
+    //
+    // For repeated fields, the final "0" in the example above changes to a "1"
+    // in order to be the same as the system hash code for an empty list.
+    //
+    private MethodSpec messageHashCode(NameAllocator nameAllocator, MessageType type) {
+        NameAllocator localNameAllocator = nameAllocator.clone();
+
+        String resultName = localNameAllocator.newName("result");
+        MethodSpec.Builder result = MethodSpec.methodBuilder("hashCode")
+                .addAnnotation(Override.class)
+                .addModifiers(PUBLIC)
+                .returns(int.class);
+
+        List<Field> fields = type.fieldsAndOneOfFields();
+        if (fields.isEmpty()) {
+            result.addStatement("return 0");
+            return result.build();
+        }
+
+        result.addStatement("int $N = 0", resultName);
+        for (Field field : fields) {
+            String fieldName = localNameAllocator.get(field);
+            result.addCode("$1N = $1N * 37 + ", resultName);
+            if (field.isRepeated() || field.isRequired() || field.type().isMap()) {
+                result.addStatement("$L.hashCode()", fieldName);
+            } else {
+                result.addStatement("($1L != null ? $1L.hashCode() : 0)", fieldName);
+            }
+        }
+        result.addStatement("return $N", resultName);
+        return result.build();
     }
 
 

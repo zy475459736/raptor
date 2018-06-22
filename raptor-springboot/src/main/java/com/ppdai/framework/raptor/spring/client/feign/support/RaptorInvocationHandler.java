@@ -1,9 +1,9 @@
 package com.ppdai.framework.raptor.spring.client.feign.support;
 
+import com.ppdai.framework.raptor.rpc.RaptorClientInterceptor;
 import com.ppdai.framework.raptor.rpc.RaptorContext;
 import com.ppdai.framework.raptor.rpc.RaptorRequest;
 import com.ppdai.framework.raptor.rpc.RaptorResponse;
-import com.ppdai.framework.raptor.spring.client.ClientInterceptor;
 import com.ppdai.framework.raptor.util.RequestIdGenerator;
 import feign.InvocationHandlerFactory;
 import feign.Target;
@@ -28,7 +28,7 @@ public class RaptorInvocationHandler implements InvocationHandler {
 
     @Getter
     @Setter
-    private List<ClientInterceptor> interceptors = new LinkedList<>();
+    private List<RaptorClientInterceptor> interceptors = new LinkedList<>();
     private Target<?> target;
     private Map<Method, InvocationHandlerFactory.MethodHandler> dispatch;
 
@@ -82,7 +82,7 @@ public class RaptorInvocationHandler implements InvocationHandler {
         if (interceptors != null) {
             RaptorRequest request = RaptorContext.getContext().getRequest();
             RaptorResponse response = RaptorContext.getContext().getResponse();
-            for (ClientInterceptor interceptor : interceptors) {
+            for (RaptorClientInterceptor interceptor : interceptors) {
                 interceptor.preHandle(request, response);
             }
         }
@@ -93,7 +93,7 @@ public class RaptorInvocationHandler implements InvocationHandler {
         RaptorResponse response = RaptorContext.getContext().getResponse();
         response.setValue(result);
         if (interceptors != null) {
-            for (ClientInterceptor interceptor : interceptors) {
+            for (RaptorClientInterceptor interceptor : interceptors) {
                 interceptor.postHandle(request, response);
             }
         }
@@ -106,7 +106,7 @@ public class RaptorInvocationHandler implements InvocationHandler {
         response.setValue(result);
         response.setException(ex);
         if (interceptors != null) {
-            for (ClientInterceptor interceptor : interceptors) {
+            for (RaptorClientInterceptor interceptor : interceptors) {
                 try {
                     interceptor.afterCompletion(request, response);
                 } catch (Exception e) {

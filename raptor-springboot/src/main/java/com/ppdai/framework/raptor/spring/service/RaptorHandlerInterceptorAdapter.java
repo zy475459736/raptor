@@ -3,6 +3,7 @@ package com.ppdai.framework.raptor.spring.service;
 import com.ppdai.framework.raptor.rpc.RaptorContext;
 import com.ppdai.framework.raptor.rpc.RaptorRequest;
 import com.ppdai.framework.raptor.rpc.RaptorResponse;
+import com.ppdai.framework.raptor.rpc.RaptorServiceInterceptor;
 import com.ppdai.framework.raptor.spring.utils.RaptorClassUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;

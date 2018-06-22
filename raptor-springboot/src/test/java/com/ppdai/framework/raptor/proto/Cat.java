@@ -5,14 +5,14 @@ package com.ppdai.framework.raptor.proto;
 import com.ppdai.framework.raptor.annotation.RaptorField;
 import com.ppdai.framework.raptor.annotation.RaptorMessage;
 
+import java.util.Objects;
+
 @RaptorMessage(
     version = "version.0.1",
     protoFile = "helloworld"
 )
 public final class Cat {
   private static final long serialVersionUID = 0L;
-
-  public static final String DEFAULT_COLOR = "";
 
   @RaptorField(
       fieldType = "string",
@@ -34,6 +34,22 @@ public final class Cat {
 
   public void setColor(String color) {
     this.color=color;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == this) return true;
+    if (!(other instanceof Cat)) return false;
+    Cat o = (Cat) other;
+    return true
+        && Objects.equals(color, o.color);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = 0;
+    result = result * 37 + (color != null ? color.hashCode() : 0);
+    return result;
   }
 
   @Override

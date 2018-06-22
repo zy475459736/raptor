@@ -6,6 +6,7 @@ import com.ppdai.framework.raptor.annotation.RaptorField;
 import com.ppdai.framework.raptor.annotation.RaptorMessage;
 
 import java.util.Map;
+import java.util.Objects;
 
 @RaptorMessage(
     version = "version.0.1",
@@ -13,10 +14,6 @@ import java.util.Map;
 )
 public final class HelloReply {
   private static final long serialVersionUID = 0L;
-
-  public static final String DEFAULT_MESSAGE = "";
-
-  public static final Integer DEFAULT_CODE = 0;
 
   @RaptorField(
       fieldType = "string",
@@ -89,6 +86,28 @@ public final class HelloReply {
 
   public void setResult(Map<String, String> result) {
     this.result=result;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == this) return true;
+    if (!(other instanceof HelloReply)) return false;
+    HelloReply o = (HelloReply) other;
+    return true
+        && Objects.equals(message, o.message)
+        && Objects.equals(code, o.code)
+        && Objects.equals(request, o.request)
+        && Objects.equals(result, o.result);
+  }
+
+  @Override
+  public int hashCode() {
+    int result_ = 0;
+    result_ = result_ * 37 + (message != null ? message.hashCode() : 0);
+    result_ = result_ * 37 + (code != null ? code.hashCode() : 0);
+    result_ = result_ * 37 + (request != null ? request.hashCode() : 0);
+    result_ = result_ * 37 + (result != null ? result.hashCode() : 0);
+    return result_;
   }
 
   @Override

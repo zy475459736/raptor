@@ -5,8 +5,10 @@ package com.ppdai.framework.raptor.proto;
 import com.ppdai.framework.raptor.annotation.RaptorField;
 import com.ppdai.framework.raptor.annotation.RaptorMessage;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RaptorMessage(
     version = "version.0.1",
@@ -14,38 +16,6 @@ import java.util.Map;
 )
 public final class HelloRequest {
   private static final long serialVersionUID = 0L;
-
-  public static final String DEFAULT_NAME = "";
-
-  public static final Corpus DEFAULT_CORPUS = Corpus.UNIVERSAL;
-
-  public static final Double DEFAULT_TDOUBLE = 0.0d;
-
-  public static final Float DEFAULT_TFLOAT = 0.0f;
-
-  public static final Integer DEFAULT_TINT32 = 0;
-
-  public static final Long DEFAULT_TINT64 = 0L;
-
-  public static final Integer DEFAULT_TUNIT32 = 0;
-
-  public static final Long DEFAULT_TUNIT64 = 0L;
-
-  public static final Integer DEFAULT_TSINT32 = 0;
-
-  public static final Long DEFAULT_TSINT64 = 0L;
-
-  public static final Integer DEFAULT_TFIXED32 = 0;
-
-  public static final Long DEFAULT_TFIXED64 = 0L;
-
-  public static final Integer DEFAULT_TSFIXED32 = 0;
-
-  public static final Long DEFAULT_TSFIXED64 = 0L;
-
-  public static final byte[] DEFAULT_TBYTES = null;
-
-  public static final Boolean DEFAULT_TBOOL = false;
 
   @RaptorField(
       fieldType = "string",
@@ -713,6 +683,98 @@ public final class HelloRequest {
   }
 
   @Override
+  public boolean equals(Object other) {
+    if (other == this) return true;
+    if (!(other instanceof HelloRequest)) return false;
+    HelloRequest o = (HelloRequest) other;
+    return true
+        && Objects.equals(name, o.name)
+        && Objects.equals(corpus, o.corpus)
+        && Objects.equals(snippets, o.snippets)
+        && Objects.equals(cats, o.cats)
+        && Objects.equals(result, o.result)
+        && Objects.equals(tDouble, o.tDouble)
+        && Objects.equals(tFloat, o.tFloat)
+        && Objects.equals(tint32, o.tint32)
+        && Objects.equals(tint64, o.tint64)
+        && Objects.equals(tunit32, o.tunit32)
+        && Objects.equals(tunit64, o.tunit64)
+        && Objects.equals(tsint32, o.tsint32)
+        && Objects.equals(tsint64, o.tsint64)
+        && Objects.equals(tfixed32, o.tfixed32)
+        && Objects.equals(tfixed64, o.tfixed64)
+        && Objects.equals(tsfixed32, o.tsfixed32)
+        && Objects.equals(tsfixed64, o.tsfixed64)
+        && Arrays.equals(tbytes, o.tbytes)
+        && Objects.equals(tbool, o.tbool)
+        && Objects.equals(repInt32, o.repInt32)
+        && Objects.equals(repUint32, o.repUint32)
+        && Objects.equals(repSint32, o.repSint32)
+        && Objects.equals(repFixed32, o.repFixed32)
+        && Objects.equals(repSfixed32, o.repSfixed32)
+        && Objects.equals(repInt64, o.repInt64)
+        && Objects.equals(repUint64, o.repUint64)
+        && Objects.equals(repSint64, o.repSint64)
+        && Objects.equals(repFixed64, o.repFixed64)
+        && Objects.equals(repSfixed64, o.repSfixed64)
+        && Objects.equals(repBool, o.repBool)
+        && Objects.equals(repFloat, o.repFloat)
+        && Objects.equals(repDouble, o.repDouble)
+        && Objects.equals(repString, o.repString)
+        && Objects.equals(repBytes, o.repBytes)
+        && Objects.equals(repResult, o.repResult)
+        && Objects.equals(mapInt32Int32, o.mapInt32Int32)
+        && Objects.equals(mapStringString, o.mapStringString)
+        && Objects.equals(mapStringMessage, o.mapStringMessage)
+        && Objects.equals(mapStringEnum, o.mapStringEnum);
+  }
+
+  @Override
+  public int hashCode() {
+    int result_ = 0;
+    result_ = result_ * 37 + (name != null ? name.hashCode() : 0);
+    result_ = result_ * 37 + (corpus != null ? corpus.hashCode() : 0);
+    result_ = result_ * 37 + (snippets != null ? snippets.hashCode() : 0);
+    result_ = result_ * 37 + (cats != null ? cats.hashCode() : 0);
+    result_ = result_ * 37 + (result != null ? result.hashCode() : 0);
+    result_ = result_ * 37 + (tDouble != null ? tDouble.hashCode() : 0);
+    result_ = result_ * 37 + (tFloat != null ? tFloat.hashCode() : 0);
+    result_ = result_ * 37 + (tint32 != null ? tint32.hashCode() : 0);
+    result_ = result_ * 37 + (tint64 != null ? tint64.hashCode() : 0);
+    result_ = result_ * 37 + (tunit32 != null ? tunit32.hashCode() : 0);
+    result_ = result_ * 37 + (tunit64 != null ? tunit64.hashCode() : 0);
+    result_ = result_ * 37 + (tsint32 != null ? tsint32.hashCode() : 0);
+    result_ = result_ * 37 + (tsint64 != null ? tsint64.hashCode() : 0);
+    result_ = result_ * 37 + (tfixed32 != null ? tfixed32.hashCode() : 0);
+    result_ = result_ * 37 + (tfixed64 != null ? tfixed64.hashCode() : 0);
+    result_ = result_ * 37 + (tsfixed32 != null ? tsfixed32.hashCode() : 0);
+    result_ = result_ * 37 + (tsfixed64 != null ? tsfixed64.hashCode() : 0);
+    result_ = result_ * 37 +  Arrays.hashCode(tbytes);;
+    result_ = result_ * 37 + (tbool != null ? tbool.hashCode() : 0);
+    result_ = result_ * 37 + (repInt32 != null ? repInt32.hashCode() : 0);
+    result_ = result_ * 37 + (repUint32 != null ? repUint32.hashCode() : 0);
+    result_ = result_ * 37 + (repSint32 != null ? repSint32.hashCode() : 0);
+    result_ = result_ * 37 + (repFixed32 != null ? repFixed32.hashCode() : 0);
+    result_ = result_ * 37 + (repSfixed32 != null ? repSfixed32.hashCode() : 0);
+    result_ = result_ * 37 + (repInt64 != null ? repInt64.hashCode() : 0);
+    result_ = result_ * 37 + (repUint64 != null ? repUint64.hashCode() : 0);
+    result_ = result_ * 37 + (repSint64 != null ? repSint64.hashCode() : 0);
+    result_ = result_ * 37 + (repFixed64 != null ? repFixed64.hashCode() : 0);
+    result_ = result_ * 37 + (repSfixed64 != null ? repSfixed64.hashCode() : 0);
+    result_ = result_ * 37 + (repBool != null ? repBool.hashCode() : 0);
+    result_ = result_ * 37 + (repFloat != null ? repFloat.hashCode() : 0);
+    result_ = result_ * 37 + (repDouble != null ? repDouble.hashCode() : 0);
+    result_ = result_ * 37 + (repString != null ? repString.hashCode() : 0);
+    result_ = result_ * 37 + (repBytes != null ? repBytes.hashCode() : 0);
+    result_ = result_ * 37 + (repResult != null ? repResult.hashCode() : 0);
+    result_ = result_ * 37 + (mapInt32Int32 != null ? mapInt32Int32.hashCode() : 0);
+    result_ = result_ * 37 + (mapStringString != null ? mapStringString.hashCode() : 0);
+    result_ = result_ * 37 + (mapStringMessage != null ? mapStringMessage.hashCode() : 0);
+    result_ = result_ * 37 + (mapStringEnum != null ? mapStringEnum.hashCode() : 0);
+    return result_;
+  }
+
+  @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
     if (name != null) builder.append(", name=").append(name);
@@ -806,10 +868,6 @@ public final class HelloRequest {
   public static final class Result {
     private static final long serialVersionUID = 0L;
 
-    public static final String DEFAULT_URL = "";
-
-    public static final Corpus DEFAULT_CORPUS = Corpus.UNIVERSAL;
-
     @RaptorField(
         fieldType = "string",
         order = 1,
@@ -846,6 +904,24 @@ public final class HelloRequest {
 
     public void setCorpus(Corpus corpus) {
       this.corpus=corpus;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+      if (other == this) return true;
+      if (!(other instanceof Result)) return false;
+      Result o = (Result) other;
+      return true
+          && Objects.equals(url, o.url)
+          && Objects.equals(corpus, o.corpus);
+    }
+
+    @Override
+    public int hashCode() {
+      int result = 0;
+      result = result * 37 + (url != null ? url.hashCode() : 0);
+      result = result * 37 + (corpus != null ? corpus.hashCode() : 0);
+      return result;
     }
 
     @Override

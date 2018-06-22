@@ -6,16 +6,13 @@ import com.ppdai.framework.raptor.annotation.RaptorField;
 import com.ppdai.framework.raptor.annotation.RaptorMessage;
 
 import java.util.List;
+import java.util.Objects;
 
 @RaptorMessage(
     protoFile = "Result"
 )
 public final class Result {
   private static final long serialVersionUID = 0L;
-
-  public static final String DEFAULT_URL = "";
-
-  public static final String DEFAULT_TITLE = "";
 
   @RaptorField(
       fieldType = "string",
@@ -70,6 +67,26 @@ public final class Result {
 
   public void setSnippets(List<String> snippets) {
     this.snippets=snippets;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == this) return true;
+    if (!(other instanceof Result)) return false;
+    Result o = (Result) other;
+    return true
+        && Objects.equals(url, o.url)
+        && Objects.equals(title, o.title)
+        && Objects.equals(snippets, o.snippets);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = 0;
+    result = result * 37 + (url != null ? url.hashCode() : 0);
+    result = result * 37 + (title != null ? title.hashCode() : 0);
+    result = result * 37 + (snippets != null ? snippets.hashCode() : 0);
+    return result;
   }
 
   @Override

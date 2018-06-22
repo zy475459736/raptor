@@ -9,6 +9,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HTTP;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +54,7 @@ public class ServiceExceptionTest {
         response.getEntity().writeTo(bos);
         String result = new String(bos.toByteArray(), StandardCharsets.UTF_8);
         System.out.println(result);
+        Assert.assertTrue(result.contains("error!"));
     }
 
 
@@ -69,5 +71,6 @@ public class ServiceExceptionTest {
         response.getEntity().writeTo(bos);
         String result = new String(bos.toByteArray(), StandardCharsets.UTF_8);
         System.out.println(result);
+        Assert.assertTrue(result.contains("RaptorException!"));
     }
 }

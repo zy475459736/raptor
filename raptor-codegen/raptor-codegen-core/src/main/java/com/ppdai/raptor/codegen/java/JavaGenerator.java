@@ -873,7 +873,7 @@ public final class JavaGenerator {
         for (Field field : fields) {
             ProtoType protoType = field.type();
             String fieldName = localNameAllocator.get(field);
-            if (!protoType.isMap() && typeName(protoType).equals(BYTE_STRING)) {
+            if (!protoType.isMap() && !field.isRepeated() && typeName(protoType).equals(BYTE_STRING)) {
                 result.addCode("\n&& $1T.equals($2L, $3N.$2L)", Arrays.class, fieldName, oName);
             } else {
                 result.addCode("\n&& $1T.equals($2L, $3N.$2L)", Objects.class, fieldName, oName);
@@ -920,8 +920,8 @@ public final class JavaGenerator {
             ProtoType protoType = field.type();
             String fieldName = localNameAllocator.get(field);
             result.addCode("$1N = $1N * 37 + ", resultName);
-            if (!protoType.isMap() && typeName(protoType).equals(BYTE_STRING)) {
-                result.addCode(" $1T.hashCode($2L);", Arrays.class, fieldName);
+            if (!protoType.isMap() && !field.isRepeated() && typeName(protoType).equals(BYTE_STRING)) {
+                result.addStatement(" $1T.hashCode($2L);", Arrays.class, fieldName);
             } else {
                 result.addStatement("($1L != null ? $1L.hashCode() : 0)", fieldName);
             }

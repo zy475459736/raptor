@@ -33,7 +33,6 @@ public class MessageMetaInfo {
         OptionUtil.setAnnotationMember(builder, "version", "$S", protoFileMetaInfo.getVersion());
         OptionUtil.setAnnotationMember(builder, "protoFile", "$S", protoFileMetaInfo.getProtoFile());
         OptionUtil.setAnnotationMember(builder, "crc32", "$S", protoFileMetaInfo.getCrc32());
-        OptionUtil.setAnnotationMember(builder, "summary", "$S", summary);
         return builder.build();
     }
 }

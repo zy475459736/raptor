@@ -899,11 +899,7 @@ public final class JavaGenerator {
         result.addCode("$[return true", oName);
         for (Field field : fields) {
             String fieldName = localNameAllocator.get(field);
-            if (field.isRequired() || field.isRepeated() || field.type().isMap()) {
-                result.addCode("\n&& $1L.equals($2N.$1L)", fieldName, oName);
-            } else {
-                result.addCode("\n&& $1T.equals($2L, $3N.$2L)", Objects.class, fieldName, oName);
-            }
+            result.addCode("\n&& $1T.equals($2L, $3N.$2L)", Objects.class, fieldName, oName);
         }
         result.addCode(";\n$]");
 

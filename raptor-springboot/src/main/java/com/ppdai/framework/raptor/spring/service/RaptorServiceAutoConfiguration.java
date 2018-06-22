@@ -1,5 +1,6 @@
 package com.ppdai.framework.raptor.spring.service;
 
+import com.ppdai.framework.raptor.rpc.RaptorServiceInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

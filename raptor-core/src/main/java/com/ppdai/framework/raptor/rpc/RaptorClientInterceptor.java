@@ -1,12 +1,9 @@
-package com.ppdai.framework.raptor.spring.client;
-
-import com.ppdai.framework.raptor.rpc.RaptorRequest;
-import com.ppdai.framework.raptor.rpc.RaptorResponse;
+package com.ppdai.framework.raptor.rpc;
 
 /**
  * @author yinzuolong
  */
-public interface ClientInterceptor {
+public interface RaptorClientInterceptor {
 
     void preHandle(RaptorRequest request, RaptorResponse response);
 

@@ -1,7 +1,7 @@
 package com.ppdai.framework.raptor.spring.client.feign;
 
 import com.ppdai.framework.raptor.annotation.RaptorInterface;
-import com.ppdai.framework.raptor.spring.client.ClientInterceptor;
+import com.ppdai.framework.raptor.rpc.RaptorClientInterceptor;
 import com.ppdai.framework.raptor.spring.client.RaptorClientFactory;
 import com.ppdai.framework.raptor.spring.client.feign.support.*;
 import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientProperties;
@@ -76,7 +76,7 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
         return new InvocationHandlerFactory() {
             @Override
             public InvocationHandler create(Target target, Map<Method, MethodHandler> dispatch) {
-                List<ClientInterceptor> clientInterceptors = getList(ClientInterceptor.class);
+                List<RaptorClientInterceptor> clientInterceptors = getList(RaptorClientInterceptor.class);
                 clientInterceptors.sort(new AnnotationAwareOrderComparator());
                 RaptorInvocationHandler invocationHandler = new RaptorInvocationHandler(target, dispatch);
                 invocationHandler.setInterceptors(clientInterceptors);

@@ -1,7 +1,4 @@
-package com.ppdai.framework.raptor.spring.service;
-
-import com.ppdai.framework.raptor.rpc.RaptorRequest;
-import com.ppdai.framework.raptor.rpc.RaptorResponse;
+package com.ppdai.framework.raptor.rpc;
 
 /**
  * @author yinzuolong
@@ -13,5 +10,4 @@ public interface RaptorServiceInterceptor {
     void postHandle(RaptorRequest request, RaptorResponse response) throws Exception;
 
     void afterCompletion(RaptorRequest request, RaptorResponse response) throws Exception;
-
 }

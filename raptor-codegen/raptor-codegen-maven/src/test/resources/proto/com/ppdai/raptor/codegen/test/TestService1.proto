@@ -76,6 +76,7 @@ message HandlerSuccessEvent {
 
 message Meta {
     string name = 1;
+    bytes bytes = 2;
 }
 
 message CallAnotherServiceCommand {

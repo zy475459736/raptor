@@ -226,38 +226,11 @@ public final class JavaGenerator {
         return javaName.peerClass("Abstract" + javaName.simpleName() + "Adapter");
     }
 
-    private CodeBlock singleAdapterFor(Field field) {
-        return field.type().isMap()
-                ? CodeBlock.of("$N", field.name())
-                : singleAdapterFor(field.type());
-    }
-
-    private CodeBlock singleAdapterFor(ProtoType type) {
-        CodeBlock.Builder result = CodeBlock.builder();
-        if (type.isScalar()) {
-            result.add("$T.$L", ADAPTER, type.simpleName().toUpperCase(Locale.US));
-        } else if (type.isMap()) {
-            throw new IllegalArgumentException("Cannot create single adapter for map type " + type);
-        } else {
-            AdapterConstant adapterConstant = profile.getAdapter(type);
-            if (adapterConstant != null) {
-                result.add("$T.$L", adapterConstant.className, adapterConstant.memberName);
-            } else {
-                result.add("$T.ADAPTER", typeName(type));
-            }
-        }
-        return result.build();
-    }
-
 
     public boolean isEnum(ProtoType type) {
         return schema.getType(type) instanceof EnumType;
     }
 
-    EnumConstant enumDefault(ProtoType type) {
-        EnumType wireEnum = (EnumType) schema.getType(type);
-        return wireEnum.constants().get(0);
-    }
 
     /**
      * Returns the full name of the class generated for {@code type}.
@@ -898,8 +871,13 @@ public final class JavaGenerator {
         result.addStatement("$T $N = ($T) $N", javaType, oName, javaType, otherName);
         result.addCode("$[return true", oName);
         for (Field field : fields) {
+            ProtoType protoType = field.type();
             String fieldName = localNameAllocator.get(field);
-            result.addCode("\n&& $1T.equals($2L, $3N.$2L)", Objects.class, fieldName, oName);
+            if (!protoType.isMap() && typeName(protoType).equals(BYTE_STRING)) {
+                result.addCode("\n&& $1T.equals($2L, $3N.$2L)", Arrays.class, fieldName, oName);
+            } else {
+                result.addCode("\n&& $1T.equals($2L, $3N.$2L)", Objects.class, fieldName, oName);
+            }
         }
         result.addCode(";\n$]");
 
@@ -939,10 +917,11 @@ public final class JavaGenerator {
 
         result.addStatement("int $N = 0", resultName);
         for (Field field : fields) {
+            ProtoType protoType = field.type();
             String fieldName = localNameAllocator.get(field);
             result.addCode("$1N = $1N * 37 + ", resultName);
-            if (field.isRepeated() || field.isRequired() || field.type().isMap()) {
-                result.addStatement("$L.hashCode()", fieldName);
+            if (!protoType.isMap() && typeName(protoType).equals(BYTE_STRING)) {
+                result.addCode(" $1T.hashCode($2L);", Arrays.class, fieldName);
             } else {
                 result.addStatement("($1L != null ? $1L.hashCode() : 0)", fieldName);
             }

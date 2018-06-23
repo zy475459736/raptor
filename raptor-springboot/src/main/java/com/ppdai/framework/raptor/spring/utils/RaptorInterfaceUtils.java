@@ -1,7 +1,6 @@
 package com.ppdai.framework.raptor.spring.utils;
 
 import com.ppdai.framework.raptor.annotation.RaptorInterface;
-import com.ppdai.framework.raptor.utils.ReflectUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -17,12 +16,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author yinzuolong
  */
-public class RaptorClassUtils {
+public class RaptorInterfaceUtils {
 
     private final static Map<String, String> METHOD_INTERFACE_CACHE = new ConcurrentHashMap<>();
 
     public static String getInterfaceName(Class<?> type, Method method) {
-        String methodSignature = ReflectUtils.getMethodSignature(method);
+        String methodSignature = getMethodSignature(method);
         String classMethodKey = type.getName() + "#" + methodSignature;
         String interfaceName = METHOD_INTERFACE_CACHE.get(classMethodKey);
         if (StringUtils.isEmpty(interfaceName)) {
@@ -52,5 +51,20 @@ public class RaptorClassUtils {
             }
         }
         return raptorInterfaces;
+    }
+
+
+    public static String getMethodSignature(Method method) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(method.getName());
+        builder.append("(");
+        for (Class<?> parameterType : method.getParameterTypes()) {
+            builder.append(parameterType.getName()).append(",");
+        }
+        if (builder.subSequence(builder.length() - 1, builder.length()).equals(",")) {
+            builder.deleteCharAt(builder.length() - 1);
+        }
+        builder.append(")");
+        return builder.toString();
     }
 }

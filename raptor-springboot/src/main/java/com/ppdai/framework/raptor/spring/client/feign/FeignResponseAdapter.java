@@ -1,5 +1,6 @@
-package com.ppdai.framework.raptor.spring.client.feign.support;
+package com.ppdai.framework.raptor.spring.client.feign;
 
+import com.ppdai.framework.raptor.spring.utils.HttpHeadersUtils;
 import feign.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,7 @@ public class FeignResponseAdapter implements ClientHttpResponse {
 
     @Override
     public HttpHeaders getHeaders() {
-        return FeignUtils.getHttpHeaders(this.response.headers());
+        return HttpHeadersUtils.getHttpHeaders(this.response.headers());
     }
 
 }

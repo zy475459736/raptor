@@ -1,7 +1,6 @@
 
-package com.ppdai.framework.raptor.spring.client.feign.annotation;
+package com.ppdai.framework.raptor.spring.client.feign;
 
-import com.ppdai.framework.raptor.spring.client.feign.AnnotatedParameterProcessor;
 import feign.MethodMetadata;
 import org.springframework.web.bind.annotation.RequestParam;
 

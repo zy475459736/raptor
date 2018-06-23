@@ -1,6 +1,5 @@
-package com.ppdai.framework.raptor.utils;
+package com.ppdai.framework.raptor.spring.utils;
 
-import com.ppdai.framework.raptor.spring.utils.FieldUtils;
 import feign.Feign;
 import feign.Request;
 import org.junit.Assert;

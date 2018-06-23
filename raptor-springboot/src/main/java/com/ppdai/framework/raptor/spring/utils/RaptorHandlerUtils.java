@@ -12,7 +12,7 @@ public class RaptorHandlerUtils {
     public static boolean isRaptorService(Object handler) {
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
-            String interfaceName = RaptorClassUtils.getInterfaceName(ClassUtils.getUserClass(handlerMethod.getBean()), handlerMethod.getMethod());
+            String interfaceName = RaptorInterfaceUtils.getInterfaceName(ClassUtils.getUserClass(handlerMethod.getBean()), handlerMethod.getMethod());
             return !StringUtils.isEmpty(interfaceName);
         }
         return false;

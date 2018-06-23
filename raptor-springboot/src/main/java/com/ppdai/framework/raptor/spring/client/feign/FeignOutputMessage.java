@@ -1,5 +1,6 @@
-package com.ppdai.framework.raptor.spring.client.feign.support;
+package com.ppdai.framework.raptor.spring.client.feign;
 
+import com.ppdai.framework.raptor.spring.utils.HttpHeadersUtils;
 import feign.RequestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpOutputMessage;
@@ -18,7 +19,7 @@ public class FeignOutputMessage implements HttpOutputMessage {
     private final HttpHeaders httpHeaders;
 
     public FeignOutputMessage(RequestTemplate request) {
-        httpHeaders = FeignUtils.getHttpHeaders(request.headers());
+        httpHeaders = HttpHeadersUtils.getHttpHeaders(request.headers());
     }
 
     @Override

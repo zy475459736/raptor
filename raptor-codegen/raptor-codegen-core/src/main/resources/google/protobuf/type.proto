@@ -34,6 +34,8 @@ package google.protobuf;
 
 import "google/protobuf/any.proto";
 import "google/protobuf/source_context.proto";
+import "google/protobuf/type.proto";
+
 
 option csharp_namespace = "Google.Protobuf.WellKnownTypes";
 option cc_enable_arenas = true;

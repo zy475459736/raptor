@@ -39,6 +39,8 @@ option java_outer_classname = "AnyProto";
 option java_multiple_files = true;
 option objc_class_prefix = "GPB";
 
+import "google/protobuf/any.proto";
+
 // `Any` contains an arbitrary serialized protocol buffer message along with a
 // URL that describes the type of the serialized message.
 //

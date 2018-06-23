@@ -32,6 +32,9 @@ syntax = "proto3";
 
 package google.protobuf;
 
+import "google/protobuf/empty.proto";
+
+
 option csharp_namespace = "Google.Protobuf.WellKnownTypes";
 option go_package = "github.com/golang/protobuf/ptypes/empty";
 option java_package = "com.google.protobuf";

@@ -34,6 +34,8 @@ package google.protobuf;
 
 import "google/protobuf/source_context.proto";
 import "google/protobuf/type.proto";
+import "google/protobuf/api.proto";
+
 
 option csharp_namespace = "Google.Protobuf.WellKnownTypes";
 option java_package = "com.google.protobuf";

@@ -37,6 +37,8 @@ syntax = "proto3";
 
 package google.protobuf;
 
+import "google/protobuf/wrappers.proto";
+
 option csharp_namespace = "Google.Protobuf.WellKnownTypes";
 option cc_enable_arenas = true;
 option go_package = "github.com/golang/protobuf/ptypes/wrappers";

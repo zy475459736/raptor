@@ -4,6 +4,7 @@ package com.ppdai.raptor.codegen.test;
 
 
 import "raptor.proto";
+import "com/ppdai/raptor/codegen/test/A.proto";
 
 option (appId) = "appId";
 option (appName) = "app name";
@@ -15,7 +16,7 @@ service TestService{
     option (servicePath) = "/servicePath";
 
     /* asdfghhjk */
-    rpc getRandomString (GetRandomStringQuery) returns (RandomStringResponse) {
+    rpc getRandomString (Foo) returns (RandomStringResponse) {
         option (method) = "get";
         option (path) = "/test";
     }

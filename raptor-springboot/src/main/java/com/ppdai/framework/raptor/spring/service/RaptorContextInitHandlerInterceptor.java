@@ -4,7 +4,7 @@ import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.rpc.RaptorContext;
 import com.ppdai.framework.raptor.rpc.RaptorRequest;
 import com.ppdai.framework.raptor.rpc.RaptorResponse;
-import com.ppdai.framework.raptor.spring.utils.RaptorClassUtils;
+import com.ppdai.framework.raptor.spring.utils.RaptorInterfaceUtils;
 import com.ppdai.framework.raptor.utils.NetUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -66,7 +66,7 @@ public class RaptorContextInitHandlerInterceptor extends HandlerInterceptorAdapt
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             String method = handlerMethod.getMethod().getName();
-            String interfaceName = RaptorClassUtils.getInterfaceName(ClassUtils.getUserClass(handlerMethod.getBean()), handlerMethod.getMethod());
+            String interfaceName = RaptorInterfaceUtils.getInterfaceName(ClassUtils.getUserClass(handlerMethod.getBean()), handlerMethod.getMethod());
             raptorRequest.setMethodName(method);
             raptorRequest.setInterfaceName(interfaceName);
         }

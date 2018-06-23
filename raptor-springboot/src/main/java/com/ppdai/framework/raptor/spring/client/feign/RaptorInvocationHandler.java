@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.spring.client.feign.support;
+package com.ppdai.framework.raptor.spring.client.feign;
 
 import com.ppdai.framework.raptor.rpc.RaptorClientInterceptor;
 import com.ppdai.framework.raptor.rpc.RaptorContext;

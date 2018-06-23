@@ -3,7 +3,6 @@ package com.ppdai.framework.raptor.spring.client.feign;
 import com.ppdai.framework.raptor.annotation.RaptorInterface;
 import com.ppdai.framework.raptor.rpc.RaptorClientInterceptor;
 import com.ppdai.framework.raptor.spring.client.RaptorClientFactory;
-import com.ppdai.framework.raptor.spring.client.feign.support.*;
 import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientProperties;
 import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
 import com.ppdai.framework.raptor.spring.utils.FieldUtils;

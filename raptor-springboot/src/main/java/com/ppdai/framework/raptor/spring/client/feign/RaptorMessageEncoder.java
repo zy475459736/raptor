@@ -1,7 +1,8 @@
-package com.ppdai.framework.raptor.spring.client.feign.support;
+package com.ppdai.framework.raptor.spring.client.feign;
 
 import com.ppdai.framework.raptor.annotation.RaptorMessage;
 import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
+import com.ppdai.framework.raptor.spring.utils.HttpHeadersUtils;
 import com.ppdai.framework.raptor.spring.utils.RaptorMessageUtils;
 import feign.RequestTemplate;
 import feign.codec.EncodeException;
@@ -45,7 +46,7 @@ public class RaptorMessageEncoder implements Encoder {
                 } catch (IOException ex) {
                     throw new EncodeException("Error converting request body", ex);
                 }
-                request.headers(FeignUtils.getHeaders(outputMessage.getHeaders()));
+                request.headers(HttpHeadersUtils.getHeaders(outputMessage.getHeaders()));
                 request.body(outputMessage.getOutputStream().toByteArray(), null);
             }
         } else {

@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.common;
+package com.ppdai.framework.raptor.util;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,24 +10,17 @@ import java.util.Date;
 /**
  * 自生成Id生成器.
  * <p>
- * <p>
  * 长度为64bit,从高位到低位依次为
- * </p>
- * <p>
  * <pre>
  * 1bit   符号位
  * 41bits 时间偏移量从2016年11月1日零点到现在的毫秒数
  * 10bits 工作进程Id
  * 12bits 同一个毫秒内的自增量
  * </pre>
- * <p>
- * <p>
- * </p>
- *
  */
 @Getter
 @Slf4j
-public class CommonSelfIdGenerator implements IdGenerator {
+public class CommonSelfIdGenerator {
 
     public static final long EPOCH;
 
@@ -83,7 +76,6 @@ public class CommonSelfIdGenerator implements IdGenerator {
      *
      * @return 返回@{@link Long}类型的Id
      */
-    @Override
     public synchronized long generateId() {
         long time = System.currentTimeMillis();
         if (lastTime == time) {

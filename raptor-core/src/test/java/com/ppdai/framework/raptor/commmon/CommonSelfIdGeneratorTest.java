@@ -1,6 +1,6 @@
 package com.ppdai.framework.raptor.commmon;
 
-import com.ppdai.framework.raptor.common.CommonSelfIdGenerator;
+import com.ppdai.framework.raptor.util.CommonSelfIdGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 

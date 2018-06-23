@@ -21,6 +21,7 @@ public class RaptorRequest implements Serializable {
         this.attachments.put(key, value);
     }
 
+    @Override
     public String toString() {
         return "requestId=" + this.getRequestId()
                 + " interface=" + this.getInterfaceName()

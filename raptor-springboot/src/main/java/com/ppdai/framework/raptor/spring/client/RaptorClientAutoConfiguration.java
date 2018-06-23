@@ -1,7 +1,7 @@
 package com.ppdai.framework.raptor.spring.client;
 
-import com.ppdai.framework.raptor.spring.client.feign.RaptorFeignClientProperties;
-import com.ppdai.framework.raptor.spring.client.feign.RaptorFeignClientSpringFactory;
+import com.ppdai.framework.raptor.spring.client.feign.FeignClientProperties;
+import com.ppdai.framework.raptor.spring.client.feign.SpringFeignClientFactory;
 import com.ppdai.framework.raptor.spring.client.feign.support.HeaderTraceRequestInterceptor;
 import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientConfiguration;
 import com.ppdai.framework.raptor.spring.endpoint.RaptorRefersActuatorEndpoint;
@@ -21,14 +21,14 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import({RaptorClientPostProcessor.class, RaptorHttpClientConfiguration.class})
-@EnableConfigurationProperties({RaptorFeignClientProperties.class})
+@EnableConfigurationProperties({FeignClientProperties.class})
 public class RaptorClientAutoConfiguration implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
     @Bean
-    public RaptorFeignClientSpringFactory createRaptorClientFeignSpringFactory() {
-        return new RaptorFeignClientSpringFactory();
+    public SpringFeignClientFactory createRaptorClientFeignSpringFactory() {
+        return new SpringFeignClientFactory();
     }
 
     @Bean

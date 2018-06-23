@@ -53,18 +53,18 @@ import com.squareup.wire.schema.internal.parser.Nullable;
  * }</pre>
  */
 @AutoValue
-public abstract class ProfileFileElement {
+public abstract class AbstractProfileFileElement {
   public static Builder builder(Location location) {
-    return new AutoValue_ProfileFileElement.Builder()
+    return new AutoValue_AbstractProfileFileElement.Builder()
         .location(location)
         .imports(ImmutableList.<String>of())
-        .typeConfigs(ImmutableList.<TypeConfigElement>of());
+        .typeConfigs(ImmutableList.<AbstractTypeConfigElement>of());
   }
 
   public abstract Location location();
   @Nullable public abstract String packageName();
   public abstract ImmutableList<String> imports();
-  public abstract ImmutableList<TypeConfigElement> typeConfigs();
+  public abstract ImmutableList<AbstractTypeConfigElement> typeConfigs();
 
   public final String toSchema() {
     StringBuilder builder = new StringBuilder();
@@ -81,7 +81,7 @@ public abstract class ProfileFileElement {
     }
     if (!typeConfigs().isEmpty()) {
       builder.append('\n');
-      for (TypeConfigElement typeConfigElement : typeConfigs()) {
+      for (AbstractTypeConfigElement typeConfigElement : typeConfigs()) {
         builder.append(typeConfigElement.toSchema());
       }
     }
@@ -93,7 +93,7 @@ public abstract class ProfileFileElement {
     Builder location(Location location);
     Builder packageName(@Nullable String packageName);
     Builder imports(ImmutableList<String> imports);
-    Builder typeConfigs(ImmutableList<TypeConfigElement> typeConfigs);
-    ProfileFileElement build();
+    Builder typeConfigs(ImmutableList<AbstractTypeConfigElement> typeConfigs);
+    AbstractProfileFileElement build();
   }
 }

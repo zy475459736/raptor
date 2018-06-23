@@ -326,9 +326,12 @@ public class SpringMvcContract extends Contract.BaseContract
         }
 
         @Override
-        public Collection<String> setTemplateParameter(String name,
-                                                       Collection<String> rest) {
-            return addTemplatedParam(rest, name);
+        public Collection<String> setTemplateParameter(String name, Collection<String> rest) {
+            if (rest == null) {
+                rest = new ArrayList<>();
+            }
+            rest.add(String.format("{%s}", name));
+            return rest;
         }
     }
 

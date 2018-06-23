@@ -9,10 +9,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import javax.annotation.PreDestroy;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author yinzuolong
@@ -22,14 +24,14 @@ import java.util.TimerTask;
 @ConditionalOnMissingBean(CloseableHttpClient.class)
 @ConditionalOnProperty(name = "raptor.httpclient", havingValue = "apache", matchIfMissing = true)
 public class RaptorHttpClientConfiguration {
-    private final Timer connectionManagerTimer = new Timer(
-            "RaptorHttpClientConfiguration.connectionManagerTimer", true);
 
     @Autowired
     private RaptorHttpClientProperties httpClientProperties;
 
     @Autowired(required = false)
     private RegistryBuilder registryBuilder;
+
+    private ScheduledExecutorService connectionManagerSchedule;
 
     private CloseableHttpClient httpClient;
 
@@ -54,12 +56,16 @@ public class RaptorHttpClientConfiguration {
                         httpClientProperties.getMaxConnectionsPerRoute(),
                         httpClientProperties.getTimeToLive(),
                         httpClientProperties.getTimeToLiveUnit(), registryBuilder);
-        this.connectionManagerTimer.schedule(new TimerTask() {
+
+        CustomizableThreadFactory customizableThreadFactory = new CustomizableThreadFactory("RaptorHttpClient.connectionManager.schedule");
+        customizableThreadFactory.setDaemon(true);
+        connectionManagerSchedule = new ScheduledThreadPoolExecutor(1, customizableThreadFactory);
+        connectionManagerSchedule.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 connectionManager.closeExpiredConnections();
             }
-        }, 30000, httpClientProperties.getConnectionTimerRepeat());
+        }, 30000, httpClientProperties.getConnectionTimerRepeat(), TimeUnit.MILLISECONDS);
         return connectionManager;
     }
 
@@ -72,7 +78,9 @@ public class RaptorHttpClientConfiguration {
 
     @PreDestroy
     public void destroy() throws Exception {
-        connectionManagerTimer.cancel();
+        if (connectionManagerSchedule != null) {
+            connectionManagerSchedule.shutdownNow();
+        }
         if (httpClient != null) {
             httpClient.close();
         }

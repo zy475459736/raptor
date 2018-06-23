@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * @author yinzuolong
  */
-public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFactory implements ApplicationContextAware {
+public class SpringFeignClientFactory extends RaptorClientFactory.BaseFactory implements ApplicationContextAware {
 
     private static final String LIBRARY = "spring";
 
@@ -112,7 +112,7 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
         if (!StringUtils.hasText(name)) {
             return null;
         }
-        RaptorFeignClientProperties.RaptorClientConfiguration config = getClientConfig(name);
+        FeignClientProperties.RaptorClientConfiguration config = getClientConfig(name);
         if (config == null) {
             return null;
         }
@@ -138,15 +138,15 @@ public class RaptorFeignClientSpringFactory extends RaptorClientFactory.BaseFact
         configureUsingProperties(getClientConfig(type.getName()), builder);
     }
 
-    private RaptorFeignClientProperties.RaptorClientConfiguration getClientConfig(String name) {
-        RaptorFeignClientProperties properties = get(RaptorFeignClientProperties.class);
+    private FeignClientProperties.RaptorClientConfiguration getClientConfig(String name) {
+        FeignClientProperties properties = get(FeignClientProperties.class);
         if (!StringUtils.hasText(name)) {
             name = properties.getDefaultConfig();
         }
         return properties.getConfig().get(name);
     }
 
-    protected void configureUsingProperties(RaptorFeignClientProperties.RaptorClientConfiguration config, Feign.Builder builder) {
+    protected void configureUsingProperties(FeignClientProperties.RaptorClientConfiguration config, Feign.Builder builder) {
         if (config == null) {
             return;
         }

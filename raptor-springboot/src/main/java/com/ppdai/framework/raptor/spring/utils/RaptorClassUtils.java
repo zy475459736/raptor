@@ -19,12 +19,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RaptorClassUtils {
 
-    private final static Map<String, String> cache = new ConcurrentHashMap<>();
+    private final static Map<String, String> METHOD_INTERFACE_CACHE = new ConcurrentHashMap<>();
 
     public static String getInterfaceName(Class<?> type, Method method) {
         String methodSignature = ReflectUtil.getMethodSignature(method);
         String classMethodKey = type.getName() + "#" + methodSignature;
-        String interfaceName = cache.get(classMethodKey);
+        String interfaceName = METHOD_INTERFACE_CACHE.get(classMethodKey);
         if (StringUtils.isEmpty(interfaceName)) {
             List<Class<?>> classList = findRaptorInterfaces(type);
             for (Class<?> interfaceClass : classList) {
@@ -32,7 +32,7 @@ public class RaptorClassUtils {
                     Method interfaceMethod = interfaceClass.getMethod(method.getName(), method.getParameterTypes());
                     if (interfaceMethod != null) {
                         interfaceName = interfaceClass.getName();
-                        cache.put(classMethodKey, interfaceName);
+                        METHOD_INTERFACE_CACHE.put(classMethodKey, interfaceName);
                         return interfaceName;
                     }
                 } catch (NoSuchMethodException ignored) {

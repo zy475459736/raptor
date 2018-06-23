@@ -23,24 +23,28 @@ import com.squareup.wire.schema.internal.parser.SyntaxReader;
 public final class ProfileParser {
   private final SyntaxReader reader;
 
-  private final ProfileFileElement.Builder fileBuilder;
+  private final AbstractProfileFileElement.Builder fileBuilder;
   private final ImmutableList.Builder<String> imports = ImmutableList.builder();
-  private final ImmutableList.Builder<TypeConfigElement> typeConfigs = ImmutableList.builder();
+  private final ImmutableList.Builder<AbstractTypeConfigElement> typeConfigs = ImmutableList.builder();
 
   /** Output package name, or null if none yet encountered. */
   private String packageName;
 
   public ProfileParser(Location location, String data) {
     this.reader = new SyntaxReader(data.toCharArray(), location);
-    this.fileBuilder = ProfileFileElement.builder(location);
+    this.fileBuilder = AbstractProfileFileElement.builder(location);
   }
 
-  public ProfileFileElement read() {
+  public AbstractProfileFileElement read() {
     String label = reader.readWord();
-    if (!label.equals("syntax")) throw reader.unexpected("expected 'syntax'");
+    if (!"syntax".equals(label)) {
+        throw reader.unexpected("expected 'syntax'");
+    }
     reader.require('=');
     String syntaxString = reader.readQuotedString();
-    if (!syntaxString.equals("wire2")) throw reader.unexpected("expected 'wire2'");
+    if (!"wire2".equals(syntaxString)) {
+        throw reader.unexpected("expected 'wire2'");
+    }
     reader.require(';');
 
     while (true) {
@@ -60,15 +64,17 @@ public final class ProfileParser {
     Location location = reader.location();
     String label = reader.readWord();
 
-    if (label.equals("package")) {
-      if (packageName != null) throw reader.unexpected(location, "too many package names");
+    if ("package".equals(label)) {
+      if (packageName != null) {
+          throw reader.unexpected(location, "too many package names");
+      }
       packageName = reader.readName();
       reader.require(';');
-    } else if (label.equals("import")) {
+    } else if ("import".equals(label)) {
       String importString = reader.readString();
       imports.add(importString);
       reader.require(';');
-    } else if (label.equals("type")) {
+    } else if ("type".equals(label)) {
       typeConfigs.add(readTypeConfig(location, documentation));
     } else {
       throw reader.unexpected(location, "unexpected label: " + label);
@@ -76,7 +82,7 @@ public final class ProfileParser {
   }
 
   /** Reads a type config and returns it. */
-  private TypeConfigElement readTypeConfig(Location location, String documentation) {
+  private AbstractTypeConfigElement readTypeConfig(Location location, String documentation) {
     String name = reader.readDataType();
     String target = null;
     String adapter = null;
@@ -87,9 +93,13 @@ public final class ProfileParser {
       String word = reader.readWord();
       switch (word) {
         case "target":
-          if (target != null) throw reader.unexpected(wordLocation, "too many targets");
+          if (target != null) {
+              throw reader.unexpected(wordLocation, "too many targets");
+          }
           target = reader.readWord();
-          if (!reader.readWord().equals("using")) throw reader.unexpected("expected 'using'");
+          if (!"using".equals(reader.readWord())) {
+              throw reader.unexpected("expected 'using'");
+          }
           String adapterType = reader.readWord();
           reader.require('#');
           String adapterConstant = reader.readWord();
@@ -102,7 +112,7 @@ public final class ProfileParser {
       }
     }
 
-    return TypeConfigElement.builder(location)
+    return AbstractTypeConfigElement.builder(location)
         .type(name)
         .documentation(documentation)
         .target(target)

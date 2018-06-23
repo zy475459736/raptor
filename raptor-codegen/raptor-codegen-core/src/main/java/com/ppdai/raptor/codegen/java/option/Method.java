@@ -8,6 +8,7 @@ import java.util.Objects;
  * Date 2018/4/27
  */
 public enum Method {
+    //http方法
     GET(0, "GET"),
     HEAD(1, "HEAD"),
     POST(2, "POST"),

@@ -31,7 +31,7 @@ import java.util.List;
  * <p>
  * Schema 参考 https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#schema
  * <p>
- *
+ * <p>
  * 多线程不安全,不能声明为bean
  *
  * @author zhangchengxi
@@ -42,25 +42,28 @@ public class SwaggerConverter {
 
     protected final com.squareup.wire.schema.Schema schmea;
 
-    protected ThreadLocal<RefHelper> refHelper;
+    protected final ThreadLocal<RefHelper> refHelper = new ThreadLocal<>();
 
     public SwaggerConverter(com.squareup.wire.schema.Schema schema) {
         this.schmea = schema;
-        refHelper = new ThreadLocal<>();
     }
 
     public List<OpenAPI> convert() {
         ArrayList<OpenAPI> openApis = Lists.newArrayList();
 
-        ImmutableList<ProtoFile> protoFiles = schmea.protoFiles();
-        for (ProtoFile protoFile : protoFiles) {
-            // TODO: 2018/4/20 使用service 进行遍历
-            for (Service service : protoFile.services()) {
-                OpenAPI openAPI = getOpenApi(service, protoFile);
-                openApis.add(openAPI);
+        try {
+            ImmutableList<ProtoFile> protoFiles = schmea.protoFiles();
+            for (ProtoFile protoFile : protoFiles) {
+                // TODO: 2018/4/20 使用service 进行遍历
+                for (Service service : protoFile.services()) {
+                    OpenAPI openAPI = getOpenApi(service, protoFile);
+                    openApis.add(openAPI);
+                }
             }
+            return openApis;
+        } finally {
+            refHelper.remove();
         }
-        return openApis;
     }
 
     /**
@@ -197,7 +200,7 @@ public class SwaggerConverter {
         String basePath = protoFile.packageName();
 
         for (Rpc rpc : service.rpcs()) {
-            String path = PathUtils.collectPath(basePath , rpc.name());
+            String path = PathUtils.collectPath(basePath, rpc.name());
             // TODO: 2018/5/23 处理path 相同,方法不同的问题,
             paths.addPathItem(path, getPathItem(rpc));
         }
@@ -296,8 +299,8 @@ public class SwaggerConverter {
     /**
      * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#media-type-object
      *
-     * @return
      * @param protoType
+     * @return
      */
     protected MediaType getMediaType(ProtoType protoType) {
         MediaType mediaType = new MediaType();

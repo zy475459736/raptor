@@ -16,10 +16,10 @@
 package com.ppdai.raptor.codegen.java;
 
 import com.google.common.collect.ImmutableList;
+import com.ppdai.raptor.codegen.java.internal.AbstractProfileFileElement;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
-import com.ppdai.raptor.codegen.java.internal.ProfileFileElement;
-import com.ppdai.raptor.codegen.java.internal.TypeConfigElement;
+import com.ppdai.raptor.codegen.java.internal.AbstractTypeConfigElement;
 import com.squareup.wire.schema.ProtoType;
 
 /**
@@ -27,31 +27,33 @@ import com.squareup.wire.schema.ProtoType;
  * may have multiple profiles; for example a project may target both Android and Java.
  */
 public final class Profile {
-  private final ImmutableList<ProfileFileElement> profileFiles;
+  private final ImmutableList<AbstractProfileFileElement> profileFiles;
 
-  Profile(ImmutableList<ProfileFileElement> profileFiles) {
+  Profile(ImmutableList<AbstractProfileFileElement> profileFiles) {
     this.profileFiles = profileFiles;
   }
 
   public Profile() {
-    this(ImmutableList.<ProfileFileElement>of());
+    this(ImmutableList.<AbstractProfileFileElement>of());
   }
 
   public TypeName getTarget(ProtoType type) {
-    TypeConfigElement typeConfig = typeConfig(type);
+    AbstractTypeConfigElement typeConfig = typeConfig(type);
     return typeConfig != null ? ClassName.bestGuess(typeConfig.target()) : null;
   }
 
   public AdapterConstant getAdapter(ProtoType type) {
-    TypeConfigElement typeConfig = typeConfig(type);
+    AbstractTypeConfigElement typeConfig = typeConfig(type);
     return typeConfig != null ? new AdapterConstant(typeConfig.adapter()) : null;
   }
 
   /** Returns the config for {@code type}, or null if it is not configured. */
-  private TypeConfigElement typeConfig(ProtoType type) {
-    for (ProfileFileElement element : profileFiles) {
-      for (TypeConfigElement typeConfig : element.typeConfigs()) {
-        if (typeConfig.type().equals(type.toString())) return typeConfig;
+  private AbstractTypeConfigElement typeConfig(ProtoType type) {
+    for (AbstractProfileFileElement element : profileFiles) {
+      for (AbstractTypeConfigElement typeConfig : element.typeConfigs()) {
+        if (typeConfig.type().equals(type.toString())) {
+          return typeConfig;
+        }
       }
     }
     return null;

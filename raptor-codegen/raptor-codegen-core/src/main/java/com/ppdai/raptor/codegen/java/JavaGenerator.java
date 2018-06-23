@@ -208,7 +208,9 @@ public final class JavaGenerator {
      */
     public TypeName typeName(ProtoType protoType) {
         TypeName profileJavaName = profile.getTarget(protoType);
-        if (profileJavaName != null) return profileJavaName;
+        if (profileJavaName != null){
+            return profileJavaName;
+        }
         TypeName candidate = nameToJavaName.get(protoType);
         checkArgument(candidate != null, "unexpected type %s", protoType);
         return candidate;
@@ -220,7 +222,9 @@ public final class JavaGenerator {
      */
     public ClassName abstractAdapterName(ProtoType protoType) {
         TypeName profileJavaName = profile.getTarget(protoType);
-        if (profileJavaName == null) return null;
+        if (profileJavaName == null) {
+            return null;
+        }
 
         ClassName javaName = nameToJavaName.get(protoType);
         return javaName.peerClass("Abstract" + javaName.simpleName() + "Adapter");
@@ -260,10 +264,6 @@ public final class JavaGenerator {
         throw new IllegalStateException("Unknown type: " + type);
     }
 
-    /**
-     * @deprecated Use {@link #generateType)}
-     */
-    @Deprecated
     public TypeSpec generateEnum(EnumType type) {
         ClassName javaType = (ClassName) typeName(type.type());
 
@@ -355,10 +355,6 @@ public final class JavaGenerator {
         return builder.build();
     }
 
-    /**
-     * @deprecated Use {@link #generateType(ProtoFile, Type)}
-     */
-    @Deprecated
     public TypeSpec generateMessage(ProtoFile protoFile, MessageType type) {
         NameAllocator nameAllocator = nameAllocators.getUnchecked(type);
 
@@ -530,7 +526,9 @@ public final class JavaGenerator {
             empty = false;
         }
         initializer.add("\n.build()$]");
-        if (empty) return null;
+        if (empty) {
+            return null;
+        }
 
         return FieldSpec.builder(optionsJavaType, fieldName)
                 .addModifiers(PUBLIC, STATIC, FINAL)
@@ -626,11 +624,15 @@ public final class JavaGenerator {
                 .addModifiers(PUBLIC);
 
         for (OneOf oneOf : type.oneOfs()) {
-            if (oneOf.fields().size() < 2) continue;
+            if (oneOf.fields().size() < 2) {
+                continue;
+            }
             CodeBlock.Builder fieldNamesBuilder = CodeBlock.builder();
             boolean first = true;
             for (Field field : oneOf.fields()) {
-                if (!first) fieldNamesBuilder.add(", ");
+                if (!first) {
+                    fieldNamesBuilder.add(", ");
+                }
                 fieldNamesBuilder.add("$N", localNameAllocator.get(field));
                 first = false;
             }
@@ -700,7 +702,9 @@ public final class JavaGenerator {
             builder.add("$T.asList(", Arrays.class);
             boolean first = true;
             for (Object o : (List<?>) value) {
-                if (!first) builder.add(",");
+                if (!first) {
+                    builder.add(",");
+                }
                 first = false;
                 builder.add("\n$>$>$L$<$<", fieldInitializer(type, o));
             }

@@ -18,7 +18,7 @@ import java.util.Map;
 @Setter
 @Getter
 @ConfigurationProperties("raptor.client")
-public class RaptorFeignClientProperties {
+public class FeignClientProperties {
 
     private String defaultConfig = "default";
 

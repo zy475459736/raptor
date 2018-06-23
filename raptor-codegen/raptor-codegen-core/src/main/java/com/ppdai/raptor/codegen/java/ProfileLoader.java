@@ -19,9 +19,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.io.Closer;
-import com.ppdai.raptor.codegen.java.internal.ProfileFileElement;
+import com.ppdai.raptor.codegen.java.internal.AbstractProfileFileElement;
 import com.ppdai.raptor.codegen.java.internal.ProfileParser;
-import com.ppdai.raptor.codegen.java.internal.TypeConfigElement;
+import com.ppdai.raptor.codegen.java.internal.AbstractTypeConfigElement;
 import com.squareup.wire.schema.Location;
 import com.squareup.wire.schema.ProtoFile;
 import com.squareup.wire.schema.ProtoType;
@@ -76,15 +76,15 @@ public final class ProfileLoader {
     }
     Multimap<Path, String> pathsToAttempt = pathsToAttempt(protoLocations);
 
-    ImmutableList<ProfileFileElement> profileFiles = loadProfileFiles(pathsToAttempt);
+    ImmutableList<AbstractProfileFileElement> profileFiles = loadProfileFiles(pathsToAttempt);
     Profile profile = new Profile(profileFiles);
     validate(schema, profileFiles);
     return profile;
   }
 
-  private ImmutableList<ProfileFileElement> loadProfileFiles(Multimap<Path, String> pathsToAttempt)
+  private ImmutableList<AbstractProfileFileElement> loadProfileFiles(Multimap<Path, String> pathsToAttempt)
       throws IOException {
-    ImmutableList.Builder<ProfileFileElement> result = ImmutableList.builder();
+    ImmutableList.Builder<AbstractProfileFileElement> result = ImmutableList.builder();
     try (Closer closer = Closer.create()) {
       for (Map.Entry<Path, Collection<String>> entry : pathsToAttempt.asMap().entrySet()) {
         Path base = entry.getKey();
@@ -94,8 +94,10 @@ public final class ProfileLoader {
           base = getOnlyElement(sourceFs.getRootDirectories());
         }
         for (String path : entry.getValue()) {
-          ProfileFileElement element = loadProfileFile(base, path);
-          if (element != null) result.add(element);
+          AbstractProfileFileElement element = loadProfileFile(base, path);
+          if (element != null) {
+              result.add(element);
+          }
         }
       }
     }
@@ -134,9 +136,11 @@ public final class ProfileLoader {
    * Parses the {@code .wire} file at {@code base/path} and returns it. Returns null if no such
    * file exists.
    */
-  private ProfileFileElement loadProfileFile(Path base, String path) throws IOException {
+  private AbstractProfileFileElement loadProfileFile(Path base, String path) throws IOException {
     Source source = source(base, path);
-    if (source == null) return null;
+    if (source == null) {
+        return null;
+    }
     try {
       Location location = Location.get(base.toString(), path);
       String data = Okio.buffer(source).readUtf8();
@@ -149,13 +153,15 @@ public final class ProfileLoader {
   }
 
   /** Confirms that {@code protoFiles} link correctly against {@code schema}. */
-  void validate(Schema schema, ImmutableList<ProfileFileElement> profileFiles) {
+  void validate(Schema schema, ImmutableList<AbstractProfileFileElement> profileFiles) {
     List<String> errors = new ArrayList<>();
 
-    for (ProfileFileElement profileFile : profileFiles) {
-      for (TypeConfigElement typeConfig : profileFile.typeConfigs()) {
+    for (AbstractProfileFileElement profileFile : profileFiles) {
+      for (AbstractTypeConfigElement typeConfig : profileFile.typeConfigs()) {
         ProtoType type = importedType(ProtoType.get(typeConfig.type()));
-        if (type == null) continue;
+        if (type == null) {
+            continue;
+        }
 
         Type resolvedType = schema.getType(type);
         if (resolvedType == null) {
@@ -180,7 +186,9 @@ public final class ProfileLoader {
   /** Returns the type to import for {@code type}. */
   private ProtoType importedType(ProtoType type) {
     // Map key type is always scalar.
-    if (type.isMap()) type = type.valueType();
+    if (type.isMap()) {
+        type = type.valueType();
+    }
     return type.isScalar() ? null : type;
   }
 

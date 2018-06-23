@@ -29,8 +29,6 @@ public class RaptorMessageUtils {
         mapKeyClasses.add(String.class);
     }
 
-    private static final ByteArrayBase64PropertyEditor byteArrayBase64PropertyEditor = new ByteArrayBase64PropertyEditor();
-
     public static MutablePropertyValues toPropertyValues(Map<String, String> map) {
         MutablePropertyValues propertyValues = new MutablePropertyValues();
         if (map != null) {
@@ -41,10 +39,11 @@ public class RaptorMessageUtils {
         return propertyValues;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T transferMapToMessage(Class<T> clazz, Map<String, String> map) {
         MutablePropertyValues propertyValues = toPropertyValues(map);
         BeanWrapperImpl beanWrapper = new BeanWrapperImpl(clazz);
-        beanWrapper.registerCustomEditor(byte[].class, byteArrayBase64PropertyEditor);
+        beanWrapper.registerCustomEditor(byte[].class, new ByteArrayBase64PropertyEditor());
         beanWrapper.setAutoGrowNestedPaths(true);
         beanWrapper.setPropertyValues(propertyValues);
         return (T) beanWrapper.getWrappedInstance();

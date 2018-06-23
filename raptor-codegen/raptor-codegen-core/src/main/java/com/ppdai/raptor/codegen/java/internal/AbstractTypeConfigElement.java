@@ -25,9 +25,9 @@ import static com.squareup.wire.schema.internal.Util.appendDocumentation;
  * {@code build.wire} file that is in the same directory as the configured type.
  */
 @AutoValue
-public abstract class TypeConfigElement {
+public abstract class AbstractTypeConfigElement {
   public static Builder builder(Location location) {
-    return new AutoValue_TypeConfigElement.Builder()
+    return new AutoValue_AbstractTypeConfigElement.Builder()
         .location(location)
         .documentation("");
   }
@@ -54,6 +54,6 @@ public abstract class TypeConfigElement {
     Builder documentation(String documentation);
     Builder target(String target);
     Builder adapter(String adapter);
-    TypeConfigElement build();
+    AbstractTypeConfigElement build();
   }
 }

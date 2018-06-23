@@ -18,7 +18,7 @@ public class RaptorHttpClientProperties {
     public static final boolean DEFAULT_FOLLOW_REDIRECTS = false;
     public static final int DEFAULT_CONNECTION_TIMEOUT = 10000;
     public static final int DEFAULT_SOCKET_TIMEOUT = 30000;
-    public static final int DEFAULT_CONNECTION_TIMER_REPEAT = 3000;
+    public static final int DEFAULT_CONNECTION_TIMER_REPEAT = 10000;
     public static final int DEFAULT_RETRY_COUNT = 0;
     public static final boolean DEFAULT_RETRY_ENABLE = false;
 

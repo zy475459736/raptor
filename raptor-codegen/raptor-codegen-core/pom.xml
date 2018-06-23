@@ -94,10 +94,6 @@
             <artifactId>wire-runtime</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.squareup.wire</groupId>
-            <artifactId>wire-schema</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.squareup.okio</groupId>
             <artifactId>okio</artifactId>
         </dependency>

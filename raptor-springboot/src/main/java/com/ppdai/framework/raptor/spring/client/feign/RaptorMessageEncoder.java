@@ -40,14 +40,13 @@ public class RaptorMessageEncoder implements Encoder {
                 }
             } else {
                 //TODO MediaType
-                FeignOutputMessage outputMessage = new FeignOutputMessage(request);
+                FeignRequestOutputMessage outputMessage = new FeignRequestOutputMessage(request);
                 try {
                     raptorMessageConverter.write(requestBody, MediaType.APPLICATION_JSON_UTF8, outputMessage);
                 } catch (IOException ex) {
                     throw new EncodeException("Error converting request body", ex);
                 }
                 request.headers(HttpHeadersUtils.getHeaders(outputMessage.getHeaders()));
-                request.body(outputMessage.getOutputStream().toByteArray(), null);
             }
         } else {
             throw new RuntimeException("Can't encode requestBody, bodyType must be RaptorMessage.");

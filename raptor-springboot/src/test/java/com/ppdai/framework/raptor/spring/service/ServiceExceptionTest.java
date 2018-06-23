@@ -72,5 +72,6 @@ public class ServiceExceptionTest {
         String result = new String(bos.toByteArray(), StandardCharsets.UTF_8);
         System.out.println(result);
         Assert.assertTrue(result.contains("RaptorException!"));
+        Assert.assertTrue(result.contains("{\"a\":\"b\"}"));
     }
 }

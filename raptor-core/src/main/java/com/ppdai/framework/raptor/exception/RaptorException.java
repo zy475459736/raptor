@@ -17,6 +17,13 @@ public class RaptorException extends RuntimeException {
     private String message;
     private Map<String, String> attachments = new HashMap<>();
 
+    public RaptorException(ErrorMessage errorMessage) {
+        super();
+        this.code = errorMessage.getCode();
+        this.message = errorMessage.getMessage();
+        this.attachments = errorMessage.getAttachments();
+    }
+
     public RaptorException(String message) {
         super(message);
         this.message = message;

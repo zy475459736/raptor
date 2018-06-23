@@ -1,5 +1,6 @@
 package com.ppdai.framework.raptor.spring.service;
 
+import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.exception.ErrorMessage;
 import com.ppdai.framework.raptor.exception.RaptorException;
 import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
@@ -36,16 +37,16 @@ public class RaptorHandlerExceptionResolver implements HandlerExceptionResolver 
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         if (RaptorHandlerUtils.isRaptorService(handler)) {
             response.setStatus(500);
+            response.addHeader(RaptorConstants.HEADER_ERROR, "true");
             ServletServerHttpResponse outputMessage = new ServletServerHttpResponse(response);
             ErrorMessage errorMessage = createErrorMessage(ex);
             try {
                 raptorMessageConverter.write(errorMessage, ErrorMessage.class, getMediaType(), outputMessage);
-                return new ModelAndView();
             } catch (IOException e) {
                 log.error("Can't convert error message.", e);
                 processConvertError(response, ex);
-                return new ModelAndView();
             }
+            return new ModelAndView();
         }
         return null;
     }

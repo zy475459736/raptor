@@ -12,5 +12,6 @@ public class RaptorConstants {
     public static final String HEADER_HOST_CLIENT = "x-raptor-host-client";
     public static final String HEADER_HOST_SERVER = "x-raptor-host-server";
     public static final String HEADER_TRACE_PREFIX = "x-raptortrace-";
+    public static final String HEADER_ERROR="x-raptor-error";
 
 }

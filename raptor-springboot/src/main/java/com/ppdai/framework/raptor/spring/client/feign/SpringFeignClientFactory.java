@@ -45,6 +45,7 @@ public class SpringFeignClientFactory extends RaptorClientFactory.BaseFactory im
         Feign.Builder builder = Feign.builder()
                 .encoder(new RaptorMessageEncoder(raptorMessageConverter))
                 .decoder(new RaptorMessageDecoder(raptorMessageConverter))
+                .errorDecoder(new RaptorErrorDecoder(raptorMessageConverter))
                 .contract(new SpringMvcContract())
                 .retryer(Retryer.NEVER_RETRY)
                 .logger(new Slf4jLogger(type))

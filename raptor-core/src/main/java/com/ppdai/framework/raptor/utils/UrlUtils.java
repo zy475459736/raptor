@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.util;
+package com.ppdai.framework.raptor.utils;
 
 /**
  * @author yinzuolong

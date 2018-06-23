@@ -1,7 +1,7 @@
 package com.ppdai.framework.raptor.spring.utils;
 
 import com.ppdai.framework.raptor.annotation.RaptorInterface;
-import com.ppdai.framework.raptor.util.ReflectUtil;
+import com.ppdai.framework.raptor.utils.ReflectUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -22,7 +22,7 @@ public class RaptorClassUtils {
     private final static Map<String, String> METHOD_INTERFACE_CACHE = new ConcurrentHashMap<>();
 
     public static String getInterfaceName(Class<?> type, Method method) {
-        String methodSignature = ReflectUtil.getMethodSignature(method);
+        String methodSignature = ReflectUtils.getMethodSignature(method);
         String classMethodKey = type.getName() + "#" + methodSignature;
         String interfaceName = METHOD_INTERFACE_CACHE.get(classMethodKey);
         if (StringUtils.isEmpty(interfaceName)) {

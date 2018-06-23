@@ -100,7 +100,6 @@ public class RaptorMessageUtils {
         }
     }
 
-
     private static String getNameKey(String name, String key) {
         return name + "[" + key + "]";
     }

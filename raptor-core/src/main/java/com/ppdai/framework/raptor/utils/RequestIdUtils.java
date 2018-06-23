@@ -1,8 +1,8 @@
-package com.ppdai.framework.raptor.util;
+package com.ppdai.framework.raptor.utils;
 
 import java.net.InetAddress;
 
-public class RequestIdGenerator {
+public class RequestIdUtils {
 
     private static CommonSelfIdGenerator ID_GENERATOR = new CommonSelfIdGenerator();
 

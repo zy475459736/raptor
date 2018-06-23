@@ -1,6 +1,5 @@
-package com.ppdai.framework.raptor.commmon;
+package com.ppdai.framework.raptor.utils;
 
-import com.ppdai.framework.raptor.util.CommonSelfIdGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,13 +12,13 @@ public class CommonSelfIdGeneratorTest {
 
     @Test
     public void testThreadSafe() throws InterruptedException, ExecutionException {
-        int nthread = 10;
+        int nThread = 10;
         int idPerThread = 1000;
 
         CommonSelfIdGenerator commonSelfIdGenerator = new CommonSelfIdGenerator();
 
 
-        CountDownLatch countDownLatch  = new CountDownLatch(nthread);
+        CountDownLatch countDownLatch = new CountDownLatch(nThread);
 
         Callable<List<Long>> generate = () -> {
             ArrayList<Long> ids = new ArrayList<>();
@@ -32,26 +31,24 @@ public class CommonSelfIdGeneratorTest {
             return ids;
         };
 
-        ExecutorService executorService = Executors.newFixedThreadPool(nthread);
-        List<Future<List<Long>>> futureList = new ArrayList();
-        for (int i = 0; i < nthread; i++) {
+        ExecutorService executorService = Executors.newFixedThreadPool(nThread);
+        List<Future<List<Long>>> futureList = new ArrayList<>();
+        for (int i = 0; i < nThread; i++) {
             Future<List<Long>> futureResult = executorService.submit(generate);
             futureList.add(futureResult);
         }
         countDownLatch.await();
 
-        HashSet<Long> allIds =new HashSet();
+        HashSet<Long> allIds = new HashSet<>();
         for (Future<List<Long>> result : futureList) {
             List<Long> longs = result.get();
             allIds.addAll(longs);
         }
 
-        Assert.assertTrue(allIds.size() == nthread * idPerThread);
+        Assert.assertEquals(allIds.size(), nThread * idPerThread);
 
 
     }
-
-
 
 
 }

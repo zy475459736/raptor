@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.util;
+package com.ppdai.framework.raptor.utils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class ReflectUtil {
+public class ReflectUtils {
     public static final String PARAM_CLASS_SPLIT = ",";
     public static final String EMPTY_PARAM = "void";
     private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[0];

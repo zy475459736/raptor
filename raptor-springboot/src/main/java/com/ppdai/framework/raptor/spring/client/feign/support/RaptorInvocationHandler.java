@@ -4,7 +4,7 @@ import com.ppdai.framework.raptor.rpc.RaptorClientInterceptor;
 import com.ppdai.framework.raptor.rpc.RaptorContext;
 import com.ppdai.framework.raptor.rpc.RaptorRequest;
 import com.ppdai.framework.raptor.rpc.RaptorResponse;
-import com.ppdai.framework.raptor.util.RequestIdGenerator;
+import com.ppdai.framework.raptor.utils.RequestIdUtils;
 import feign.InvocationHandlerFactory;
 import feign.Target;
 import lombok.Getter;
@@ -71,7 +71,7 @@ public class RaptorInvocationHandler implements InvocationHandler {
         request.setArguments(args);
         request.setInterfaceName(method.getDeclaringClass().getName());
         request.setMethodName(method.getName());
-        request.setRequestId(RequestIdGenerator.getRequestId());
+        request.setRequestId(RequestIdUtils.getRequestId());
         RaptorContext.getContext().setRequest(request);
 
         RaptorResponse response = new RaptorResponse(request.getRequestId());

@@ -3,7 +3,7 @@ package com.ppdai.framework.raptor.spring.client.feign.support;
 import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.rpc.RaptorContext;
 import com.ppdai.framework.raptor.rpc.RaptorResponse;
-import com.ppdai.framework.raptor.util.UrlUtils;
+import com.ppdai.framework.raptor.utils.UrlUtils;
 import feign.Client;
 import feign.Request;
 import feign.Response;

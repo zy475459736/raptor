@@ -5,7 +5,7 @@ import com.ppdai.framework.raptor.rpc.RaptorContext;
 import com.ppdai.framework.raptor.rpc.RaptorRequest;
 import com.ppdai.framework.raptor.rpc.RaptorResponse;
 import com.ppdai.framework.raptor.spring.utils.RaptorClassUtils;
-import com.ppdai.framework.raptor.util.NetUtils;
+import com.ppdai.framework.raptor.utils.NetUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;

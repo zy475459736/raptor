@@ -3,7 +3,7 @@ package com.ppdai.framework.raptor.spring.client.feign.support;
 import com.ppdai.framework.raptor.common.RaptorConstants;
 import com.ppdai.framework.raptor.rpc.RaptorContext;
 import com.ppdai.framework.raptor.rpc.RaptorRequest;
-import com.ppdai.framework.raptor.util.NetUtils;
+import com.ppdai.framework.raptor.utils.NetUtils;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.springframework.core.annotation.Order;

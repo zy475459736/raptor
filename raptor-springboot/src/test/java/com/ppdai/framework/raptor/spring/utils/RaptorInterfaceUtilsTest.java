@@ -3,7 +3,6 @@ package com.ppdai.framework.raptor.spring.utils;
 import com.ppdai.framework.raptor.proto.HelloRequest;
 import com.ppdai.framework.raptor.proto.MoreService;
 import com.ppdai.framework.raptor.spring.service.MoreServiceImpl;
-import com.ppdai.framework.raptor.spring.utils.RaptorInterfaceUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.util.ReflectionUtils;

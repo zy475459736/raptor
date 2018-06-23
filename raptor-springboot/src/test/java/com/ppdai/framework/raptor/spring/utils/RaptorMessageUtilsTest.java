@@ -2,7 +2,6 @@ package com.ppdai.framework.raptor.spring.utils;
 
 import com.ppdai.framework.raptor.proto.Cat;
 import com.ppdai.framework.raptor.proto.HelloRequest;
-import com.ppdai.framework.raptor.spring.utils.RaptorMessageUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

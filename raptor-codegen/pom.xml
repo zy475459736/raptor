@@ -34,14 +34,6 @@
                 <version>${wire.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.squareup.wire</groupId>
-                <artifactId>wire-schema</artifactId>
-                <!--release 版本有bug-->
-                <version>${wire.version}</version>
-
-                <!--<version>2.3.0-SNAPSHOT</version>-->
-            </dependency>
-            <dependency>
                 <groupId>com.squareup.okio</groupId>
                 <artifactId>okio</artifactId>
                 <version>1.11.0</version>

@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.utils;
+package com.ppdai.framework.raptor.spring.utils;
 
 import com.ppdai.framework.raptor.proto.Cat;
 import com.ppdai.framework.raptor.proto.HelloRequest;

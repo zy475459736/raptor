@@ -8,29 +8,22 @@ import org.springframework.http.HttpOutputMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author yinzuolong
  */
 public class FeignRequestOutputMessage implements HttpOutputMessage {
-    private RequestTemplate request;
     private HttpHeaders httpHeaders;
+    private ByteArrayOutputStream buf;
 
     public FeignRequestOutputMessage(RequestTemplate request) {
-        this.request = request;
         this.httpHeaders = HttpHeadersUtils.getHttpHeaders(request.headers());
+        this.buf = new ByteArrayOutputStream();
     }
 
     @Override
     public OutputStream getBody() throws IOException {
-        return new ByteArrayOutputStream() {
-            @Override
-            public void flush() throws IOException {
-                super.flush();
-                request.body(this.toByteArray(), StandardCharsets.UTF_8);
-            }
-        };
+        return this.buf;
     }
 
     @Override
@@ -38,4 +31,7 @@ public class FeignRequestOutputMessage implements HttpOutputMessage {
         return this.httpHeaders;
     }
 
+    public byte[] body() {
+        return this.buf.toByteArray();
+    }
 }

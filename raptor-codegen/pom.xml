@@ -18,7 +18,6 @@
     <modules>
         <module>raptor-codegen-core</module>
         <module>raptor-codegen-maven</module>
-        <module>raptor-codegen-cli</module>
     </modules>
 
     <dependencyManagement>

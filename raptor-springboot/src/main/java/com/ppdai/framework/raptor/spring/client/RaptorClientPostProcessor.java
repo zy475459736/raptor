@@ -8,6 +8,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -20,15 +22,13 @@ public class RaptorClientPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        Class<?> clazz = bean.getClass();
+        Class<?> clazz = ClassUtils.getUserClass(bean);
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             try {
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
                 RaptorClient reference = field.getAnnotation(RaptorClient.class);
                 if (reference != null) {
+                    ReflectionUtils.makeAccessible(field);
                     if (field.get(bean) != null) {
                         //字段已经初始化
                         continue;

@@ -9,6 +9,7 @@ import com.ppdai.framework.raptor.spring.utils.FieldUtils;
 import feign.*;
 import feign.codec.ErrorDecoder;
 import feign.slf4j.Slf4jLogger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -27,6 +28,7 @@ import java.util.Map;
 /**
  * @author yinzuolong
  */
+@Slf4j
 public class SpringFeignClientFactory extends RaptorClientFactory.BaseFactory implements ApplicationContextAware {
 
     private static final String LIBRARY = "spring";
@@ -61,7 +63,10 @@ public class SpringFeignClientFactory extends RaptorClientFactory.BaseFactory im
         //自定义配置
         configureUsingProperties(type, builder);
 
-        return builder.target(type, getUrl(type));
+        String url = getUrl(type);
+        T t = builder.target(type, url);
+        log.info("Create raptor client of type [{}] by url [{}].", type.getName(), url);
+        return t;
     }
 
     protected Request.Options createOptions() {

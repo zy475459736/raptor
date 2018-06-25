@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -39,10 +40,10 @@ public class RaptorMessageEncoder implements Encoder {
                     throw new RuntimeException("Transfer requestBody to query string error.", e);
                 }
             } else {
-                //TODO MediaType
                 FeignRequestOutputMessage outputMessage = new FeignRequestOutputMessage(request);
                 try {
-                    raptorMessageConverter.write(requestBody, MediaType.APPLICATION_JSON_UTF8, outputMessage);
+                    raptorMessageConverter.write(requestBody,  MediaType.APPLICATION_JSON, outputMessage);
+                    request.body(outputMessage.body(), StandardCharsets.UTF_8);
                 } catch (IOException ex) {
                     throw new EncodeException("Error converting request body", ex);
                 }

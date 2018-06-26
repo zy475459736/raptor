@@ -11,9 +11,6 @@
     <packaging>pom</packaging>
 
     <artifactId>raptor-codegen</artifactId>
-    <properties>
-        <wire.version>2.3.0-RC1</wire.version>
-    </properties>
 
     <modules>
         <module>raptor-codegen-core</module>

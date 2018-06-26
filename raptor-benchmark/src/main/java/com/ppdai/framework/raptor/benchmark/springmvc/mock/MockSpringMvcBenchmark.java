@@ -3,5 +3,5 @@ package com.ppdai.framework.raptor.benchmark.springmvc.mock;
 /**
  * @author yinzuolong
  */
-public class SpringMvcBenchmark {
+public class MockSpringMvcBenchmark {
 }

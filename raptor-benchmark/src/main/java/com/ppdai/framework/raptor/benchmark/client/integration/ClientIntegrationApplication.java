@@ -1,16 +1,16 @@
 package com.ppdai.framework.raptor.benchmark.client.integration;
 
-import com.ppdai.framework.raptor.benchmark.SimpleImpl;
+import com.ppdai.framework.raptor.benchmark.client.SimpleImpl;
 import com.ppdai.framework.raptor.proto.MoreService;
 import com.ppdai.framework.raptor.proto.Simple;
 import com.ppdai.framework.raptor.spring.annotation.RaptorClient;
 import lombok.Getter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@ComponentScan(basePackageClasses = {SimpleImpl.class})
+@Import(SimpleImpl.class)
 public class ClientIntegrationApplication {
 
     @Getter

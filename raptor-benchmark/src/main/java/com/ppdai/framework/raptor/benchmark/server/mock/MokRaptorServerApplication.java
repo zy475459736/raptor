@@ -8,5 +8,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @SpringBootApplication
 @Configuration
-public class ServerMockApplication {
+public class MokRaptorServerApplication {
+    //TODO
 }

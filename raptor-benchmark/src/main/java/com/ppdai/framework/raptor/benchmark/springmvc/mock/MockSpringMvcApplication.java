@@ -12,10 +12,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {RaptorAutoConfiguration.class, RaptorClientAutoConfiguration.class, RaptorServiceAutoConfiguration.class})
-public class ServerApplication {
+public class MockSpringMvcApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ServerApplication.class, args);
+        SpringApplication.run(MockSpringMvcApplication.class, args);
     }
 
 }

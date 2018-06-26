@@ -1,4 +1,4 @@
-package com.ppdai.framework.raptor.benchmark;
+package com.ppdai.framework.raptor.benchmark.server;
 
 import com.ppdai.framework.raptor.proto.HelloReply;
 import com.ppdai.framework.raptor.proto.HelloRequest;

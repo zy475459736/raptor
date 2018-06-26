@@ -1,9 +1,13 @@
 package com.ppdai.framework.raptor.benchmark.springmvc.httpclient;
 
+import com.ppdai.framework.raptor.spring.client.httpclient.ApacheHttpClientConnectionManagerFactory;
+import com.ppdai.framework.raptor.spring.client.httpclient.ApacheHttpClientFactory;
+import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientProperties;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.openjdk.jmh.annotations.*;
@@ -41,7 +45,10 @@ public class HttpclientSpringMvcBenchmark {
         port = SocketUtils.findAvailableTcpPort();
         System.setProperty("server.port", String.valueOf(port));
         context = SpringApplication.run(HttpclientSpringMvcApplication.class);
-        httpClient = context.getBean(CloseableHttpClient.class);
+        ApacheHttpClientConnectionManagerFactory factory = new ApacheHttpClientConnectionManagerFactory();
+        HttpClientConnectionManager manager = factory.newConnectionManager(false, 100, 100);
+        ApacheHttpClientFactory apacheHttpClientFactory = new ApacheHttpClientFactory();
+        httpClient = apacheHttpClientFactory.createHttpClient(manager, new RaptorHttpClientProperties());
     }
 
     @TearDown

@@ -29,47 +29,49 @@ public class PerformanceTestController {
 
     @RequestMapping("/thread")
     public String test(@RequestParam("threadCount") int threadCount,
-                       @RequestParam("cyclicCount") int cyclicCount,
+                       @RequestParam("second") int second,
                        @RequestParam("data") String data) throws Exception {
         if (isRunning.compareAndSet(false, true)) {
-            MetricRegistry registry = new MetricRegistry();
-            Timer timer = registry.timer("test.timer");
-            ExecutorService pool = new ThreadPoolExecutor(threadCount + 10,
-                    threadCount + 10,
-                    0L,
-                    TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<>());
+            try {
+                MetricRegistry registry = new MetricRegistry();
+                Timer timer = registry.timer("test.timer");
+                ExecutorService pool = new ThreadPoolExecutor(threadCount + 10,
+                        threadCount + 10,
+                        0L,
+                        TimeUnit.MILLISECONDS,
+                        new LinkedBlockingQueue<>());
 
-            //预热
-            for (int i = 0; i < 10; i++) {
-                rpcCall(data);
-            }
+                //预热
+                for (int i = 0; i < 10; i++) {
+                    rpcCall(data);
+                }
 
-            //开启线程一起跑
-            CountDownLatch countDownLatch = new CountDownLatch(threadCount);
-            for (int t = 0; t < threadCount; t++) {
-                pool.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            countDownLatch.await();
-                        } catch (InterruptedException ignored) {
+                //开启线程一起跑
+                CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+                for (int t = 0; t < threadCount; t++) {
+                    pool.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                countDownLatch.await();
+                            } catch (InterruptedException ignored) {
+                            }
+                            while (isRunning.get()) {
+                                Timer.Context tc = timer.time();
+                                rpcCall(data);
+                                tc.stop();
+                            }
                         }
-                        for (int i = 0; i < cyclicCount; i++) {
-                            Timer.Context tc = timer.time();
-                            rpcCall(data);
-                            tc.stop();
-                        }
-                    }
-                });
-                //保证10个线程一起启动
-                countDownLatch.countDown();
+                    });
+                    //保证10个线程一起启动
+                    countDownLatch.countDown();
+                }
+                TimeUnit.SECONDS.sleep(second);
+                pool.shutdownNow();
+                return getMetricReport(registry);
+            } finally {
+                isRunning.set(false);
             }
-
-            pool.shutdown();
-            pool.awaitTermination(60, TimeUnit.MINUTES);
-            isRunning.set(false);
-            return getMetricReport(registry);
         }
         return "is running now.";
     }

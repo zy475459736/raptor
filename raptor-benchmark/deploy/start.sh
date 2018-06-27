@@ -1,6 +1,6 @@
 #!/bin/sh
 
-APP_HOME=/opt/app/raptor
+APP_HOME=.
 
 APP_MAINCLASS=org.openjdk.jmh.Main
 

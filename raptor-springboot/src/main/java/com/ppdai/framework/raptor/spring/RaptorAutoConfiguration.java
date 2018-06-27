@@ -1,5 +1,6 @@
 package com.ppdai.framework.raptor.spring;
 
+import com.ppdai.framework.raptor.spring.converter.RaptorJacksonMessageConverter;
 import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,6 @@ public class RaptorAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public RaptorMessageConverter createRaptorMessageConverter() {
-        return new RaptorMessageConverter();
+        return new RaptorJacksonMessageConverter();
     }
 }

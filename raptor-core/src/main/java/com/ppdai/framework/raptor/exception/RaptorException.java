@@ -34,6 +34,12 @@ public class RaptorException extends RuntimeException {
         this.message = message;
     }
 
+    public RaptorException(int code, String message, Throwable cause) {
+        super(message, cause);
+        this.message = message;
+        this.code = code;
+    }
+
     public RaptorException(int code, String message, Map<String, String> attachments, Throwable cause) {
         super(message, cause);
         this.message = message;
@@ -43,9 +49,10 @@ public class RaptorException extends RuntimeException {
         }
     }
 
-    public void putAttachment(String name, String value) {
+    public RaptorException putAttachment(String name, String value) {
         if (this.attachments != null) {
             this.attachments.put(name, value);
         }
+        return this;
     }
 }

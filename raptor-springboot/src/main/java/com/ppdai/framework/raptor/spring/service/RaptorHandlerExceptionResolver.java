@@ -41,7 +41,7 @@ public class RaptorHandlerExceptionResolver implements HandlerExceptionResolver 
             ServletServerHttpResponse outputMessage = new ServletServerHttpResponse(response);
             ErrorMessage errorMessage = createErrorMessage(ex);
             try {
-                raptorMessageConverter.write(errorMessage, ErrorMessage.class, getMediaType(), outputMessage);
+                raptorMessageConverter.write(errorMessage, getMediaType(), outputMessage);
             } catch (IOException e) {
                 log.error("Can't convert error message.", e);
                 processConvertError(response, ex);

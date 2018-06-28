@@ -1,18 +1,10 @@
 package com.ppdai.framework.raptor.spring.converter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
 
 /**
  * @author yinzuolong
  */
-public class RaptorMessageConverter extends MappingJackson2HttpMessageConverter {
+public interface RaptorMessageConverter extends HttpMessageConverter<Object> {
 
-    public RaptorMessageConverter() {
-        super();
-    }
-
-    public RaptorMessageConverter(ObjectMapper objectMapper) {
-        super(objectMapper);
-    }
 }

@@ -1,12 +1,10 @@
 package com.ppdai.framework.raptor.spring.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -22,8 +20,8 @@ import java.util.ArrayList;
 @Slf4j
 public class RaptorHandlerAdapterPostProcessor implements BeanPostProcessor {
 
-    @Autowired(required = false)
-    private ObjectMapper objectMapper;
+    @Autowired
+    private RaptorMessageConverter raptorMessageConverter;
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -34,15 +32,6 @@ public class RaptorHandlerAdapterPostProcessor implements BeanPostProcessor {
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (RequestMappingHandlerAdapter.class.isAssignableFrom(ClassUtils.getUserClass(bean))) {
             RequestMappingHandlerAdapter adapter = (RequestMappingHandlerAdapter) bean;
-            //找raptorMessageConverter
-            RaptorMessageConverter raptorMessageConverter = null;
-            for (HttpMessageConverter<?> convert : adapter.getMessageConverters()) {
-                if (convert instanceof RaptorMessageConverter) {
-                    raptorMessageConverter = (RaptorMessageConverter) convert;
-                    break;
-                }
-            }
-            raptorMessageConverter = raptorMessageConverter == null ? createRaptorMessageConverter() : raptorMessageConverter;
             RaptorHandlerMethodProcessor raptorHandlerMethodProcessor = new RaptorHandlerMethodProcessor(raptorMessageConverter);
 
             ArrayList<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>(adapter.getArgumentResolvers());
@@ -56,7 +45,4 @@ public class RaptorHandlerAdapterPostProcessor implements BeanPostProcessor {
         return bean;
     }
 
-    private RaptorMessageConverter createRaptorMessageConverter() {
-        return objectMapper == null ? new RaptorMessageConverter() : new RaptorMessageConverter(objectMapper);
-    }
 }

@@ -13,8 +13,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
         <jmh.version>1.20</jmh.version>
-        <javac.target>1.8</javac.target>
         <benchjar.name>benchmarks</benchjar.name>
     </properties>
 
@@ -76,7 +77,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
             </plugin>
             <plugin>
                 <groupId>com.ppdai.framework</groupId>

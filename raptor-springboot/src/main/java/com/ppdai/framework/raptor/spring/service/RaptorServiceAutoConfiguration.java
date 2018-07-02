@@ -2,8 +2,13 @@ package com.ppdai.framework.raptor.spring.service;
 
 import com.ppdai.framework.raptor.rpc.RaptorServiceInterceptor;
 import com.ppdai.framework.raptor.spring.converter.RaptorMessageConverter;
+import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -11,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.List;
 
@@ -44,6 +50,26 @@ public class RaptorServiceAutoConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
         exceptionResolvers.add(new RaptorHandlerExceptionResolver(raptorMessageConverter));
+    }
+
+    @Configuration
+    @ConditionalOnClass(AbstractEndpoint.class)
+    static class ActuatorEndpointConfig implements BeanClassLoaderAware {
+
+        private ClassLoader classLoader;
+
+        @Bean
+        @ConditionalOnBean(RequestMappingHandlerMapping.class)
+        public RaptorProtoFilesEndpoint createRaptorProtoFilesEndpoint(RequestMappingHandlerMapping requestMappingHandlerMapping) {
+            RaptorProtoFilesEndpoint raptorProtoFilesEndpoint = new RaptorProtoFilesEndpoint(requestMappingHandlerMapping);
+            raptorProtoFilesEndpoint.setClassLoader(classLoader);
+            return raptorProtoFilesEndpoint;
+        }
+
+        @Override
+        public void setBeanClassLoader(ClassLoader classLoader) {
+            this.classLoader = classLoader;
+        }
     }
 
 }

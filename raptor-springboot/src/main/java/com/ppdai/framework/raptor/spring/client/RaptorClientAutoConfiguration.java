@@ -4,7 +4,6 @@ import com.ppdai.framework.raptor.spring.client.feign.FeignClientProperties;
 import com.ppdai.framework.raptor.spring.client.feign.SpringFeignClientFactory;
 import com.ppdai.framework.raptor.spring.client.feign.HeaderTraceRequestInterceptor;
 import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientConfiguration;
-import com.ppdai.framework.raptor.spring.endpoint.RaptorClientsEndpoint;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import org.apache.http.client.HttpClient;

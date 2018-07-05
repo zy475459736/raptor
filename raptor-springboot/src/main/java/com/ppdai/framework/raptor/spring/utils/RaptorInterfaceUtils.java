@@ -18,27 +18,33 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RaptorInterfaceUtils {
 
-    private final static Map<String, String> METHOD_INTERFACE_CACHE = new ConcurrentHashMap<>();
+    private final static Map<String, Class<?>> METHOD_INTERFACE_CACHE = new ConcurrentHashMap<>();
+
 
     public static String getInterfaceName(Class<?> type, Method method) {
+        Class<?> interfaceClass = getInterfaceClass(type, method);
+        return interfaceClass == null ? null : interfaceClass.getName();
+    }
+
+    public static Class<?> getInterfaceClass(Class<?> type, Method method) {
         String methodSignature = getMethodSignature(method);
         String classMethodKey = type.getName() + "#" + methodSignature;
-        String interfaceName = METHOD_INTERFACE_CACHE.get(classMethodKey);
-        if (StringUtils.isEmpty(interfaceName)) {
+        Class<?> result = METHOD_INTERFACE_CACHE.get(classMethodKey);
+        if (StringUtils.isEmpty(result)) {
             List<Class<?>> classList = findRaptorInterfaces(type);
             for (Class<?> interfaceClass : classList) {
                 try {
                     Method interfaceMethod = interfaceClass.getMethod(method.getName(), method.getParameterTypes());
                     if (interfaceMethod != null) {
-                        interfaceName = interfaceClass.getName();
-                        METHOD_INTERFACE_CACHE.put(classMethodKey, interfaceName);
-                        return interfaceName;
+                        result = interfaceClass;
+                        METHOD_INTERFACE_CACHE.put(classMethodKey, result);
+                        return result;
                     }
                 } catch (NoSuchMethodException ignored) {
                 }
             }
         }
-        return interfaceName;
+        return result;
     }
 
     public static List<Class<?>> findRaptorInterfaces(Class<?> clazz) {

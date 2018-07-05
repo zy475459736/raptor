@@ -1,6 +1,5 @@
-package com.ppdai.framework.raptor.spring.endpoint;
+package com.ppdai.framework.raptor.spring.client;
 
-import com.ppdai.framework.raptor.spring.client.RaptorClientRegistry;
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 
 public class RaptorClientsEndpoint extends AbstractEndpoint {

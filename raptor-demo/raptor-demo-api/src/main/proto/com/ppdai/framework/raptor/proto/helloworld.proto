@@ -2,7 +2,8 @@ syntax = "proto3";
 
 package com.ppdai.framework.raptor.proto;
 
-import "com/ppdai/framework/raptor/proto/Result.proto";
+import "com/ppdai/framework/raptor/proto/OtherResult.proto";
+import "com/ppdai/framework/raptor/proto/Dog.proto";
 import "raptor.proto";
 
 option (appId) = "123456";
@@ -78,6 +79,7 @@ message HelloRequest {
     sfixed64 tsfixed64 = 17;
     bytes tbytes = 18;
     bool tbool = 19;
+    OtherResult otherResult = 20;
 
 
     repeated int32 rep_int32 = 201;
@@ -101,6 +103,7 @@ message HelloRequest {
     map<string, string> map_string_string = 502;
     map<string, Result> map_string_message = 503;
     map<string, Corpus> map_string_enum = 504;
+    map<string, Dog> dogMap = 505;
 }
 
 message HelloReply {

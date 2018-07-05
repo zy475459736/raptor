@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package com.ppdai.framework.raptor.proto;
 
-message Result {
+message OtherResult {
     string url = 1;
     string title = 2;
     repeated string snippets = 3;

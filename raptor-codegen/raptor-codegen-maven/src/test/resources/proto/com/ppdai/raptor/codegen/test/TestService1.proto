@@ -64,9 +64,10 @@ message SetHealthCheckStatusResponse {
 }
 
 message RandomSampleEvent {
-    Meta meta = 1;
-    string id = 2;
-    string message = 3;
+    Meta Meta = 1;
+    string idPro = 2;
+    string message_name = 3;
+    string interface = 4;
 }
 
 message HandlerSuccessEvent {

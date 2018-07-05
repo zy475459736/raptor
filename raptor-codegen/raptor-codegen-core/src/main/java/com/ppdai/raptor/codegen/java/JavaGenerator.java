@@ -1,5 +1,6 @@
 package com.ppdai.raptor.codegen.java;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
@@ -385,6 +386,8 @@ public final class JavaGenerator {
             String fieldName = nameAllocator.get(field);
             FieldSpec.Builder fieldBuilder = FieldSpec.builder(fieldJavaType, fieldName, PRIVATE);
             fieldBuilder.addAnnotation(wireFieldAnnotation(field, type.oneOfs()));
+            fieldBuilder.addAnnotation(jsonPropertyAnnotation(field));
+
             if (!field.documentation().isEmpty()) {
                 fieldBuilder.addJavadoc("$L\n", sanitizeJavadoc(field.documentation()));
             }
@@ -541,6 +544,12 @@ public final class JavaGenerator {
         return field.isRepeated() ? listOf(messageType) : messageType;
     }
 
+    private AnnotationSpec jsonPropertyAnnotation(Field field) {
+        AnnotationSpec.Builder result = AnnotationSpec.builder(JsonProperty.class);
+        result.addMember("value", "$S", field.name());
+
+        return result.build();
+    }
 
     // Example:
     //

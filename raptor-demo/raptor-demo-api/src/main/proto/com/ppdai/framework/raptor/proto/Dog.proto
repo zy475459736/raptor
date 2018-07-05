@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package com.ppdai.framework.raptor.proto;
+
+message Dog {
+    string name = 1;
+}

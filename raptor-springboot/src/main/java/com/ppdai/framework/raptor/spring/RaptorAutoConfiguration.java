@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class RaptorAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(RaptorMessageConverter.class)
     public RaptorMessageConverter createRaptorMessageConverter() {
         return new RaptorJacksonMessageConverter();
     }

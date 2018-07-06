@@ -1,5 +1,6 @@
 package com.ppdai.framework.raptor.spring.client.httpclient;
 
+import org.apache.http.client.HttpClient;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -37,19 +38,19 @@ public class RaptorHttpClientConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(ApacheHttpClientConnectionManagerFactory.class)
-    public ApacheHttpClientConnectionManagerFactory connectionManagerFactory() {
+    public ApacheHttpClientConnectionManagerFactory createConnectionManagerFactory() {
         return new ApacheHttpClientConnectionManagerFactory();
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    public ApacheHttpClientFactory apacheHttpClientFactory() {
+    @ConditionalOnMissingBean(ApacheHttpClientFactory.class)
+    public ApacheHttpClientFactory createApacheHttpClientFactory() {
         return new ApacheHttpClientFactory();
     }
 
     @Bean
     @ConditionalOnMissingBean(HttpClientConnectionManager.class)
-    public HttpClientConnectionManager connectionManager(
+    public HttpClientConnectionManager createConnectionManager(
             ApacheHttpClientConnectionManagerFactory connectionManagerFactory) {
         final HttpClientConnectionManager connectionManager = connectionManagerFactory
                 .newConnectionManager(httpClientProperties.isDisableSslValidation(), httpClientProperties.getMaxConnections(),
@@ -70,7 +71,8 @@ public class RaptorHttpClientConfiguration {
     }
 
     @Bean
-    public CloseableHttpClient httpClient(ApacheHttpClientFactory httpClientFactory,
+    @ConditionalOnMissingBean(HttpClient.class)
+    public CloseableHttpClient createHttpClient(ApacheHttpClientFactory httpClientFactory,
                                           HttpClientConnectionManager httpClientConnectionManager) {
         this.httpClient = httpClientFactory.createHttpClient(httpClientConnectionManager, httpClientProperties);
         return this.httpClient;

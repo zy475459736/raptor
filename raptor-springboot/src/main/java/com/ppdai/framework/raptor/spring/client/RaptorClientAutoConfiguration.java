@@ -36,7 +36,7 @@ public class RaptorClientAutoConfiguration implements ApplicationContextAware {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(Client.class)
     public Client createRaptorFeignClient() {
 
         HttpClient httpClient = applicationContext.getBean(HttpClient.class);

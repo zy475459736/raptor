@@ -2,7 +2,6 @@ package com.ppdai.framework.raptor.spring.client;
 
 import com.ppdai.framework.raptor.spring.client.feign.FeignClientProperties;
 import com.ppdai.framework.raptor.spring.client.feign.SpringFeignClientFactory;
-import com.ppdai.framework.raptor.spring.client.feign.HeaderTraceRequestInterceptor;
 import com.ppdai.framework.raptor.spring.client.httpclient.RaptorHttpClientConfiguration;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
@@ -45,11 +44,6 @@ public class RaptorClientAutoConfiguration implements ApplicationContextAware {
         } else {
             return new ApacheHttpClient();
         }
-    }
-
-    @Bean
-    public HeaderTraceRequestInterceptor createHeaderTraceClientInterceptor() {
-        return new HeaderTraceRequestInterceptor();
     }
 
     @Configuration

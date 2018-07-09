@@ -52,7 +52,7 @@ public class SpringFeignClientFactory extends RaptorClientFactory.BaseFactory im
                 .retryer(Retryer.NEVER_RETRY)
                 .logger(new Slf4jLogger(type))
                 .options(createOptions())
-                .requestInterceptors(getList(RequestInterceptor.class));
+                .requestInterceptor(new HeaderTraceRequestInterceptor());
 
         //自定义InvocationHandlerFactory，用于自定义拦截器
         builder.invocationHandlerFactory(createInvocationHandlerFactory());

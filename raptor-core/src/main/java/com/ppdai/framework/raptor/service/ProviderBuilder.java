@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Build 模式
+ * */
 public class ProviderBuilder {
 
     private List<ProviderFilter> filters;

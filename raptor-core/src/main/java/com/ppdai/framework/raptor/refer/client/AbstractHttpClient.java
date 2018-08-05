@@ -49,7 +49,10 @@ public abstract class AbstractHttpClient implements Client {
             this.serialization = SerializationProviders.getInstance().getDefault();
         }
     }
-
+    /**
+     * 这个方法大量使用，而且没有持久化的需求，
+     * request、url、response、HttpPost等是否可以不用强引用来帮助gc,
+     * */
     @Override
     public Response sendRequest(Request request, URL serviceUrl) {
         DefaultResponse response = new DefaultResponse(request.getRequestId());

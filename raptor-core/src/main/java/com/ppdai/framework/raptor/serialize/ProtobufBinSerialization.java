@@ -4,7 +4,7 @@ import com.google.protobuf.Message;
 import com.ppdai.framework.raptor.util.ProtoBuffUtils;
 
 public class ProtobufBinSerialization extends AbstractProtobufSerialization {
-
+    //对应http请求头中的字段
     public static final String NAME = "application/protobuf";
 
     @Override

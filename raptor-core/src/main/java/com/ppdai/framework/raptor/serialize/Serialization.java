@@ -1,5 +1,7 @@
 package com.ppdai.framework.raptor.serialize;
-
+/**
+ * 编码解码的接口
+ * */
 public interface Serialization {
 
     String getName();

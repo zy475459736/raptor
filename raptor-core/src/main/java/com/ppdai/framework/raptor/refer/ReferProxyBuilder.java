@@ -24,7 +24,9 @@ public class ReferProxyBuilder {
     private ReferProxyBuilder() {
         this.filterList = new ArrayList<>();
     }
-
+    /**
+     * 最终创建Proxy的地方
+     * */
     public <T> T build(Class<T> interfaceClass, URL url) {
         if (this.client == null) {
             this.client = createDefaultClient();

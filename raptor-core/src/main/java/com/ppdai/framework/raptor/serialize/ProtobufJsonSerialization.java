@@ -13,6 +13,7 @@ public class ProtobufJsonSerialization extends AbstractProtobufSerialization {
     @Override
     public byte[] serializeMessage(Message message) {
         try {
+            //该工具类方法返回的json带有默认值
             String jsonString = ProtoBuffUtils.convertProtoBuffToJsonWithDefaultValues(message);
             return jsonString.getBytes(RaptorConstants.DEFAULT_CHARACTER);
         } catch (UnsupportedEncodingException e) {

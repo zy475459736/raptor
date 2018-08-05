@@ -18,7 +18,9 @@ public class DefaultProvider<T> extends AbstractProvider<T> {
     public DefaultProvider(Class<T> interfaceClass, T serviceInstance) {
         super(interfaceClass, serviceInstance);
     }
-
+    /**
+     * 调用于AbstractProvider.call <- ServletEndpoint.doPost
+     * */
     @Override
     protected Response invoke(Request request) {
         DefaultResponse response = new DefaultResponse();
@@ -36,6 +38,9 @@ public class DefaultProvider<T> extends AbstractProvider<T> {
         }
 
         try {
+            /**
+             * 反射
+             * */
             Object value = method.invoke(this.serviceInstance, request.getArgument());
             response.setValue(value);
         } catch (Throwable e) {

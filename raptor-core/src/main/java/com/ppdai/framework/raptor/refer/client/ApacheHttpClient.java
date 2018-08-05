@@ -23,14 +23,14 @@ import java.io.IOException;
 @Slf4j
 public class ApacheHttpClient extends AbstractHttpClient {
 
-    private int connectTimeout = -1;
-    private int socketTimeout = -1;
-    private int connectionRequestTimeout = -1;
-    private int retryCount = 0;
-    private boolean requestSentRetryEnabled = false;
-    private int poolMaxTotal = 500;
-    private int poolMaxPreRoute = 100;
-
+    private int     connectTimeout              = -1;
+    private int     socketTimeout               = -1;
+    private int     connectionRequestTimeout    = -1;
+    private int     retryCount                  = 0;
+    private boolean requestSentRetryEnabled     = false;
+    private int     poolMaxTotal                = 500;
+    private int     poolMaxPreRoute             = 100;
+    // Can it be better?
     private CloseableHttpClient client;
 
     public ApacheHttpClient() {
@@ -68,8 +68,8 @@ public class ApacheHttpClient extends AbstractHttpClient {
 
     protected RequestConfig getRequestConfig(URL serviceUrl) {
         RequestConfig.Builder builder = RequestConfig.custom()
-                .setConnectTimeout(serviceUrl.getIntParameter(URLParamType.connectTimeout.getName(), this.getConnectTimeout()))
-                .setSocketTimeout(serviceUrl.getIntParameter(URLParamType.socketTimeout.getName(), this.getSocketTimeout()))
+                .setConnectTimeout(          serviceUrl.getIntParameter(URLParamType.connectTimeout.getName(), this.getConnectTimeout()))
+                .setSocketTimeout(           serviceUrl.getIntParameter(URLParamType.socketTimeout.getName(), this.getSocketTimeout()))
                 .setConnectionRequestTimeout(serviceUrl.getIntParameter(URLParamType.connectionRequestTimeout.getName(), this.getConnectionRequestTimeout()));
         return builder.build();
     }

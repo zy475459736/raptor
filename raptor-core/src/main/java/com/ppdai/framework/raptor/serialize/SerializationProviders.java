@@ -7,6 +7,11 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 用于提供编解码服务给：
+ *              1）Httpclient
+ *              2）ServletEndpoint
+ */
 @Slf4j
 public class SerializationProviders {
 

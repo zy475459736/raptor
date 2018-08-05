@@ -28,6 +28,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * ���ȣ�����һ��EndPoint,ά�����Provider��
+ * RaptorĬ�Ͻ���ͬʱ��Ϊһ��Servlet����doPost()�н���url��provider��ά���Ľӿ�ʵ�����method֮���
+ * */
 @Slf4j
 public class ServletEndpoint extends HttpServlet implements Endpoint {
 
@@ -48,7 +52,7 @@ public class ServletEndpoint extends HttpServlet implements Endpoint {
             throw new RaptorFrameworkException("ServletEndpoint init error.", e);
         }
     }
-
+    //todo
     @Override
     protected void doPost(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
         Response response = null;
@@ -76,8 +80,10 @@ public class ServletEndpoint extends HttpServlet implements Endpoint {
             transportException(e, response, httpRequest, httpResponse);
         }
     }
-
-    @Override
+    /**
+     * EndPoint Methods
+     * */
+    @Override//todo URL.builder.build() null
     public URL export(Provider<?> provider) {
         return export(provider, URL.builder().build());
     }
@@ -85,14 +91,14 @@ public class ServletEndpoint extends HttpServlet implements Endpoint {
     @Override
     public URL export(Provider<?> provider, URL serviceUrl) {
         URL newServiceUrl = doExport(provider, serviceUrl);
-        String key = getProviderKey(provider.getInterface().getName());
+        String key           = getProviderKey(provider.getInterface().getName());
         providers.put(key, provider);
         return newServiceUrl;
     }
 
     protected URL doExport(Provider<?> provider, URL serviceUrl) {
         URL newServiceUrl = baseUrl.createCopy();
-        String basePath = StringUtils.removeEnd(baseUrl.getPath(), RaptorConstants.PATH_SEPARATOR);
+        String  basePath      = StringUtils.removeEnd(baseUrl.getPath(), RaptorConstants.PATH_SEPARATOR);
         newServiceUrl.setProtocol(serviceUrl.getProtocol());
         newServiceUrl.setPath(provider.getInterface().getName());
         newServiceUrl.getParameters().putAll(serviceUrl.getParameters());

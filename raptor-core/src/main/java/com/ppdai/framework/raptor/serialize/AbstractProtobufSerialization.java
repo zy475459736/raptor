@@ -4,7 +4,7 @@ import com.google.protobuf.Message;
 import com.ppdai.framework.raptor.exception.RaptorServiceException;
 
 public abstract class AbstractProtobufSerialization implements Serialization {
-
+    //todo 最底层是基于protobuf协议，但是该方法设置为protected是否更好？
     public abstract byte[] serializeMessage(Message message);
 
     public abstract <T extends Message> T deserializeMessage(byte[] bytes, Class<T> clazz);

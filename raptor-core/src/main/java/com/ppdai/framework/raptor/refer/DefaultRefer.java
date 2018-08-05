@@ -10,8 +10,8 @@ public class DefaultRefer<T> implements Refer<T> {
 
     public DefaultRefer(Class<T> interfaceClass, Client client, URL serviceUrl) {
         this.interfaceClass = interfaceClass;
-        this.client = client;
-        this.serviceUrl = serviceUrl.createCopy();
+        this.client         = client;
+        this.serviceUrl     = serviceUrl.createCopy();
     }
 
     @Override
@@ -23,7 +23,10 @@ public class DefaultRefer<T> implements Refer<T> {
     public URL getServiceUrl() {
         return serviceUrl;
     }
-
+    /**
+     * 最终执行 call 的地方
+     *
+     * */
     @Override
     public Response call(Request request) {
 

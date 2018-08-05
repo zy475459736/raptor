@@ -13,6 +13,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * 装饰者模式
+ * */
 public class ProviderFilterDecorator {
 
     @Getter
@@ -28,10 +31,11 @@ public class ProviderFilterDecorator {
             return provider;
         }
         sort();
+        //装饰器模式
         Provider<T> lastProvider = provider;
         for (ProviderFilter filter : providerFilters) {
             final ProviderFilter filterFinal = filter;
-            final Provider<T> lastProviderFinal = lastProvider;
+            final Provider<T> lastProviderFinal = lastProvider;//todo  what is this for?
             lastProvider = new Provider<T>() {
                 @Override
                 public Response call(Request request) {

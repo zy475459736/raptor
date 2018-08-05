@@ -32,12 +32,13 @@ public class RaptorClientAutoConfiguration implements EnvironmentAware {
 
     private Environment environment;
 
-    private final static String DEFAULT_PREFIX = "raptor.url.";
-    private final static String PREFIX_KEY = "raptor.url.prefix";
+    private final static String DEFAULT_PREFIX  = "raptor.url.";
+    private final static String PREFIX_KEY      = "raptor.url.prefix";
 
     @Autowired
     private ApacheHttpClientProperties apacheHttpClientProperties;
 
+    //配置UrlRepository
     @Bean
     @ConditionalOnProperty(name = "raptor.urlRepository", havingValue = "springEnv", matchIfMissing = true)
     public AbstractUrlRepository createUrlRepository() {
@@ -46,6 +47,7 @@ public class RaptorClientAutoConfiguration implements EnvironmentAware {
         return springEnvUrlRepository;
     }
 
+    /*****************************   client   ************************************/
     @Bean
     @ConditionalOnMissingBean
     public Client createDefaultClient() {
@@ -55,6 +57,7 @@ public class RaptorClientAutoConfiguration implements EnvironmentAware {
         return client;
     }
 
+    /*****************************   Refer   ************************************/
     @Bean
     public ReferProxyBuilder createReferProxyBuilder(Client client, ObjectProvider<List<ReferFilter>> referFilters) {
         List<ReferFilter> referFilterList = referFilters.getIfAvailable();
@@ -65,23 +68,26 @@ public class RaptorClientAutoConfiguration implements EnvironmentAware {
     public RaptorClientRegistry createClientRegistry(AbstractUrlRepository urlRepository, ReferProxyBuilder referProxyBuilder) {
         return new RaptorClientRegistry(urlRepository, referProxyBuilder);
     }
-
+    /*****************************   EnvironmentAware   ************************************/
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;
     }
 
+
+
+    /*****************************   Filter   ************************************/
     @Bean
     @ConditionalOnProperty(name = "raptor.refer.filter.accessLog", havingValue = "true", matchIfMissing = true)
     public ReferAccessLogFilter createReferAccessLogFilter() {
         return new ReferAccessLogFilter();
     }
-
     @Bean
     @ConditionalOnProperty(name = "raptor.refer.filter.metrics", havingValue = "true", matchIfMissing = true)
     public ReferMetricsFilter createReferMetricFilter() {
         return new ReferMetricsFilter();
     }
+    /*****************************   Filter   ************************************/
 
     @Configuration
     @ConditionalOnClass(AbstractEndpoint.class)

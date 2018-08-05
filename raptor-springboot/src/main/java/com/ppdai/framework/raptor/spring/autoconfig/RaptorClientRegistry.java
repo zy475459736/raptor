@@ -13,9 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 客户端代理Registry
- */
 @Getter
 @Setter
 public class RaptorClientRegistry {
@@ -23,27 +20,34 @@ public class RaptorClientRegistry {
     private AbstractUrlRepository urlRepository;
     private ReferProxyBuilder referProxyBuilder;
 
-    private Map<String, Object> clientCache = new ConcurrentHashMap<>();
+    private Map<String, Object>     clientCache = new ConcurrentHashMap<>();
 
     public RaptorClientRegistry(AbstractUrlRepository urlRepository, ReferProxyBuilder referProxyBuilder) {
         this.urlRepository = urlRepository;
         this.referProxyBuilder = referProxyBuilder;
     }
-
+    /**
+     * 根据 接口 和 url 获取/创建Proxy，将Proxy设置给带有RaptorClient注解的Field
+     *
+     * */
     public Object getOrCreateClientProxy(String interfaceName, String url) {
         URL serviceUrl = getURL(interfaceName, url);
         if (serviceUrl == null) {
             throw new RaptorServiceException(String.format("Can't find service url of interface: %s", interfaceName));
         }
+
         String cacheKey = getCacheKey(interfaceName, serviceUrl);
-        Object proxy = clientCache.get(cacheKey);
+        Object proxy    = clientCache.get(cacheKey);
         if (proxy == null) {
             proxy = createClientProxy(interfaceName, serviceUrl);
             clientCache.put(cacheKey, proxy);
         }
         return proxy;
     }
-
+    /**
+     * 根据 interfaceName 和 url 两个String 构建 URL
+     *
+     * */
     public URL getURL(String interfaceName, String url) {
         URL serviceUrl;
         if (StringUtils.isNotBlank(url)) {

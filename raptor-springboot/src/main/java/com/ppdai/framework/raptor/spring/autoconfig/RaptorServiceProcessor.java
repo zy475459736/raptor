@@ -13,6 +13,7 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -32,18 +33,13 @@ public class RaptorServiceProcessor implements BeanPostProcessor {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private ProviderBuilder providerBuilder;
-
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
-    }
+    private ProviderBuilder    providerBuilder;
 
     @Override
     public Object postProcessAfterInitialization(Object springBean, String beanName) throws BeansException {
         Object bean = springBean;
         if (AopUtils.isAopProxy(bean)) {
-            try {
+            try {//todo
                 bean = AopHelper.getTarget(bean);
             } catch (Exception e) {
                 throw new RaptorServiceException(String.format("Can not find proxy target for %s .", bean.getClass().getName()));
@@ -53,10 +49,12 @@ public class RaptorServiceProcessor implements BeanPostProcessor {
         if (annotation == null) {
             return springBean;
         }
+        /**带有RaptorService注解的BEAN执行以下逻辑**/
         List<Class<?>> interfaceClasses = findAllInterfaces(bean);
         if (interfaceClasses.size() == 0) {
             throw new RaptorServiceException(String.format("Can not find %s serviceImpl's interface.", bean.getClass().getName()));
         }
+        DefaultListableBeanFactory defaultListableBeanFactory;
         for (Class<?> interfaceClass : interfaceClasses) {
             registryRaptorService(interfaceClass, springBean);
         }
@@ -64,6 +62,26 @@ public class RaptorServiceProcessor implements BeanPostProcessor {
     }
 
 
+    /**
+     * 注册Bean(契约接口的实现类)到 EndPoint
+     * @param interfaceClass 带有@RaptorInterface注解、RPC/Protobuf Service所对应接口
+     * @param bean 容器中的Bean实例，实际上是RPC/Protobuf Service所对应接口的实现类
+     * */
+    @SuppressWarnings("unchecked")
+    private void registryRaptorService(Class interfaceClass, Object bean) {
+        Provider provider = providerBuilder.build(interfaceClass, bean);
+        Map<String, Endpoint> endpointMap = applicationContext.getBeansOfType(Endpoint.class);
+        for (Endpoint endpoint : endpointMap.values()) {
+            URL url = endpoint.export(provider);
+            log.info("register a raptor service '{}' to endpoint '{}'", interfaceClass.getName(), url.getUri());
+        }
+    }
+
+    /**
+     * Find all the interfaces the specific BEAN implements,
+     * and retrun those interfaces which is annotated by RapterInterface.
+     * 获取Bean的所有接口，然后返回带有RaptorInterface注解的interface class
+     * */
     private List<Class<?>> findAllInterfaces(Object bean) {
         List<Class<?>> raptorInterfaces = new ArrayList<>();
         Set<Class<?>> interfaceClasses = ClassUtils.getAllInterfacesAsSet(bean);
@@ -75,14 +93,8 @@ public class RaptorServiceProcessor implements BeanPostProcessor {
         }
         return raptorInterfaces;
     }
-
-    @SuppressWarnings("unchecked")
-    private void registryRaptorService(Class interfaceClass, Object bean) {
-        Provider provider = providerBuilder.build(interfaceClass, bean);
-        Map<String, Endpoint> endpointMap = applicationContext.getBeansOfType(Endpoint.class);
-        for (Endpoint endpoint : endpointMap.values()) {
-            URL url = endpoint.export(provider);
-            log.info("register a raptor service '{}' to endpoint '{}'", interfaceClass.getName(), url.getUri());
-        }
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
     }
 }

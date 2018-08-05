@@ -19,12 +19,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 
+import javax.servlet.Servlet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,11 +43,17 @@ public class RaptorServiceAutoConfiguration {
     }
 
     @Autowired
-    private Environment env;
+    private Environment               env;
 
     @Autowired
     private ServletEndpointProperties servletEndpointProperties;
 
+    /*****************************   Servlet   ************************************/
+    /**
+     * 根据ServletEndpointProperties中的配置、或缺省配置，创建一个Servlet
+     * 该Servlet用于实际处理客户端调用，在这里配置如：端口、basePath、params等。
+     * @ConditionalOnMissingBean 留个口子，定制Servlet。
+     * */
     @Bean
     @ConditionalOnMissingBean(ServletEndpoint.class)
     public ServletEndpoint createServletEndpoint() {
@@ -58,26 +66,40 @@ public class RaptorServiceAutoConfiguration {
                 .parameters(servletEndpointProperties.getParameters()).build();
         return new ServletEndpoint(baseUrl);
     }
-
+    /**
+     * org.springframework.boot.web.servlet.ServletRegistrationBean ：
+     * A {@link ServletContextInitializer} to register {@link Servlet}s in a Servlet 3.0+
+     * container.
+     * */
     @Bean
     public ServletRegistrationBean registerServlet(ServletEndpoint servletEndpoint) {
         ServletRegistrationBean registrationBean = new ServletRegistrationBean();
         registrationBean.setServlet(servletEndpoint);
+
         Map<String, String> initParams = new HashMap<>();
         registrationBean.setInitParameters(initParams);
+
         List<String> urlMappings = new ArrayList<>();
         //先把开头的/删除，在加上/，保护下
         String path = RaptorConstants.PATH_SEPARATOR + StringUtils.removeStart(servletEndpoint.getBaseUrl().getPath(), RaptorConstants.PATH_SEPARATOR);
         path = StringUtils.removeEnd(path, RaptorConstants.PATH_SEPARATOR);
         urlMappings.add(path + "/*");
         registrationBean.setUrlMappings(urlMappings);
+//        DispatcherServlet dispatcherServlet;
         registrationBean.setLoadOnStartup(1);
         return registrationBean;
     }
 
+    /*****************************   ProviderBuilder ************************************/
+    /*****************************   Filter   begins ************************************/
+    /**
+     * add Filter to ProviderBuilder
+     * 此处注入一个ProviderBuilder给IoC容器，然后再添加Filter
+     * todo ObjectProvider这个是如何使得ProviderBuilder这个Bean的生成晚于后两个Filter的
+     * */
     @Bean
     public ProviderBuilder createProviderBuilder(ObjectProvider<List<ProviderFilter>> providerFilters) {
-        List<ProviderFilter> providerFilterList = providerFilters.getIfAvailable();
+        List<ProviderFilter> providerFilterList = providerFilters.getIfAvailable();                                     //        DefaultListableBeanFactory defaultListableBeanFactory;
         return ProviderBuilder.newBuilder().addFilters(providerFilterList);
     }
 
@@ -92,7 +114,9 @@ public class RaptorServiceAutoConfiguration {
     public ProviderMetricsFilter createProviderMetricFilter() {
         return new ProviderMetricsFilter();
     }
+    /*****************************   Filter   end  ************************************/
 
+    //todo what does the ActuatorEndpoint for? and why is the config like this?
     @Configuration
     @ConditionalOnClass(AbstractEndpoint.class)
     static class EndpointConfig {

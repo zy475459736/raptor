@@ -11,11 +11,16 @@ import org.springframework.core.io.ResourceLoader;
 
 import java.lang.reflect.Field;
 
+//todo
 public class RaptorClientPostProcessor implements BeanPostProcessor, ResourceLoaderAware {
     private ResourceLoader resourceLoader;
     @Autowired
     private RaptorClientRegistry raptorClientRegistry;
 
+    /**
+     * 对容器中每一个Bean的Field进行检查，
+     * 选择带有RaptorClient注解的，对尚未初始化的field进行处理
+     * */
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         Class<?> clazz = bean.getClass();
@@ -25,6 +30,7 @@ public class RaptorClientPostProcessor implements BeanPostProcessor, ResourceLoa
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
+                //获取带注解的
                 RaptorClient reference = field.getAnnotation(RaptorClient.class);
                 if (reference != null) {
                     if (field.get(bean) != null) {
@@ -51,6 +57,7 @@ public class RaptorClientPostProcessor implements BeanPostProcessor, ResourceLoa
         return raptorClientRegistry.getOrCreateClientProxy(referenceClass.getName(), url);
     }
 
+    //无
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean;

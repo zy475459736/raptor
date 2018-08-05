@@ -9,7 +9,7 @@ import java.util.HashMap;
 @ConfigurationProperties(prefix = "raptor.servletEndpoint")
 public class ServletEndpointProperties {
 
-    private String basePath = "raptor";
+    private String                  basePath   = "raptor";
 
     private HashMap<String, String> parameters = new HashMap<>();
 }
